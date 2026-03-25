@@ -1,0 +1,39 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #fff;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Lado esquerdo (logos) */
+.direita {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Lado direito (perfil) */
+.esquerda {
+    display: flex;
+    align-items: center;
+}
+
+/* Logos */
+.logo1 {
+    width: 10%;
+    height: auto;
+}
+
+.logo2 {
+    width: 40%;
+    height: auto;
+}
+
+/* Ícone de usuário */
+.perfil {
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+}
