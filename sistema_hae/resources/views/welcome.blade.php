@@ -11,14 +11,15 @@
 
 <div class="container">
     @include('components.header')
-    
+
     <h1>Seja Bem Vindo!</h1>
 
     <div class="buttons">
-        <a href="#" class="btn">Professor</a>
-        <a href="#" class="btn">Coordenador</a>
-        <a href="#" class="btn">Direção</a>
+        <a href="/login/professor" class="btn">Professor</a>
+        <a href="/login/coordenador" class="btn">Coordenador</a>
+        <a href="/login/direcao" class="btn">Direção</a>
     </div>
+
 </div>
 
 </body>
