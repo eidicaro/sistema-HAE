@@ -12,8 +12,8 @@ Route::get('/login/{tipo}', [AuthController::class, 'showLogin']);
 Route::post('/login/{tipo}', [AuthController::class, 'login']);
 
 
-Route::get('/professor', function () { return view('professor'); })->middleware('auth.tipo:professor');
+Route::get('/professor', function () { return view('professor'); }); //->middleware('auth.tipo:professor');
 
-Route::get('/coordenador', function () { return view('coordenador'); })->middleware('auth.tipo:coordenador');
+Route::get('/coordenador', function () { return view('coordenador'); }); //->middleware('auth.tipo:coordenador');
 
-Route::get('/direcao', function () { return view('direcao'); })->middleware('auth.tipo:direcao');
+Route::get('/direcao', function () { return view('direcao'); }); //->middleware('auth.tipo:direcao');
