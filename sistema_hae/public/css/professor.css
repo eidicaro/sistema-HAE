@@ -1,0 +1,33 @@
+.nova-hae {
+    width: 80%;
+    margin: 5% 0 0 10%;
+}
+
+.nova-hae label {
+    display: block;
+    margin: 0 0 1% 2%;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.select-hae {
+    width: 90%;
+    margin: 0 0 0 5%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: #d3d3d3;
+    color: #555;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* efeito ao clicar */
+.select-hae:focus {
+    outline: none;
+    background-color: #c7c7c7;
+}
+
+h2{
+    margin: 3% 0 0 10%;
+}

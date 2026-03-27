@@ -21,5 +21,17 @@ class DatabaseSeeder extends Seeder
             'password' => '123', // Laravel já faz hash automático
             'type' => 'professor',
         ]);
+        User::create([
+            'name' => 'coord',
+            'email' => 'coord',
+            'password' => '123', // Laravel já faz hash automático
+            'type' => 'coordenador',
+        ]);
+        User::create([
+            'name' => 'dir',
+            'email' => 'dir',
+            'password' => '123', // Laravel já faz hash automático
+            'type' => 'direcao',
+        ]);
     }
 }

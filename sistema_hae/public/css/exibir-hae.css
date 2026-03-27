@@ -1,0 +1,65 @@
+.minhas-haes {
+    width: 80%;
+    margin: 0 0 0 10%;
+    padding: 20px;
+}
+
+.hae-box {
+    margin-bottom: 30px;
+    background-color: #e5e5e5;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.hae-header {
+    padding: 10px 15px;
+    font-weight: bold;
+    color: white;
+}
+
+/* cores */
+.laranja {
+    background-color: #FF570F;
+    opacity: 0.84;
+}
+
+.amarelo {
+    background-color: #eab308;
+}
+
+.verde {
+    background-color: #009908;
+    opacity: 0.84;
+}
+
+.vermelho {
+    background-color: #FF0000;
+    opacity: 0.84;
+}
+
+/* lista */
+.hae-list {
+    padding: 10px 15px;
+}
+
+/* item */
+.hae-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #555;
+}
+
+/* remove última linha */
+.hae-item:last-child {
+    border-bottom: none;
+}
+
+.titulo {
+    color: #333;
+}
+
+.data {
+    color: #555;
+    font-size: 12px;
+}
