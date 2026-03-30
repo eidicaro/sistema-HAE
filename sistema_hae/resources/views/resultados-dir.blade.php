@@ -10,15 +10,12 @@
 <body>
     @include('components.header')
 
-    <h1>Olá Direção!</h1>
+    <a href="/direcao" class="btn-voltar">Voltar</a>
 
     <h2>HAEs Submetidas</h2>
-    <a href="/ver-relatores" class="btn-results">Ver Relatores</a>
 
-    @include('components.exibir-hae')
-    <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
+    @include('components.exibir-hae2')
 
-    <h2>Quantidade de HAEs</h2>
-
+    <h2>Estatísticas</h2>
 </body>
 </html>

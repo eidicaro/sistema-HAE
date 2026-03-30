@@ -17,3 +17,8 @@ Route::get('/professor', function () { return view('professor'); }); //->middlew
 Route::get('/coordenador', function () { return view('coordenador'); }); //->middleware('auth.tipo:coordenador');
 
 Route::get('/direcao', function () { return view('direcao'); }); //->middleware('auth.tipo:direcao');
+
+Route::get('/formulario', function () { return view('formulario'); });
+
+Route::get('/resultados-dir', function () { return view('resultados-dir'); });
+Route::get('/ver-relatores', function () { return view('ver-relatores'); });

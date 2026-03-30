@@ -1,0 +1,175 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    padding: 20px;
+}
+
+/* TÍTULO */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #B30A07;
+}
+
+h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #B30A07;
+    border-left: 5px solid #B30A07;
+    padding-left: 10px;
+}
+
+/* FORM CONTAINER */
+form {
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: 3%;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+}
+
+/* LABEL */
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* INPUTS E SELECTS */
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+/* TEXTAREA */
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* FOCO */
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #B30A07;
+    outline: none;
+    box-shadow: 0 0 5px rgba(30, 58, 138, 0.2);
+}
+
+/* BOTÃO */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #B30A07;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* HOVER BOTÃO */
+button:hover {
+    background-color: #B30A07;
+}
+
+/* SEPARAÇÃO DE SEÇÕES */
+form h2 {
+    margin-top: 40px;
+}
+
+/* GRID PARA CAMPOS (opcional) */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    form {
+        padding: 20px;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* SUBCATEGORIAS */
+.sub-bloco {
+    display: none;
+    background-color: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #e5e7eb;
+}
+
+/* ANIMAÇÃO SUAVE */
+.sub-bloco {
+    transition: all 0.3s ease;
+}
+
+/* SELECT DESTACADO */
+select {
+    background-color: #f8fafc;
+}
+
+/* ESPAÇO ENTRE BLOCOS */
+#administracao,
+#estudos,
+#extensao,
+#plantao,
+#ams {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    margin: 5%;
+    font-size: 18px;
+    position: relative;
+}
+
+a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px; /* distância da linha */
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s ease;
+}
+
+a:hover::after {
+    transform: scaleX(1);
+}

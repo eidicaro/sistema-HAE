@@ -1,3 +1,49 @@
 h2{
     margin: 3% 0 0 10%;
 }
+
+.btn-voltar {
+    display: inline-block; /* ESSENCIAL */
+    text-decoration: none;
+    color: #000;
+    margin: 30px 0 0 10%; /* agora vai funcionar */
+    font-size: 18px;
+    position: relative;
+}
+
+.btn-voltar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px; /* distância da linha */
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s ease;
+}
+
+.btn-voltar:hover::after {
+    transform: scaleX(1);
+}
+
+.btn-results {
+    display: block; /* importante aqui */
+    width: fit-content; /* não esticar */
+    margin: 0 10% 30px auto; /* joga pra direita + margem embaixo */
+    
+    background-color: #B30A07;
+    padding: 15px 80px;
+    border-radius: 10px;
+    font-weight: 800;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.4s;
+}
+
+.btn-results:hover{
+    background-color: #7b0503;
+    transition: 0.4s;
+}

@@ -17,16 +17,28 @@
 
         <select id="tipoHAE" class="select-hae">
             <option value="">Escolha o tipo de HAE</option>
-            <option value="ensino">Ensino</option>
-            <option value="pesquisa">Pesquisa</option>
+            <option value="graduacao">Projeto de Graduação</option>
+            <option value="administracao">Administração Acadêmica</option>
+            <option value="estudos">Estudos e Projetos</option>
             <option value="extensao">Extensão</option>
-            <option value="gestao">Gestão</option>
+            <option value="plantao">Plantão Didático</option>
+            <option value="ams">Programa AMS</option>
         </select>
     </div>
 
-    
     <h2>Minhas HAEs</h2>
     @include('components.exibir-hae')
     @include('components.exibir-hae2')
+
+    <script>
+        document.getElementById("tipoHAE").addEventListener("change", function () {
+            let tipo = this.value;
+
+            if (tipo) {
+                window.location.href = `/formulario?tipo=${tipo}`;
+            }
+        });
+    </script>
+    
 </body>
 </html>

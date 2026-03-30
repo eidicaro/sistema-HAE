@@ -9,6 +9,7 @@
     background-color: #e5e5e5;
     border-radius: 6px;
     overflow: hidden;
+    box-shadow: 5px 4px 5px rgba(0, 0, 0, 0.6);
 }
 
 .hae-header {
