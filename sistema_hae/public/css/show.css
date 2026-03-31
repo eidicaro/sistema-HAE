@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+/* CONTAINER */
+.hae-container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+}
+
+/* TITULO */
+.titulo {
+    margin-bottom: 10px;
+}
+
+/* INFO */
+.info p {
+    margin: 5px 0;
+}
+
+/* STATUS */
+.status {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* BLOCOS */
+.bloco {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+/* CRONOGRAMA */
+.cronograma {
+    list-style: none;
+    padding: 0;
+}
+
+.cronograma li {
+    margin-bottom: 5px;
+}
+
+/* ITENS (parecer/decisão) */
+.item {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* TEXTO VAZIO */
+.vazio {
+    color: #777;
+    font-style: italic;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    margin: 5%;
+    font-size: 22px;
+    position: relative;
+}
+
+a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px; /* distância da linha */
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s ease;
+}
+
+a:hover::after {
+    transform: scaleX(1);
+}

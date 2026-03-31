@@ -10,39 +10,43 @@
 <body>
 <div class="minhas-haes">
 
+<!-- FINALIZADAS -->
 <div class="hae-box">
     <div class="hae-header verde">
-        Finalizado
+        Finalizadas
     </div>
 
     <div class="hae-list">
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
-
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
+        @forelse($finalizadas as $hae)
+            <div class="hae-item">
+                <span class="titulo">{{ $hae->titulo }}</span>
+                <span class="data">
+                    data de submissão: {{ $hae->created_at->format('d/m/Y') }}
+                </span>
+            </div>
+        @empty
+            <p>Nenhuma HAE finalizada</p>
+        @endforelse
     </div>
 </div>
 
+<!-- RECUSADAS -->
 <div class="hae-box">
     <div class="hae-header vermelho">
-        Recusados
+        Recusadas
     </div>
 
     <div class="hae-list">
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
-
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
+        @forelse($recusadas as $hae)
+            <div class="hae-item">
+                <span class="titulo">{{ $hae->titulo }}</span>
+                <span class="data">
+                    data de submissão: {{ $hae->created_at->format('d/m/Y') }}
+                </span>
+            </div>
+        @empty
+            <p>Nenhuma HAE recusada</p>
+        @endforelse
     </div>
 </div>
 

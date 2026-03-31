@@ -49,6 +49,7 @@
     justify-content: space-between;
     padding: 10px 0;
     border-bottom: 1px solid #555;
+    text-decoration: none;
 }
 
 /* remove última linha */

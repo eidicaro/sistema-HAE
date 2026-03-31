@@ -23,8 +23,8 @@
 
 <label>Sobre o EDITAL DE HAE Nº 02/2025 – 1º SEMESTRE DE 2026</label>
 <select name="edital">
-    <option>Li e estou de acordo com o Edital</option>
-    <option>Li e não desejo submeter um projeto.</option>
+    <option value="1">Li e estou de acordo</option>
+    <option value="0">Não desejo submeter</option>
 </select>
 
 <h2>Das Informações Iniciais</h2>

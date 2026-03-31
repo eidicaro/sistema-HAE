@@ -11,6 +11,10 @@
     @include('components.header')
 
     <h1>Olá Professor!</h1>
+    <form method="POST" action="/logout">
+    @csrf
+    <button type="submit">Logout</button>
+</form>
 
     <div class="nova-hae">
         <label for="tipoHAE">Nova HAE</label>

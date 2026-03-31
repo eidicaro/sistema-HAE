@@ -10,50 +10,45 @@
 <body>
 <div class="minhas-haes">
 
-<!-- BLOCO 1 -->
+<!-- PENDENTES -->
 <div class="hae-box">
     <div class="hae-header laranja">
-        Aprovadas com diligência
+        Pendentes
     </div>
 
     <div class="hae-list">
-        <!-- ITEM -->
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
-
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
-
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
+        @forelse($pendentes as $hae)
+            <a href="/hae/{{ $hae->id }}" class="hae-item">
+                <span class="titulo">{{ $hae->titulo }}</span>
+                <span class="data">
+                    data de submissão: {{ $hae->created_at->format('d/m/Y') }}
+                </span>
+            </a>
+        @empty
+            <p>Nenhuma HAE pendente</p>
+        @endforelse
     </div>
 </div>
 
-<!-- BLOCO 2 -->
+<!-- DILIGÊNCIA -->
 <div class="hae-box">
     <div class="hae-header amarelo">
-        Aprovadas para início
+        Com Diligência
     </div>
 
     <div class="hae-list">
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
-
-        <div class="hae-item">
-            <span class="titulo">titulo hae</span>
-            <span class="data">data de submissão: 12/02/2033</span>
-        </div>
+        @forelse($diligencia as $hae)
+            <div class="hae-item">
+                <span class="titulo">{{ $hae->titulo }}</span>
+                <span class="data">
+                    data de submissão: {{ $hae->created_at->format('d/m/Y') }}
+                </span>
+            </div>
+        @empty
+            <p>Nenhuma HAE com diligência</p>
+        @endforelse
     </div>
 </div>
-
 
 </div>
 </body>

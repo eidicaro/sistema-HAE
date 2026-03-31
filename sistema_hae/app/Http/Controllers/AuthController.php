@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -15,28 +16,32 @@ class AuthController extends Controller
 
     public function login(Request $request, $tipo)
     {
-        $user = DB::table('users')
-            ->where('email', $request->email)
-            ->first();
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password
+        ];
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            session([
-                'tipo' => $user->type,
-                'user' => $user
-            ]);
+        if (Auth::attempt($credentials)) {
 
-            return redirect('/' . $user->type);
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            return redirect('/' . $user->role);
         }
 
         return back()->with('erro', 'Login inválido');
     }
 
-            public function handle($request, Closure $next, $tipo)
-        {
-            if (session('tipo') !== $tipo && session('tipo') !== 'admin') {
-                abort(403);
-            }
+    public function logout(Request $request)
+    {
+        Auth::logout();
 
-            return $next($request);
-        }
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
+    }
+
+   
 }

@@ -2,23 +2,108 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HaeController;
+use App\Http\Controllers\ParecerController;
+use App\Http\Controllers\DecisaoController;
 
-Route::get('/', function () { return view('welcome'); } );
+/*
+|--------------------------------------------------------------------------
+| ROTA INICIAL
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// tela de login
+/*
+|--------------------------------------------------------------------------
+| AUTENTICAÇÃO
+|--------------------------------------------------------------------------
+*/
+
+// tela de login (tipo: professor, coordenador, direcao)
 Route::get('/login/{tipo}', [AuthController::class, 'showLogin']);
+
+Route::get('/login', function () {
+    return redirect('/'); // padrão
+})->name('login');
+
+Route::post('/logout', [AuthController::class, 'logout']);
 
 // processa login
 Route::post('/login/{tipo}', [AuthController::class, 'login']);
 
+// logout
+Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::get('/professor', function () { return view('professor'); }); //->middleware('auth.tipo:professor');
 
-Route::get('/coordenador', function () { return view('coordenador'); }); //->middleware('auth.tipo:coordenador');
+/*
+|--------------------------------------------------------------------------
+| ROTAS PROTEGIDAS (PRECISA ESTAR LOGADO)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
 
-Route::get('/direcao', function () { return view('direcao'); }); //->middleware('auth.tipo:direcao');
+    /*
+    |--------------------------------------------------------------------------
+    | PROFESSOR / COORD / DIREÇÃO (DASHBOARDS)
+    |--------------------------------------------------------------------------
+    */
 
-Route::get('/formulario', function () { return view('formulario'); });
+    // cada rota usa o mesmo controller (index decide o que mostrar)
+    Route::get('/professor', [HaeController::class, 'index']);
+    Route::get('/coordenador', [HaeController::class, 'index']);
+    Route::get('/direcao', [HaeController::class, 'index']);
 
-Route::get('/resultados-dir', function () { return view('resultados-dir'); });
-Route::get('/ver-relatores', function () { return view('ver-relatores'); });
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULÁRIO HAE
+    |--------------------------------------------------------------------------
+    */
+
+    // abre formulário com tipo dinâmico (?tipo=graduacao)
+    Route::get('/formulario', function () {
+        $tipo = request('tipo');
+        return view('formulario', compact('tipo'));
+    });
+
+    // salvar HAE
+    Route::post('/salvar-hae', [HaeController::class, 'store']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PARECER (RELATOR)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/parecer', [ParecerController::class, 'store']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DECISÃO (COORDENAÇÃO / DIREÇÃO)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/decisao', [DecisaoController::class, 'store']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TELAS AUXILIARES (DIREÇÃO)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/resultados-dir', function () {
+        return view('resultados-dir');
+    });
+
+    Route::get('/ver-relatores', function () {
+        return view('ver-relatores');
+    });
+
+});
+
+Route::get('/hae/{id}', [HaeController::class, 'show'])->middleware('auth');

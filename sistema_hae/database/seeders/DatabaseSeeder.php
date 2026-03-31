@@ -13,25 +13,25 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@admin',
             'password' => '123', // Laravel já faz hash automático
-            'type' => 'admin',
+            'role' => 'admin',
         ]);
         User::create([
             'name' => 'prof',
             'email' => 'prof',
             'password' => '123', // Laravel já faz hash automático
-            'type' => 'professor',
+            'role' => 'professor',
         ]);
         User::create([
             'name' => 'coord',
             'email' => 'coord',
             'password' => '123', // Laravel já faz hash automático
-            'type' => 'coordenador',
+            'role' => 'coordenador',
         ]);
         User::create([
             'name' => 'dir',
             'email' => 'dir',
             'password' => '123', // Laravel já faz hash automático
-            'type' => 'direcao',
+            'role' => 'direcao',
         ]);
     }
 }
