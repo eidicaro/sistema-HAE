@@ -25,11 +25,16 @@ return new class extends Migration
             $table->text('justificativa');
         
             // cronograma
-            $table->text('fevereiro')->nullable();
-            $table->text('marco')->nullable();
-            $table->text('abril')->nullable();
-            $table->text('maio')->nullable();
-            $table->text('junho')->nullable();
+            $table->date('fevereiro')->nullable();
+            $table->date('marco')->nullable();
+            $table->date('abril')->nullable();
+            $table->date('maio')->nullable();
+            $table->date('junho')->nullable();
+            $table->date('agosto')->nullable();
+            $table->date('setembro')->nullable();
+            $table->date('outubro')->nullable();
+            $table->date('novembro')->nullable();
+            $table->date('dezembro')->nullable();
         
             $table->string('status')->default('pendente');
         

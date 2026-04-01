@@ -53,6 +53,7 @@ body {
     padding: 10px;
     border-radius: 8px;
     margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
 }
 
 /* TEXTO VAZIO */
@@ -85,4 +86,27 @@ a::after {
 
 a:hover::after {
     transform: scaleX(1);
+}
+
+.bloco-parecer{
+    display: block;
+}
+
+.comentario{
+    width: 100%;
+}
+
+.btn-parecer{
+    padding: 12px 22px;
+    background-color: #B30A07;
+    color: #fff;
+    font-weight: 700;
+    border-style: none;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+.btn-parecer:hover{
+    padding: 13px 23px;
+    background-color: #8f0200;
+    transition: 0.2s;
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Parecer;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Haes;
+use App\Http\Controllers\HaeController;
 
 class ParecerController extends Controller
 {
@@ -26,16 +29,37 @@ class ParecerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-{
-    Parecer::create([
-        'hae_id' => $request->hae_id,
-        'relator_id' => auth()->id(),
-        'comentario' => $request->comentario,
-    ]);
-
-    return back();
-}
+    public function store(Request $request, $hae_id)
+    {
+        $hae = Haes::findOrFail($hae_id);
+    
+        // valida se é relator
+        if (!$hae->relatores->contains(auth()->id())) {
+            abort(403);
+        }
+    
+        // impede duplicidade
+        $jaExiste = Parecer::where('hae_id', $hae->id)
+            ->where('user_id', auth()->id())
+            ->exists();
+    
+        if ($jaExiste) {
+            return back()->with('erro', 'Você já enviou um parecer.');
+        }
+    
+        $tipo = auth()->user()->role == 'coordenador'
+            ? 'coordenador'
+            : 'relator';
+    
+        Parecer::create([
+            'hae_id' => $hae->id,
+            'user_id' => auth()->id(),
+            'tipo' => $tipo,
+            'comentario' => $request->comentario
+        ]);
+    
+        return back()->with('sucesso', 'Parecer enviado!');
+    }
 
     /**
      * Display the specified resource.

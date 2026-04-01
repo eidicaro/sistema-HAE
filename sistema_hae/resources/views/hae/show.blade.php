@@ -8,12 +8,25 @@
     <link rel="stylesheet" href="{{ asset('../../css/fonte.css') }}">
 </head>
 <body>
-    <a href="/professor">voltar</a>
+    <a href="{{ url()->previous() }}">Voltar</a>
 <div class="hae-container">
 
     <h1 class="titulo">{{ $hae->titulo }}</h1>
 
     <div class="info">
+            <p><strong>Tipo de HAE:</strong> 
+            {{
+                match($hae->tipo) {
+                    'graduacao' => 'Projeto de Graduação',
+                    'administracao' => 'Administração Acadêmica',
+                    'estudos' => 'Estudos e Projetos',
+                    'extensao' => 'Extensão',
+                    'plantao' => 'Plantão Didático',
+                    'ams' => 'Programa AMS',
+                    default => ucfirst($hae->tipo)
+                }
+            }}
+        </p>
         <p><strong>Professor:</strong> {{ $hae->user->name }}</p>
         <p><strong>Curso:</strong> {{ $hae->curso }}</p>
         <p><strong>Carga Horaria:</strong> {{ $hae->carga_horaria }}</p>
@@ -44,12 +57,7 @@
     <div class="bloco">
         <h2>Detalhes Específicos</h2>
 
-        @if($hae->tipo == 'graduacao' && $hae->graduacao)
-            <p><strong>Tipo:</strong> {{ $hae->graduacao->tipo_graduacao }}</p>
-            <p><strong>Orientações:</strong> {{ $hae->graduacao->orientacoes }}</p>
-            <p><strong>Bancas (Orientador):</strong> {{ $hae->graduacao->bancas_orientador }}</p>
-            <p><strong>Bancas (Membro):</strong> {{ $hae->graduacao->bancas_membro }}</p>
-        @endif
+        @includeIf('components.hae.' . $hae->tipo, ['hae' => $hae])
     </div>
 
     <div class="bloco">
@@ -57,12 +65,35 @@
 
         @forelse($hae->pareceres as $parecer)
             <div class="item">
-                <p><strong>Relator:</strong> {{ $parecer->relator_id }}</p>
-                <p>{{ $parecer->comentario }}</p>
+            <p>
+                <strong>{{ $parecer->user->name }}</strong> 
+                ({{ $parecer->tipo }})
+            </p>
+
+            <p>{{ $parecer->comentario }}</p>
             </div>
         @empty
             <p class="vazio">Sem pareceres ainda</p>
         @endforelse
+
+        @php
+            $usuarioEhRelator = $hae->relatores->contains(auth()->id());
+            $jaDeuParecer = $hae->pareceres->where('user_id', auth()->id())->count();
+        @endphp
+
+        @if($usuarioEhRelator && !$jaDeuParecer)
+            <div class="bloco-parecer">
+                <h2>Dar Parecer</h2>
+
+                <form method="POST" action="/parecer/{{ $hae->id }}">
+                    @csrf
+
+                    <textarea name="comentario" required class="comentario"></textarea>
+
+                    <button type="submit" class="btn-parecer">Enviar parecer</button>
+                </form>
+            </div>
+        @endif
     </div>
 
     <div class="bloco">

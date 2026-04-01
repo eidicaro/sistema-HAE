@@ -11,6 +11,8 @@ use App\Models\HaeEstudos;
 use App\Models\HaeExtensao;
 use App\Models\HaePlantao;
 use App\Models\HaeAms;
+use App\Models\User;
+
 
 class HaeController extends Controller
 {
@@ -21,7 +23,7 @@ class HaeController extends Controller
     {
         $user = auth()->user();
     
-        $query = Haes::with('user')->latest();
+        $query = Haes::with(['user', 'relatores'])->latest();
     
         if ($user->role == 'professor') {
             $query->where('user_id', $user->id);
@@ -36,6 +38,7 @@ class HaeController extends Controller
         }
     
         else {
+            // fallback (caso queira usar depois)
             $query->whereHas('relatores', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
@@ -43,25 +46,39 @@ class HaeController extends Controller
     
         $haes = $query->get();
     
+        // 📊 separação por status (como você já fazia)
         $pendentes = $haes->where('status', 'pendente');
         $diligencia = $haes->where('status', 'com_diligencia');
         $finalizadas = $haes->where('status', 'finalizada');
         $recusadas = $haes->where('status', 'recusada');
     
-        // 🔥 retorna view certa
+        // 🔥 NOVO: HAEs onde o usuário é relator
+        $haesRelator = Haes::whereHas('relatores', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->get();
+    
+        // 🔥 retorno das views
         if ($user->role == 'professor') {
-            return view('professor', compact('pendentes','diligencia','finalizadas','recusadas'));
+            return view('professor', compact(
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+            ));
         }
     
         if ($user->role == 'coordenador') {
-            return view('coordenador', compact('pendentes','diligencia','finalizadas','recusadas'));
+            return view('coordenador', compact(
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+            ));
         }
     
         if ($user->role == 'direcao') {
-            return view('direcao', compact('pendentes','diligencia','finalizadas','recusadas'));
+            return view('direcao', compact(
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+            ));
         }
     
-        return view('professor', compact('pendentes','diligencia','finalizadas','recusadas'));
+        return view('professor', compact(
+            'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+        ));
     }
 
     /**
@@ -71,7 +88,7 @@ class HaeController extends Controller
     {
         //
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -163,16 +180,20 @@ class HaeController extends Controller
             break;
 
             case 'plantao':
-                HaePlantao::create([
-                    'hae_id' => $hae->id,
-                    'tipo_plantao' => $request->tipo_plantao,
-                    'alunos_atendidos' => $request->alunos_atendidos,
-                    'simulados' => $request->simulados,
-                    'relatorios' => $request->relatorios,
-                    'acoes' => $request->acoes,
-                    'indicador' => $request->indicador,
-                    'outra_acao' => $request->outra_acao,
-                ]);
+                try {
+                    HaePlantao::create([
+                        'hae_id' => $hae->id,
+                        'tipo_plantao' => $request->tipo_plantao,
+                        'alunos_atendidos' => $request->alunos_atendidos,
+                        'simulados' => $request->simulados,
+                        'relatorios' => $request->relatorios,
+                        'acoes' => $request->acoes,
+                        'indicador' => $request->indicador,
+                        'outra_acao' => $request->outra_acao,
+                    ]);
+                } catch (\Exception $e) {
+                    dd($e->getMessage());
+                }
             break;
 
             case 'ams':
@@ -190,6 +211,7 @@ class HaeController extends Controller
 
         return redirect('/professor')->with('success', 'HAE enviada com sucesso!');
     }
+    
 
     /**
      * Display the specified resource.
@@ -204,7 +226,8 @@ class HaeController extends Controller
             'extensao',
             'plantao',
             'ams',
-            'pareceres',
+            'pareceres.user',
+            'relatores',
             'decisoes'
         ])->findOrFail($id);
     

@@ -47,3 +47,108 @@ h2{
     background-color: #7b0503;
     transition: 0.4s;
 }
+
+/* ver relatores */
+
+.container {
+    width: 80%;
+    margin: 30px auto;
+}
+
+/* títulos */
+.titulo-secao {
+    margin: 30px 0 10px 0;
+    color: #000000;
+}
+
+/* lista de usuários */
+.usuarios-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.usuario-item {
+    background-color: #f3f3f3;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.usuario-item .role {
+    color: #777;
+}
+
+/* card da hae */
+.hae-card {
+    background-color: #f9f9f9;
+    border-left: 6px solid #B30A07;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+
+.hae-card:hover {
+    transform: translateY(-2px);
+}
+
+/* título da hae */
+.hae-titulo {
+    margin-bottom: 10px;
+    color: #222;
+}
+
+/* relatores */
+.relator {
+    margin-bottom: 10px;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #B30A07;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.nenhum {
+    color: #777;
+    font-style: italic;
+}
+
+/* select */
+.select-relatores {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* botão */
+.btn-salvar {
+    margin-top: 10px;
+    background-color: #B30A07;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-salvar:hover {
+    background-color: #8f0805;
+}
+
+/* botão voltar */
+.btn-voltar {
+    margin-left: 10%;
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+}

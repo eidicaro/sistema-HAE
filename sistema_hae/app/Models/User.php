@@ -62,4 +62,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Decisao::class, 'user_id');
     }
+
+    public function haesComoRelator()
+    {
+        return $this->belongsToMany(Haes::class, 'relatores', 'user_id', 'hae_id');
+    }
 }

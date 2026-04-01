@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HaeController;
 use App\Http\Controllers\ParecerController;
-use App\Http\Controllers\DecisaoController;
+use App\Http\Controllers\DirecaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +71,12 @@ Route::middleware('auth')->group(function () {
     // salvar HAE
     Route::post('/salvar-hae', [HaeController::class, 'store']);
 
+    //mostrar hae
+    Route::get('/hae/{id}', [HaeController::class, 'show']);
+
+    // salvar parecer
+    Route::post('/parecer/{hae_id}', [ParecerController::class, 'store'])->middleware('auth');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -87,7 +93,8 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::post('/decisao', [DecisaoController::class, 'store']);
+    Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
+    Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
 
 
     /*
@@ -105,5 +112,3 @@ Route::middleware('auth')->group(function () {
     });
 
 });
-
-Route::get('/hae/{id}', [HaeController::class, 'show'])->middleware('auth');

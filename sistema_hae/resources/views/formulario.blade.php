@@ -47,7 +47,7 @@
 <input type="text" name="titulo">
 
 <label>Carga Horaria Semanal Solicitada</label>
-<input type="text" name="carga_horaria">
+<input type="number" name="carga_horaria">
 
 <label>Resumo do Projeto</label>
 <textarea name="resumo"></textarea>
@@ -57,11 +57,11 @@
 
 <h2>Do Cronograma</h2>
 
-<input type="text" name="fevereiro" placeholder="Fevereiro">
-<input type="text" name="marco" placeholder="Março">
-<input type="text" name="abril" placeholder="Abril">
-<input type="text" name="maio" placeholder="Maio">
-<input type="text" name="junho" placeholder="Junho">
+<input type="date" name="fevereiro" placeholder="Fevereiro">
+<input type="date" name="marco" placeholder="Março">
+<input type="date" name="abril" placeholder="Abril">
+<input type="date" name="maio" placeholder="Maio">
+<input type="date" name="junho" placeholder="Junho">
 
 <input type="hidden" name="tipo" value="{{ $tipo }}">
 
@@ -77,16 +77,16 @@
         </select>
 
         <label>Número de Orientações de PTG e TG Previstas:</label>
-        <input type="text" name="orientacoes">
+        <input type="number" name="orientacoes">
 
         <label>Número de Participações em Bancas Previstas como Orientador:</label>
-        <input type="text" name="bancas_orientador">
+        <input type="number" name="bancas_orientador">
 
         <label>Número de Participações em Bancas Previstas como Membro:</label>
-        <input type="text" name="bancas_membro">
+        <input type="number" name="bancas_membro">
 
         <label>Especificar Indicador de Desempenho:</label>
-        <input type="text" name="indicador">
+        <input type="number" name="indicador">
     @endif
 
 <!-- ================= ADMINISTRAÇÃO ================= -->
@@ -107,27 +107,27 @@
 
 <div id="admin-avaliacao" class="sub-bloco">
     <label>Previsão do Número de ações de encontros previstos com a comissão (CPA e RAAI):</label>
-    <input type="text" name="encontros">
+    <input type="number" name="encontros">
 </div>
 
 <div id="admin-indicadores" class="sub-bloco">
     <label>Previsão de Número de relatórios preenchidos, entregues ou atualizados sobre permanência e êxito:</label>
-    <input type="text" name="relatorios">
+    <input type="number" name="relatorios">
 </div>
 
 <div id="admin-integracao" class="sub-bloco">
     <label>Previsão de Número de ações interdisciplinares implementadas:</label>
-    <input type="text" name="acoes_interdisciplinares">
+    <input type="number" name="acoes_interdisciplinares">
 </div>
 
 <div id="admin-formacao" class="sub-bloco">
     <label>Previsão do Número de formações, oficinas ou reuniões pedagógicas organizadas:</label>
-    <input type="text" name="formacoes">
+    <input type="number" name="formacoes">
 </div>
 
 <div id="admin-comunicacao" class="sub-bloco">
     <label>Previsão do Número de materiais e canais informativos produzidos:</label>
-    <input type="text" name="materiais">
+    <input type="number" name="materiais">
 </div>
 
 <label>Especificar Indicador de Desempenho:</label>
@@ -156,27 +156,27 @@
 
 <div id="estudos-alunos" class="sub-bloco">
     <label>Previsão do número de alunos envolvidos em pesquisas discentes:</label>
-    <input type="text" name="alunos">
+    <input type="number" name="alunos">
 </div>
 
 <div id="estudos-propostas" class="sub-bloco">
     <label>Previsão do número de propostas submetidas a editais:</label>
-    <input type="text" name="propostas">
+    <input type="number" name="propostas">
 </div>
 
 <div id="estudos-prototipos" class="sub-bloco">
     <label>Previsão do número de protótipos, soluções, relatórios ou parcerias inovadoras geradas:</label>
-    <input type="text" name="prototipos">
+    <input type="number" name="prototipos">
 </div>
 
 <div id="estudos-revista" class="sub-bloco">
     <label>Previsão do número de edições ou artigos apoiados na Revista Sapere:</label>
-    <input type="text" name="artigos">
+    <input type="number" name="artigos">
 </div>
 
 <div id="estudos-resumos" class="sub-bloco">
     <label>Previsão do número de trabalhos organizados em cadernos de resumo:</label>
-    <input type="text" name="resumos">
+    <input type="number" name="resumos">
 </div>
 
 <label>Especificar Indicador de Desempenho:</label>
@@ -204,22 +204,22 @@
 
 <div id="extensao-pessoas" class="sub-bloco">
     <label>Previsão de número de pessoas atingidas:</label>
-    <input type="text" name="pessoas">
+    <input type="number" name="pessoas">
 </div>
 
 <div id="extensao-instituicoes" class="sub-bloco">
     <label>Previsão de número de instituições públicas parceiras:</label>
-    <input type="text" name="instituicoes">
+    <input type="number" name="instituicoes">
 </div>
 
 <div id="extensao-eventos" class="sub-bloco">
     <label>Previsão de número de eventos institucionais realizados:</label>
-    <input type="text" name="eventos">
+    <input type="number" name="eventos">
 </div>
 
 <div id="extensao-beneficiarios" class="sub-bloco">
     <label>Previsão de número de beneficiários e produtos gerados em projetos sociais:</label>
-    <input type="text" name="beneficiarios">
+    <input type="number" name="beneficiarios">
 </div>
 
 <label>Especificar Indicador de Desempenho:</label>
@@ -247,22 +247,22 @@
 
 <div id="plantao-alunos" class="sub-bloco">
     <label>Previsão de Número de alunos atendidos individualmente:</label>
-    <input type="text" name="alunos_atendidos">
+    <input type="number" name="alunos_atendidos">
 </div>
 
 <div id="plantao-simulados" class="sub-bloco">
     <label>Previsão da Quantidade de simulados e materiais aplicados:</label>
-    <input type="text" name="simulados">
+    <input type="number" name="simulados">
 </div>
 
 <div id="plantao-relatorios" class="sub-bloco">
     <label>Previsão de Número de devolutivas ou relatórios pedagógicos realizados:</label>
-    <input type="text" name="relatorios">
+    <input type="number" name="relatorios">
 </div>
 
 <div id="plantao-acoes" class="sub-bloco">
     <label>Previsão de Número de ações de permanência realizadas (grupos, mentorias etc.):</label>
-    <input type="text" name="acoes">
+    <input type="number" name="acoes">
 </div>
 
 <label>Especificar Indicador de Desempenho:</label>
@@ -289,17 +289,17 @@
 
 <div id="ams-escolas" class="sub-bloco">
     <label>Previsão de Número de Escolas Públicas a Serem Visitadas:</label>
-    <input type="text" name="escolas">
+    <input type="number" name="escolas">
 </div>
 
 <div id="ams-eventos" class="sub-bloco">
     <label>Previsão de Número de Eventos/Atividades de Inovação Previstas (Rota da Inovação):</label>
-    <input type="text" name="eventos">
+    <input type="number" name="eventos">
 </div>
 
 <div id="ams-encontros" class="sub-bloco">
     <label>Previsão de Número de Encontros com Alunos dos 1º, 2º e 3º anos:</label>
-    <input type="text" name="encontros_alunos">
+    <input type="number" name="encontros_alunos">
 </div>
 
 <label>Especificar Indicador de Desempenho:</label>
@@ -315,6 +315,15 @@
 <button type="submit">Enviar</button>
 
 </form>
+@if ($errors->any())
+    <div style="color:red; margin-bottom:20px;">
+        <ul>
+            @foreach ($errors->all() as $erro)
+                <li>{{ $erro }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <!-- ================= JS ================= -->
 <script>
@@ -353,6 +362,7 @@ function ativarSubcategoria(selectId, prefixo) {
 @if($tipo == 'ams')
     ativarSubcategoria("tipo_ams", "ams");
 @endif
+
 </script>
 
 </body>

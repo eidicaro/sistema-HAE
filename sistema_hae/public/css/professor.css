@@ -31,3 +31,18 @@
 h2{
     margin: 3% 0 0 10%;
 }
+
+.logout{
+    padding: 10px;
+    background-color: #B30A07;
+    color: #fff;
+    border-style: none;
+    font-weight: 800;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+.logout:hover{
+    transition: 0.2s;
+    background-color: #9b0300;
+    transform: translateX(10px);
+}

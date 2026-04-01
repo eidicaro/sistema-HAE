@@ -9,20 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('parecer', function (Blueprint $table) {
             $table->id();
-        
-            $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade');
-            $table->foreignId('relator_id')->constrained('users')->onDelete('cascade');
-        
+            $table->foreignId('hae_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('tipo', ['relator', 'coordenador']);
             $table->text('comentario');
-        
             $table->timestamps();
+    
+            // evita duplicidade de parecer por usuário
+            $table->unique(['hae_id', 'user_id']);
         });
     }
-
     /**
      * Reverse the migrations.
      */

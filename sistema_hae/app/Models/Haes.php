@@ -81,4 +81,9 @@ class Haes extends Model
     {
         return $this->hasMany(Decisao::class, 'hae_id');
     }
+
+    public function relatores()
+    {
+        return $this->belongsToMany(User::class, 'relatores', 'hae_id', 'user_id');
+    }
 }

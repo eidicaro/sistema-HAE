@@ -7,16 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Parecer extends Model
 {
     protected $table = 'parecer';
-    protected $fillable = ['hae_id', 'relator_id', 'comentario'];
+
+    protected $fillable = [
+        'hae_id',
+        'user_id',
+        'tipo',
+        'comentario'
+    ];
 
     public function hae()
     {
-        return $this->belongsTo(Haes::class, 'hae_id');
+        return $this->belongsTo(Hae::class);
     }
 
-    public function relator()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'relator_id');
+        return $this->belongsTo(User::class);
     }
 }
 

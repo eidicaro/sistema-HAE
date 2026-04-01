@@ -13,10 +13,10 @@
     <h1>Olá Direção!</h1>
     <form method="POST" action="/logout">
     @csrf
-    <button type="submit">Logout</button>
+    <button type="submit" class="logout">Logout</button>
 
     <h2>HAEs Submetidas</h2>
-    <a href="/ver-relatores" class="btn-results">Ver Relatores</a>
+    <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
 
     @include('components.exibir-hae')
     <a href="/resultados-dir" class="btn-results">Ver Resultados</a>

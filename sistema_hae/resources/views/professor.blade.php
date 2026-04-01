@@ -11,9 +11,9 @@
     @include('components.header')
 
     <h1>Olá Professor!</h1>
-    <form method="POST" action="/logout">
+    <form method="POST" action="/logout" >
     @csrf
-    <button type="submit">Logout</button>
+    <button type="submit" class="logout">Logout</button>
 </form>
 
     <div class="nova-hae">
@@ -43,6 +43,23 @@
             }
         });
     </script>
+
+<h2>HAEs para Parecer</h2>
+
+<div class="relator">
+    <div class="hae-list">
+        @forelse($haesRelator as $hae)
+            <a href="/hae/{{ $hae->id }}" class="hae-item">
+                <span class="titulo">{{ $hae->titulo }}</span>
+                <span class="data">
+                    data de submissão: {{ $hae->created_at->format('d/m/Y') }}
+                </span>
+            </a>
+        @empty
+            <p>Nenhuma HAE para parecer</p>
+        @endforelse
+    </div>
+</div>
     
 </body>
 </html>
