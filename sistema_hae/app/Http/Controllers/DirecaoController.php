@@ -66,4 +66,12 @@ class DirecaoController extends Controller
     
         return back()->with('sucesso', 'Decisão aplicada!');
     }
+
+    public function resultados()
+    {
+        $finalizadas = \App\Models\Haes::where('status', 'finalizada')->get();
+        $recusadas = \App\Models\Haes::where('status', 'recusada')->get();
+
+        return view('resultados-dir', compact('finalizadas', 'recusadas'));
+    }
 }

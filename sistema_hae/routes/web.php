@@ -106,12 +106,6 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/resultados-dir', function () {
-        return view('resultados-dir');
-    });
-
-    Route::get('/ver-relatores', function () {
-        return view('ver-relatores');
-    });
+    Route::get('/resultados-dir', [DirecaoController::class, 'resultados']);
 
 });

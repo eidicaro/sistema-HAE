@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>direção</title>
+    <title>resultados-dir</title>
     <link rel="stylesheet" href="{{ asset('../css/direcao.css') }}">
     <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
 </head>
