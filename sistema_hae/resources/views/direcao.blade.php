@@ -11,7 +11,7 @@
     @include('components.header')
 
     <h1>Olá Direção!</h1>
-    <form method="POST" action="/logout">
+    <form method="POST" action="/logout" >
     @csrf
     <button type="submit" class="logout">Logout</button>
 

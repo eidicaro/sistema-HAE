@@ -55,7 +55,9 @@ class HaeController extends Controller
         // 🔥 NOVO: HAEs onde o usuário é relator
         $haesRelator = Haes::whereHas('relatores', function ($q) use ($user) {
             $q->where('user_id', $user->id);
-        })->get();
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
     
         // 🔥 retorno das views
         if ($user->role == 'professor') {

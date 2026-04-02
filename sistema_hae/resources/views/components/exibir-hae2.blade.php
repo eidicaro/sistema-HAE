@@ -18,12 +18,12 @@
 
     <div class="hae-list">
         @forelse($finalizadas as $hae)
-            <div class="hae-item">
+            <a href="/hae/{{ $hae->id }}" class="hae-item verde">
                 <span class="titulo">{{ $hae->titulo }}</span>
                 <span class="data">
                     data de submissão: {{ $hae->created_at->format('d/m/Y') }}
                 </span>
-            </div>
+            </a>
         @empty
             <p>Nenhuma HAE finalizada</p>
         @endforelse
@@ -38,12 +38,12 @@
 
     <div class="hae-list">
         @forelse($recusadas as $hae)
-            <div class="hae-item">
+            <a href="/hae/{{ $hae->id }}" class="hae-item vermelho">
                 <span class="titulo">{{ $hae->titulo }}</span>
                 <span class="data">
                     data de submissão: {{ $hae->created_at->format('d/m/Y') }}
                 </span>
-            </div>
+            </a>
         @empty
             <p>Nenhuma HAE recusada</p>
         @endforelse

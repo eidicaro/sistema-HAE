@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="{{ asset('../../css/fonte.css') }}">
 </head>
 <body>
-    <a href="{{ url()->previous() }}">Voltar</a>
+    @php
+        $user = auth()->user();
+    @endphp
+
+    <a href="{{ route($user->role) }}">Voltar</a>
 <div class="hae-container">
 
     <h1 class="titulo">{{ $hae->titulo }}</h1>
@@ -96,17 +100,51 @@
         @endif
     </div>
 
-    <div class="bloco">
-        <h2>Decisão</h2>
+<!-- vê se quem é o usuario -->
+    @php
+    $user = auth()->user();
+    @endphp
 
-        @forelse($hae->decisoes as $decisao)
-            <div class="item">
-                <p><strong>Decisão:</strong> {{ $decisao->decisao }}</p>
-                <p>{{ $decisao->comentario }}</p>
+    <div class="bloco">
+    <h2>Decisão</h2>
+
+    @forelse($hae->decisoes as $decisao)
+        <div class="item">
+            <p><strong>Decisão:</strong> {{ $decisao->decisao}}</p>
+            <p>{{ $decisao->comentario }}</p>
+        </div>
+    @empty
+        <p class="vazio">Sem decisão ainda</p>
+    @endforelse
+
+    {{-- 🔥 BOTÕES SÓ PARA DIREÇÃO --}}
+    @if($user->role == 'direcao' && $hae->status != 'finalizada' && $hae->status != 'recusada')
+        
+        <div class="bloco-decisao">
+            <h3>Tomar decisão</h3>
+
+            <form method="POST" action="/direcao/decisao/{{ $hae->id }}">
+                @csrf
+
+                <textarea name="comentario" placeholder="Comentário (opcional)" class="comentario"></textarea>
+
+                    <div class="acoes">
+                        <button name="acao" value="aprovada" class="btn-aprovar">
+                            Aprovar
+                        </button>
+
+                        <button name="acao" value="recusada" class="btn-recusar">
+                            Recusar
+                        </button>
+
+                        <button name="acao" value="diligencia" class="btn-diligencia">
+                            Pedir Diligência
+                        </button>
+                    </div>
+                </form>
             </div>
-        @empty
-            <p class="vazio">Sem decisão ainda</p>
-        @endforelse
+
+        @endif
     </div>
 
 </div>

@@ -51,9 +51,9 @@ Route::middleware('auth')->group(function () {
     */
 
     // cada rota usa o mesmo controller (index decide o que mostrar)
-    Route::get('/professor', [HaeController::class, 'index']);
-    Route::get('/coordenador', [HaeController::class, 'index']);
-    Route::get('/direcao', [HaeController::class, 'index']);
+    Route::get('/professor', [HaeController::class, 'index'])->name('professor');
+    Route::get('/coordenador', [HaeController::class, 'index'])->name('coordenador');
+    Route::get('/direcao', [HaeController::class, 'index'])->name('direcao');
 
 
     /*
@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
 
     // salvar parecer
     Route::post('/parecer/{hae_id}', [ParecerController::class, 'store'])->middleware('auth');
+
+    //decisão
+    Route::post('/direcao/decisao/{id}', [DirecaoController::class, 'decisao']);
 
 
     /*

@@ -86,7 +86,7 @@ h2{
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
-    box-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+    box-shadow: 3px 3px 4px rgba(0,0,0,0.6);
     transition: 0.2s;
 }
 
@@ -151,4 +151,20 @@ h2{
     text-decoration: none;
     color: #000000;
     font-weight: bold;
+}
+
+/* logout */
+.logout{
+    padding: 10px;
+    background-color: #B30A07;
+    color: #fff;
+    border-style: none;
+    font-weight: 800;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+.logout:hover{
+    transition: 0.2s;
+    background-color: #9b0300;
+    transform: translateX(10px);
 }

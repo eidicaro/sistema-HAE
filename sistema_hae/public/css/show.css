@@ -16,7 +16,7 @@ body {
 
 /* TITULO */
 .titulo {
-    margin-bottom: 10px;
+    margin:  0 0 4% 0;
 }
 
 /* INFO */
@@ -108,5 +108,58 @@ a:hover::after {
 .btn-parecer:hover{
     padding: 13px 23px;
     background-color: #8f0200;
+    transition: 0.2s;
+}
+
+
+/* botões de aprovação */
+.acoes{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 1% 0 0 0;
+}
+.btn-aprovar{
+    color: #fff;
+    font-weight: 800;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #20af00;
+    border-style: none;
+    transition: 0.2s;
+}
+.btn-aprovar:hover{
+    padding: 12px 20px;
+    background-color: #188100;
+    transition: 0.2s;
+}
+
+.btn-recusar{
+    color: #fff;
+    font-weight: 800;
+    padding: 10px 20px;;
+    border-radius: 10px;
+    background-color: #B30A07;
+    border-style: none;
+    border-style: none;
+    transition: 0.2s;
+}
+.btn-recusar:hover{
+    padding: 12px 20px;
+    background-color: #7b0503;
+    transition: 0.2s;
+}
+
+.btn-diligencia{
+    color: #fff;
+    font-weight: 800;
+    padding: 10px 20px;;
+    border-radius: 10px;
+    background-color: #e35300;
+    border-style: none;
+    transition: 0.2s;
+}
+.btn-diligencia:hover{
+    padding: 12px 20px;
+    background-color: #b54200;
     transition: 0.2s;
 }

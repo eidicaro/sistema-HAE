@@ -7,15 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class Decisao extends Model
 {
     protected $table = 'decisoes';
-    protected $fillable = ['hae_id', 'avaliador_id', 'decisao', 'comentario'];
+
+    protected $fillable = [
+        'hae_id',
+        'avaliador_id',
+        'decisao',
+        'comentario'
+    ];
 
     public function hae()
     {
         return $this->belongsTo(Haes::class, 'hae_id');
     }
 
-    public function usuario()
+    public function avaliador()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'avaliador_id');
     }
 }

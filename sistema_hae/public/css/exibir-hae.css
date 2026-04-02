@@ -22,20 +22,24 @@
 .laranja {
     background-color: #FF570F;
     opacity: 0.84;
+    border-left: 5px solid #FF570F;
 }
 
 .amarelo {
     background-color: #eab308;
+    border-left: 5px solid #eab308;
 }
 
 .verde {
     background-color: #009908;
     opacity: 0.84;
+    border-left: 5px solid #009908;
 }
 
 .vermelho {
     background-color: #FF0000;
     opacity: 0.84;
+    border-left: 5px solid #FF0000;
 }
 
 /* lista */
@@ -87,7 +91,7 @@
     margin-bottom: 10px;
     text-decoration: none;
     transition: all 0.2s ease;
-    border-left: 5px solid #FF570F;
+    
 }
 
 /* efeito hover */

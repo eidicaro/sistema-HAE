@@ -18,7 +18,7 @@
 
     <div class="hae-list">
         @forelse($pendentes as $hae)
-            <a href="/hae/{{ $hae->id }}" class="hae-item">
+            <a href="/hae/{{ $hae->id }}" class="hae-item laranja">
                 <span class="titulo">{{ $hae->titulo }}</span>
                 <span class="data">
                     data de submissão: {{ $hae->created_at->format('d/m/Y') }}
@@ -38,12 +38,12 @@
 
     <div class="hae-list">
         @forelse($diligencia as $hae)
-            <div class="hae-item">
+            <a href="/hae/{{ $hae->id }}" class="hae-item amarelo">
                 <span class="titulo">{{ $hae->titulo }}</span>
                 <span class="data">
                     data de submissão: {{ $hae->created_at->format('d/m/Y') }}
                 </span>
-            </div>
+            </a>
         @empty
             <p>Nenhuma HAE com diligência</p>
         @endforelse
