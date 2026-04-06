@@ -43,7 +43,7 @@ class DecisaoController extends Controller
         } elseif ($request->decisao == 'recusado') {
             $hae->status = 'recusada';
         } else {
-            $hae->status = 'com_diligencia';
+            $hae->status = Haes::STATUS_DILIGENCIA;
         }
 
         $hae->save();

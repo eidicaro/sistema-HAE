@@ -12,6 +12,7 @@ use App\Models\HaeExtensao;
 use App\Models\HaePlantao;
 use App\Models\HaeAms;
 use App\Models\User;
+use App\Models\LimiteHae;
 
 
 class HaeController extends Controller
@@ -73,8 +74,27 @@ class HaeController extends Controller
         }
     
         if ($user->role == 'direcao') {
+            $tipos = ['ams','graduacao','administracao','estudos','extensao','plantao'];
+
+            $dadosLimites = [];
+
+            foreach ($tipos as $tipo) {
+
+                $limite = LimiteHae::where('tipo', $tipo)->first();
+
+                $usado = Haes::where('tipo', $tipo)
+                    ->where('status', 'finalizada')
+                    ->sum('carga_horaria');
+
+                $dadosLimites[] = [
+                    'tipo' => $tipo,
+                    'limite' => $limite->carga_total ?? 0,
+                    'usado' => $usado,
+                    'restante' => ($limite->carga_total ?? 0) - $usado
+                ];
+            }
             return view('direcao', compact(
-                'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'dadosLimites'
             ));
         }
     
@@ -239,17 +259,46 @@ class HaeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Hae $hae)
+    public function edit($id)
     {
-        //
+        $hae = Haes::findOrFail($id);
+
+        $tipo = $hae->tipo;
+
+        return view('formulario', compact('hae', 'tipo'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Hae $hae)
+    public function update(Request $request, $id)
     {
-        //
+        $hae = Haes::findOrFail($id);
+    
+        // 🔒 Só pode editar se foi reprovado
+        if ($hae->status != Haes::STATUS_DILIGENCIA) {
+            return back()->with('error', 'Só é possível editar HAE com diligencia.');
+        }
+    
+        $hae->update([
+            'titulo' => $request->titulo,
+            'curso' => $request->curso,
+            'carga_horaria' => $request->carga_horaria,
+            'resumo' => $request->resumo,
+            'justificativa' => $request->justificativa,
+        
+            'fevereiro' => $request->fevereiro,
+            'marco' => $request->marco,
+            'abril' => $request->abril,
+            'maio' => $request->maio,
+            'junho' => $request->junho,
+        
+            'edital_aceito' => $request->edital,
+        
+            'status' => Haes::STATUS_PENDENTE
+        ]);
+    
+        return redirect('/professor')->with('success', 'HAE enviada com sucesso!');
     }
 
     /**

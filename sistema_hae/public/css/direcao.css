@@ -168,3 +168,23 @@ h2{
     background-color: #9b0300;
     transform: translateX(10px);
 }
+
+/* controlle de hae */
+.form-limite {
+    margin-top: 20px;
+}
+
+.form-limite input, .form-limite select {
+    display: block;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    background: #B30A07;
+    color: white;
+}

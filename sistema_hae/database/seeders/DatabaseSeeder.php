@@ -10,14 +10,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Admin',
-            'email' => 'admin@admin',
-            'password' => '123', // Laravel já faz hash automático
-            'role' => 'admin',
-        ]);
-        User::create([
             'name' => 'prof',
             'email' => 'prof',
+            'password' => '123', // Laravel já faz hash automático
+            'role' => 'professor',
+        ]);
+        User::create([
+            'name' => 'prof2',
+            'email' => 'prof2',
             'password' => '123', // Laravel já faz hash automático
             'role' => 'professor',
         ]);

@@ -8,6 +8,10 @@ use App\Models\User;
 class Haes extends Model
 {
     protected $table = 'haes';
+    const STATUS_PENDENTE = 'pendente';
+    const STATUS_DILIGENCIA = 'com_diligencia';
+    const STATUS_FINALIZADA = 'finalizada';
+    const STATUS_RECUSADA = 'recusada';
 
     protected $fillable = [
         'user_id',

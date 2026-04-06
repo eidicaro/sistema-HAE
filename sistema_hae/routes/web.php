@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HaeController;
 use App\Http\Controllers\ParecerController;
@@ -27,8 +28,6 @@ Route::get('/login/{tipo}', [AuthController::class, 'showLogin']);
 Route::get('/login', function () {
     return redirect('/'); // padrão
 })->name('login');
-
-Route::post('/logout', [AuthController::class, 'logout']);
 
 // processa login
 Route::post('/login/{tipo}', [AuthController::class, 'login']);
@@ -74,6 +73,10 @@ Route::middleware('auth')->group(function () {
     //mostrar hae
     Route::get('/hae/{id}', [HaeController::class, 'show']);
 
+    //editar Hae
+    Route::put('/hae/{id}', [HaeController::class, 'update'])->name('hae.update');
+    Route::get('/hae/{id}/edit', [HaeController::class, 'edit'])->name('hae.edit');
+
     // salvar parecer
     Route::post('/parecer/{hae_id}', [ParecerController::class, 'store'])->middleware('auth');
 
@@ -98,6 +101,21 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
     Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
+    // limitação de qtde de hae
+    Route::get('/direcao/limites', function () {
+        return view('direcao.limites');
+    });
+
+    Route::post('/direcao/limites', function (Request $request) {
+
+        \App\Models\LimiteHae::updateOrCreate(
+            ['tipo' => $request->tipo],
+            ['carga_total' => $request->carga_total]
+        );
+
+        return back()->with('success', 'Limite salvo!');
+    })->name('direcao.limites.salvar');
+
 
 
     /*

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Haes;
 use App\Http\Controllers\HaeController;
 use App\Models\Decisao;
+use App\Models\LimiteHae;
 
 class DirecaoController extends Controller
 {
@@ -39,7 +40,26 @@ class DirecaoController extends Controller
         $hae = Haes::findOrFail($id);
     
         switch ($request->acao) {
+    
             case 'aprovada':
+    
+                // 🔥 BUSCA LIMITE DO TIPO
+                $limite = LimiteHae::where('tipo', $hae->tipo)->first();
+    
+                if (!$limite) {
+                    return back()->with('error', 'Limite não definido para esse tipo de HAE.');
+                }
+    
+                // 🔥 SOMA O QUE JÁ FOI APROVADO
+                $totalUsado = Haes::where('tipo', $hae->tipo)
+                    ->where('status', 'finalizada') // 👈 seu aprovado vira finalizada
+                    ->sum('carga_horaria');
+    
+                // 🔥 VERIFICA SE VAI ESTOURAR
+                if (($totalUsado + $hae->carga_horaria) > $limite->carga_total) {
+                    return back()->with('error', 'Limite de carga horária excedido!');
+                }
+    
                 $status = 'finalizada';
                 break;
     
@@ -56,7 +76,7 @@ class DirecaoController extends Controller
         $hae->status = $status;
         $hae->save();
     
-        // 🔥 SALVA NA TABELA DECISOES
+        // 🔥 salva decisão
         Decisao::create([
             'hae_id' => $hae->id,
             'avaliador_id' => auth()->id(),

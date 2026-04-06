@@ -14,6 +14,7 @@
     <form method="POST" action="/logout" >
     @csrf
     <button type="submit" class="logout">Logout</button>
+    </form>
 
     <h2>HAEs Submetidas</h2>
     <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
@@ -21,7 +22,51 @@
     @include('components.exibir-hae')
     <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
 
-    <h2>Quantidade de HAEs</h2>
+    <h2>Controle de Carga Horária</h2>
 
+        <table border="1" cellpadding="10" style="margin-top:20px;">
+            <tr>
+                <th>Tipo</th>
+                <th>Limite</th>
+                <th>Usado</th>
+                <th>Restante</th>
+            </tr>
+
+            @foreach($dadosLimites as $dado)
+                <tr>
+                    <td>{{ ucfirst($dado['tipo']) }}</td>
+                    <td>{{ $dado['limite'] }}h</td>
+                    <td>{{ $dado['usado'] }}h</td>
+
+                    <td style="
+                        color: {{ $dado['restante'] < 0 ? 'red' : 'green' }};
+                        font-weight: bold;
+                    ">
+                        {{ $dado['restante'] }}h
+                    </td>
+                </tr>
+            @endforeach
+        </table>
+
+    <h2>Definir Limite de Carga Horária</h2>
+
+        <form method="POST" action="{{ route('direcao.limites.salvar') }}">
+            @csrf
+
+            <label>Tipo de HAE</label>
+            <select name="tipo">
+                <option value="ams">AMS</option>
+                <option value="graduacao">Graduação</option>
+                <option value="administracao">Administração</option>
+                <option value="estudos">Estudos</option>
+                <option value="extensao">Extensão</option>
+                <option value="plantao">Plantão</option>
+            </select>
+
+            <label>Carga Horária Total</label>
+            <input type="number" name="carga_total" required>
+
+            <button type="submit">Salvar Limite</button>
+        </form>
 </body>
 </html>

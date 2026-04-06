@@ -30,11 +30,6 @@ return new class extends Migration
             $table->date('abril')->nullable();
             $table->date('maio')->nullable();
             $table->date('junho')->nullable();
-            $table->date('agosto')->nullable();
-            $table->date('setembro')->nullable();
-            $table->date('outubro')->nullable();
-            $table->date('novembro')->nullable();
-            $table->date('dezembro')->nullable();
         
             $table->string('status')->default('pendente');
         
