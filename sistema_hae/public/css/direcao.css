@@ -188,3 +188,41 @@ th {
     background: #B30A07;
     color: white;
 }
+
+/* carga horaria */
+.carga-hora{
+    margin-top:20px;
+    margin: 5% auto;
+}
+
+th{
+    padding: 10px 60px;
+}
+td{
+    border: 1px solid #000;
+
+}
+
+.definir-hora{
+    margin: 5% auto;
+    width: 50%;
+    background-color: #e5e5e5;
+    padding: 2%;
+    border-radius: 10px;
+    box-shadow: 3px 3px 4px rgba(0,0,0,0.6);
+}
+
+.definir-hora > button{
+    padding: 1%;
+    background-color: #B30A07;
+    border-radius: 12px;
+    border-style: none;
+    color: #fff;
+    font-weight: 700;
+    margin: 0 0 0 5%;
+    transition: 0.2s;
+}
+.definir-hora > button:hover{
+    padding: 1.2%;
+    transition: 0.2s;
+}

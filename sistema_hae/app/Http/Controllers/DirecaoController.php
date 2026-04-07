@@ -42,25 +42,25 @@ class DirecaoController extends Controller
         switch ($request->acao) {
     
             case 'aprovada':
-    
-                // 🔥 BUSCA LIMITE DO TIPO
+
                 $limite = LimiteHae::where('tipo', $hae->tipo)->first();
-    
+            
                 if (!$limite) {
                     return back()->with('error', 'Limite não definido para esse tipo de HAE.');
                 }
-    
-                // 🔥 SOMA O QUE JÁ FOI APROVADO
+            
+                // 🔥 agora soma EM_EXECUCAO + FINALIZADA
                 $totalUsado = Haes::where('tipo', $hae->tipo)
-                    ->where('status', 'finalizada') // 👈 seu aprovado vira finalizada
+                    ->whereIn('status', ['em_execucao', 'finalizada'])
                     ->sum('carga_horaria');
-    
-                // 🔥 VERIFICA SE VAI ESTOURAR
+            
                 if (($totalUsado + $hae->carga_horaria) > $limite->carga_total) {
                     return back()->with('error', 'Limite de carga horária excedido!');
                 }
-    
-                $status = 'finalizada';
+            
+                // 🔥 AQUI É A MUDANÇA PRINCIPAL
+                $status = 'em_execucao';
+            
                 break;
     
             case 'recusada':
@@ -90,6 +90,7 @@ class DirecaoController extends Controller
     public function resultados()
     {
         $finalizadas = \App\Models\Haes::where('status', 'finalizada')->get();
+        $emExecucao = Haes::where('status', 'em_execucao')->get();
         $recusadas = \App\Models\Haes::where('status', 'recusada')->get();
 
         return view('resultados-dir', compact('finalizadas', 'recusadas'));

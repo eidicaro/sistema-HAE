@@ -24,7 +24,7 @@
 
     <h2>Controle de Carga Horária</h2>
 
-        <table border="1" cellpadding="10" style="margin-top:20px;">
+        <table cellpadding="10" style="" class="carga-hora">
             <tr>
                 <th>Tipo</th>
                 <th>Limite</th>
@@ -50,7 +50,7 @@
 
     <h2>Definir Limite de Carga Horária</h2>
 
-        <form method="POST" action="{{ route('direcao.limites.salvar') }}">
+        <form method="POST" action="{{ route('direcao.limites.salvar') }}" class="definir-hora">
             @csrf
 
             <label>Tipo de HAE</label>

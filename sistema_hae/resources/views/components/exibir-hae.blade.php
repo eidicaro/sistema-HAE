@@ -50,6 +50,26 @@
     </div>
 </div>
 
+<!-- EM EXECUÇÃO -->
+<div class="hae-box">
+    <div class="hae-header azul">
+        Em Execução
+    </div>
+
+    <div class="hae-list">
+        @forelse($emExecucao as $hae)
+            <a href="/hae/{{ $hae->id }}" class="hae-item azul">
+                <span class="titulo">{{ $hae->titulo }}</span>
+                <span class="data">
+                    data de submissão: {{ $hae->created_at->format('d/m/Y') }}
+                </span>
+            </a>
+        @empty
+            <p>Nenhuma HAE em execução</p>
+        @endforelse
+    </div>
+</div>
+
 </div>
 </body>
 </html>

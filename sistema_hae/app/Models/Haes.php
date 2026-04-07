@@ -10,6 +10,8 @@ class Haes extends Model
     protected $table = 'haes';
     const STATUS_PENDENTE = 'pendente';
     const STATUS_DILIGENCIA = 'com_diligencia';
+    const STATUS_APROVADA = 'aprovada';
+    const STATUS_EM_EXECUCAO = 'em_execucao';
     const STATUS_FINALIZADA = 'finalizada';
     const STATUS_RECUSADA = 'recusada';
 

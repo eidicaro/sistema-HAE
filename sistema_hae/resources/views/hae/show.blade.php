@@ -41,7 +41,16 @@
         <p>
             <strong>Status:</strong> 
             <span class="status status-{{ $hae->status }}">
-                {{ $hae->status }}
+            {{
+                match($hae->status) {
+                    'pendente' => 'Pendente',
+                    'com_diligencia' => 'Com Diligência',
+                    'em_execucao' => 'Em Execução',
+                    'finalizada' => 'Finalizada',
+                    'recusada' => 'Recusada',
+                    default => $hae->status
+                }
+            }}
             </span>
         </p>
 
@@ -158,7 +167,7 @@
         @endif
 
         {{-- 🔥 BOTÕES DIREÇÃO --}}
-        @if($user->role == 'direcao' && !in_array($hae->status, ['finalizada', 'recusada']))
+        @if($user->role == 'direcao' && !in_array($hae->status, ['finalizada', 'recusada', 'em_execucao']))
             
             <div class="bloco-decisao">
                 <h3>Tomar decisão</h3>

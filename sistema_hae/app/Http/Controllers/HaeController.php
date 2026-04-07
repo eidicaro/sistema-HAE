@@ -50,6 +50,7 @@ class HaeController extends Controller
         // 📊 separação por status (como você já fazia)
         $pendentes = $haes->where('status', 'pendente');
         $diligencia = $haes->where('status', 'com_diligencia');
+        $emExecucao = $haes->where('status', 'em_execucao');
         $finalizadas = $haes->where('status', 'finalizada');
         $recusadas = $haes->where('status', 'recusada');
     
@@ -63,13 +64,13 @@ class HaeController extends Controller
         // 🔥 retorno das views
         if ($user->role == 'professor') {
             return view('professor', compact(
-                'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'emExecucao'
             ));
         }
     
         if ($user->role == 'coordenador') {
             return view('coordenador', compact(
-                'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'emExecucao'
             ));
         }
     
@@ -94,12 +95,12 @@ class HaeController extends Controller
                 ];
             }
             return view('direcao', compact(
-                'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'dadosLimites'
+                'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'dadosLimites', 'emExecucao'
             ));
         }
     
         return view('professor', compact(
-            'pendentes','diligencia','finalizadas','recusadas','haesRelator'
+            'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'emExecucao'
         ));
     }
 
