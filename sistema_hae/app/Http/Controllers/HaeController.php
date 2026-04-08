@@ -13,6 +13,7 @@ use App\Models\HaePlantao;
 use App\Models\HaeAms;
 use App\Models\User;
 use App\Models\LimiteHae;
+use App\Models\Semestres;
 
 
 class HaeController extends Controller
@@ -23,9 +24,25 @@ class HaeController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $semestreAtual = Semestres::where('ativo', true)->first();
+
+        if (!$semestreAtual) {
+            return view('direcao', [
+                'pendentes' => collect(),
+                'diligencia' => collect(),
+                'finalizadas' => collect(),
+                'recusadas' => collect(),
+                'haesRelator' => collect(),
+                'dadosLimites' => [],
+                'emExecucao' => collect(),
+                'semestreAtual' => null
+            ])->with('erro', 'Nenhum semestre ativo.');
+        }
     
-        $query = Haes::with(['user', 'relatores'])->latest();
-    
+        $query = Haes::with(['user', 'relatores'])
+        ->where('semestre_id', $semestreAtual->id)
+        ->latest();
+
         if ($user->role == 'professor') {
             $query->where('user_id', $user->id);
         }
@@ -58,6 +75,7 @@ class HaeController extends Controller
         $haesRelator = Haes::whereHas('relatores', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })
+        ->where('semestre_id', $semestreAtual->id) // SLA
         ->orderBy('created_at', 'desc')
         ->get();
     
@@ -84,8 +102,9 @@ class HaeController extends Controller
                 $limite = LimiteHae::where('tipo', $tipo)->first();
 
                 $usado = Haes::where('tipo', $tipo)
-                    ->where('status', 'finalizada')
-                    ->sum('carga_horaria');
+                ->whereIn('status', ['em_execucao', 'finalizada'])
+                ->where('semestre_id', $semestreAtual->id)
+                ->sum('carga_horaria');
 
                 $dadosLimites[] = [
                     'tipo' => $tipo,
@@ -95,7 +114,7 @@ class HaeController extends Controller
                 ];
             }
             return view('direcao', compact(
-                'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'dadosLimites', 'emExecucao'
+                'pendentes','diligencia','finalizadas','recusadas', 'haesRelator', 'dadosLimites', 'emExecucao', 'semestreAtual'
             ));
         }
     
@@ -117,6 +136,12 @@ class HaeController extends Controller
      */
     public function store(Request $request)
     {
+                // 🔎 pega semestre ativo
+        $semestre = Semestres::where('ativo', true)->first();
+
+        if (!$semestre) {
+            return back()->with('erro', 'Nenhum semestre ativo encontrado.');
+        }
         // 🧾 VALIDAÇÃO BÁSICA
         $request->validate([
             'tipo' => 'required',
@@ -137,14 +162,17 @@ class HaeController extends Controller
             'carga_horaria' => $request->carga_horaria,
             'resumo' => $request->resumo,
             'justificativa' => $request->justificativa,
-
+        
             'fevereiro' => $request->fevereiro,
             'marco' => $request->marco,
             'abril' => $request->abril,
             'maio' => $request->maio,
             'junho' => $request->junho,
-
-            'status' => 'pendente'
+        
+            'status' => 'pendente',
+        
+            // PRA NÃO QUEBRAR O BGL
+            'semestre_id' => $semestre->id
         ]);
 
         // 🧩 2. SALVA ESPECÍFICO

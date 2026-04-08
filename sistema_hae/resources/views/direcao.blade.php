@@ -68,5 +68,10 @@
 
             <button type="submit">Salvar Limite</button>
         </form>
+
+        <div class="semestre">
+            <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
+            <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>
+        </div>
 </body>
 </html>

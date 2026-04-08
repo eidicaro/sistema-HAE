@@ -213,16 +213,41 @@ td{
 }
 
 .definir-hora > button{
-    padding: 1%;
+    padding: 1.4%;
     background-color: #B30A07;
     border-radius: 12px;
     border-style: none;
     color: #fff;
     font-weight: 700;
     margin: 0 0 0 5%;
-    transition: 0.2s;
+    transition: 0.3s;
 }
 .definir-hora > button:hover{
-    padding: 1.2%;
-    transition: 0.2s;
+    background-color: #9b0300;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+/* btn semestres */
+.btn-semestres{
+    display: block; /* importante aqui */
+    width: fit-content; /* não esticar */
+    margin: 2% 20%; /* joga pra direita + margem embaixo */
+    
+    background-color: #B30A07;
+    padding: 15px 50px;
+    border-radius: 10px;
+    font-weight: 800;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.4s;
+}
+.btn-semestres:hover{
+    background-color: #7b0503;
+    transition: 0.4s;
+}
+
+.semestre{
+    display: flex;
+    justify-content: space-between;
 }

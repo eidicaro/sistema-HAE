@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HaeController;
 use App\Http\Controllers\ParecerController;
 use App\Http\Controllers\DirecaoController;
+use App\Http\Controllers\SemestresController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,4 +127,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/resultados-dir', [DirecaoController::class, 'resultados']);
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | CONTROLLE DE SEMESTRE
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/semestres', [SemestresController::class, 'index']);
+    Route::post('/semestres', [SemestresController::class, 'store']);
+    Route::post('/semestres/{id}/ativar', [SemestresController::class, 'ativar']);
 });

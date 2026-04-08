@@ -29,7 +29,8 @@ class Haes extends Model
         'abril',
         'maio',
         'junho',
-        'status'
+        'status',
+        'semestre_id'
     ];
 
     /*
@@ -92,4 +93,10 @@ class Haes extends Model
     {
         return $this->belongsToMany(User::class, 'relatores', 'hae_id', 'user_id');
     }
+
+    // SEMESTRE
+    public function semestre()
+{
+    return $this->belongsTo(Semestres::class);
+}
 }

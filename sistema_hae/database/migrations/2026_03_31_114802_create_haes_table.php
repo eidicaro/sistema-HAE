@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('edital_aceito');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('semestre_id')->constrained()->cascadeOnDelete(); //semestres
             $table->string('tipo');
 
             $table->string('curso');
