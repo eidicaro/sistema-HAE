@@ -14,6 +14,9 @@
 <div class="hae-box">
     <div class="hae-header verde">
         Finalizadas
+        @if(auth()->user()->role == 'direcao')
+            <span class="qtd">({{ $finalizadas->count() }})</span>
+        @endif
     </div>
 
     <div class="hae-list">
@@ -34,6 +37,9 @@
 <div class="hae-box">
     <div class="hae-header vermelho">
         Recusadas
+        @if(auth()->user()->role == 'direcao')
+            <span class="qtd">({{ $recusadas->count() }})</span>
+        @endif
     </div>
 
     <div class="hae-list">

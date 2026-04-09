@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Haes;
 use App\Http\Controllers\HaeController;
+use App\Http\Controllers\SemestresController;
 use App\Models\Decisao;
 use App\Models\LimiteHae;
+use App\Models\Semestres;
+
 
 class DirecaoController extends Controller
 {
@@ -15,9 +18,11 @@ class DirecaoController extends Controller
     {
         // professores e coordenadores
         $usuarios = User::whereIn('role', ['professor', 'coordenador'])->get();
+        $semestreAtivo = Semestres::where('ativo', 1)->first();
 
         // todas as HAEs com relatores
         $haes = Haes::with('relatores')
+        ->where('semestre_id', $semestreAtivo->id)
         ->orderBy('created_at', 'desc')
         ->get();
 

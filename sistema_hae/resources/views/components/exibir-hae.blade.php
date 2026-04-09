@@ -8,12 +8,20 @@
     <link rel="stylesheet" href="{{ asset('../../css/fonte.css') }}">
 </head>
 <body>
+
+@php
+    $user = auth()->user();
+@endphp
+
 <div class="minhas-haes">
 
 <!-- PENDENTES -->
 <div class="hae-box">
     <div class="hae-header laranja">
         Pendentes
+        @if(auth()->user()->role == 'direcao')
+            <span class="qtd">({{ $pendentes->count() }})</span>
+        @endif
     </div>
 
     <div class="hae-list">
@@ -32,9 +40,12 @@
 
 <!-- DILIGÊNCIA -->
 <div class="hae-box">
-    <div class="hae-header amarelo">
-        Com Diligência
-    </div>
+        <div class="hae-header amarelo">
+            Com Diligência
+            @if(auth()->user()->role == 'direcao')
+                <span class="qtd">({{ $diligencia->count() }})</span>
+            @endif
+        </div>
 
     <div class="hae-list">
         @forelse($diligencia as $hae)
@@ -54,6 +65,9 @@
 <div class="hae-box">
     <div class="hae-header azul">
         Em Execução
+        @if(auth()->user()->role == 'direcao')
+            <span class="qtd">({{ $emExecucao->count() }})</span>
+        @endif
     </div>
 
     <div class="hae-list">
