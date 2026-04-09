@@ -166,14 +166,16 @@ a:hover::after {
 
 /* para o professor */
 .btn-editar{
-    color: #fff;
-    font-weight: 800;
-    font-size: 16px;
-    margin-top: 5%;
-    padding: 10px 20px;;
-    border-radius: 10px;
+    display: block; /* importante aqui */
+    width: fit-content; /* não esticar */
+    margin: 2% 0; /* joga pra direita + margem embaixo */
+    
     background-color: #B30A07;
-    border-style: none;
-    border-style: none;
-    transition: 0.2s;
+    padding: 1% 2%;
+    font-size: 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.4s;
 }
