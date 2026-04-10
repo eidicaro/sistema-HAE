@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Semestres;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +26,14 @@ class DatabaseSeeder extends Seeder
             'name' => 'coord',
             'email' => 'coord',
             'password' => '123', // Laravel já faz hash automático
+            'curso' => 'AMS - Análise e Desenvolvimento de Sistemas',
+            'role' => 'coordenador',
+        ]);
+        User::create([
+            'name' => 'coord2',
+            'email' => 'coord2',
+            'password' => '123', // Laravel já faz hash automático
+            'curso' => 'Automação Industrial',
             'role' => 'coordenador',
         ]);
         User::create([
@@ -33,5 +42,6 @@ class DatabaseSeeder extends Seeder
             'password' => '123', // Laravel já faz hash automático
             'role' => 'direcao',
         ]);
+
     }
 }

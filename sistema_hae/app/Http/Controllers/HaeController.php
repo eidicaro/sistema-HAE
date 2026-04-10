@@ -27,6 +27,29 @@ class HaeController extends Controller
         $semestreAtual = Semestres::where('ativo', true)->first();
 
         if (!$semestreAtual) {
+
+            if ($user->role == 'professor') {
+                return view('professor', [
+                    'pendentes' => collect(),
+                    'diligencia' => collect(),
+                    'finalizadas' => collect(),
+                    'recusadas' => collect(),
+                    'haesRelator' => collect(),
+                    'emExecucao' => collect(),
+                ])->with('erro', 'Nenhum semestre ativo.');
+            }
+        
+            if ($user->role == 'coordenador') {
+                return view('coordenador', [
+                    'pendentes' => collect(),
+                    'diligencia' => collect(),
+                    'finalizadas' => collect(),
+                    'recusadas' => collect(),
+                    'haesRelator' => collect(),
+                    'emExecucao' => collect(),
+                ])->with('erro', 'Nenhum semestre ativo.');
+            }
+        
             return view('direcao', [
                 'pendentes' => collect(),
                 'diligencia' => collect(),
@@ -48,7 +71,8 @@ class HaeController extends Controller
         }
     
         elseif ($user->role == 'coordenador') {
-            $query->whereIn('status', ['pendente', 'com_diligencia']);
+            $query->where('curso', $user->curso) // ou curso_id se tiver
+                  ->whereIn('status', ['pendente', 'com_diligencia']);
         }
     
         elseif ($user->role == 'direcao') {
@@ -75,7 +99,10 @@ class HaeController extends Controller
         $haesRelator = Haes::whereHas('relatores', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })
-        ->where('semestre_id', $semestreAtual->id) // SLA
+        ->where('semestre_id', $semestreAtual->id)
+        ->when($user->role == 'coordenador', function ($q) use ($user) {
+            $q->where('curso', $user->curso);
+        })
         ->orderBy('created_at', 'desc')
         ->get();
     
