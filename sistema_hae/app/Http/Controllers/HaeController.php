@@ -187,7 +187,7 @@ class HaeController extends Controller
         $hae = Haes::create([
             'user_id' => auth()->id(),
             'tipo' => $request->tipo,
-            'edital_aceito' => $request->edital == "Li e estou de acordo com o Edital",
+            'edital_aceito' => (bool) $request->edital,
             'curso' => $request->curso,
             'titulo' => $request->titulo,
             'carga_horaria' => $request->carga_horaria,
@@ -347,11 +347,7 @@ class HaeController extends Controller
             'resumo' => $request->resumo,
             'justificativa' => $request->justificativa,
         
-            'fevereiro' => $request->fevereiro,
-            'marco' => $request->marco,
-            'abril' => $request->abril,
-            'maio' => $request->maio,
-            'junho' => $request->junho,
+            'cronograma' => $request->cronograma,
         
             'edital_aceito' => $request->edital,
         

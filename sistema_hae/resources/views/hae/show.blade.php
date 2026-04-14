@@ -39,9 +39,9 @@
         <p><strong>Curso:</strong> {{ $hae->curso }}</p>
         <p><strong>Carga Horária:</strong> {{ $hae->carga_horaria }}</p>
         @if( $hae->edital_aceito == 1)
-            <p style="color: #009908"><strong style="color: #000">Carga Horária:</strong>Aceito</p>
+            <p style="color: #009908"><strong style="color: #000">Edital:</strong>Aceito</p>
             @else
-            <p style="color: #FF0000"><strong style="color: #000">Carga Horária:</strong>Recusado</p>
+            <p style="color: #FF0000"><strong style="color: #000">Edital:</strong>Recusado</p>
         @endif
 
 
