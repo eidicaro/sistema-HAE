@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('limites_hae', function (Blueprint $table) {
+            // direção que mexe
             $table->id();
             $table->string('tipo'); // ams, graduacao...
             $table->integer('carga_total'); // ex: 135

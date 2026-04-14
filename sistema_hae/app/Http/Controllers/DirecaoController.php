@@ -29,6 +29,7 @@ class DirecaoController extends Controller
         return view('ver-relatores', compact('usuarios', 'haes'));
     }
 
+    //atribuir o relator
     public function atribuirRelator(Request $request, $hae_id)
     {
         $hae = Haes::findOrFail($hae_id);
@@ -40,6 +41,7 @@ class DirecaoController extends Controller
         return back()->with('sucesso', 'Relatores definidos!');
     }
 
+    // altera o status da hae conforme a decisão
     public function decisao(Request $request, $id)
     {
         $hae = Haes::findOrFail($id);
@@ -54,7 +56,7 @@ class DirecaoController extends Controller
                     return back()->with('error', 'Limite não definido para esse tipo de HAE.');
                 }
             
-                // 🔥 agora soma EM_EXECUCAO + FINALIZADA
+                // agora soma EM_EXECUCAO + FINALIZADA
                 $totalUsado = Haes::where('tipo', $hae->tipo)
                     ->whereIn('status', ['em_execucao', 'finalizada'])
                     ->sum('carga_horaria');
@@ -63,7 +65,6 @@ class DirecaoController extends Controller
                     return back()->with('error', 'Limite de carga horária excedido!');
                 }
             
-                // 🔥 AQUI É A MUDANÇA PRINCIPAL
                 $status = 'em_execucao';
             
                 break;
@@ -77,11 +78,11 @@ class DirecaoController extends Controller
                 break;
         }
     
-        // 🔹 atualiza status
+        // atualiza status
         $hae->status = $status;
         $hae->save();
     
-        // 🔥 salva decisão
+        // salva decisão
         Decisao::create([
             'hae_id' => $hae->id,
             'avaliador_id' => auth()->id(),
@@ -92,6 +93,7 @@ class DirecaoController extends Controller
         return back()->with('sucesso', 'Decisão aplicada!');
     }
 
+    //so exibe
     public function resultados()
     {
         $finalizadas = \App\Models\Haes::where('status', 'finalizada')->get();

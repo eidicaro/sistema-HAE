@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade');
         
+            //infos da hae
             $table->string('tipo_extensao')->nullable();
         
             $table->integer('pessoas')->nullable();
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->integer('eventos')->nullable();
             $table->integer('beneficiarios')->nullable();
         
+            // infos gerais
             $table->string('indicador')->nullable();
             $table->string('outra_acao')->nullable();
         

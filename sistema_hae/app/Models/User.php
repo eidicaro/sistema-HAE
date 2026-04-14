@@ -49,6 +49,8 @@ class User extends Authenticatable
         ];
     }
 
+    // Relaiconamentos
+
     public function haes()
     {
         return $this->hasMany(Haes::class, 'user_id');

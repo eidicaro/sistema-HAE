@@ -15,6 +15,8 @@ class Parecer extends Model
         'comentario'
     ];
 
+    //relacionamento
+    
     public function hae()
     {
         return $this->belongsTo(Hae::class);

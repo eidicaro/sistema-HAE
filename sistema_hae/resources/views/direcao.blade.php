@@ -22,6 +22,7 @@
     @include('components.exibir-hae')
     <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
 
+    <!-- Carga horaria -->
     <h2>Controle de Carga Horária</h2>
 
         <table cellpadding="10" style="" class="carga-hora">
@@ -69,6 +70,7 @@
             <button type="submit">Salvar Limite</button>
         </form>
 
+        <!-- semestre -->
         <div class="semestre">
             <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
             <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>

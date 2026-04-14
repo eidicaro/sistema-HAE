@@ -28,6 +28,7 @@ class DecisaoController extends Controller
      */
     public function store(Request $request)
     {
+        //salva a decisao
         Decisao::create([
             'hae_id' => $request->hae_id,
             'avaliador_id' => auth()->id(),

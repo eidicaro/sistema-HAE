@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('parecer', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hae_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('tipo', ['relator', 'coordenador']);
+            $table->foreignId('hae_id')->constrained()->onDelete('cascade'); //hae
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); //usuario
+            $table->enum('tipo', ['relator', 'coordenador']); //coordenador
             $table->text('comentario');
             $table->timestamps();
     

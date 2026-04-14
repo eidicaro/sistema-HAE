@@ -29,19 +29,16 @@ class Haes extends Model
         'semestre_id'
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELACIONAMENTOS
-    |--------------------------------------------------------------------------
-    */
+    //  RELACIONAMENTOS
 
-    // 🔗 HAE pertence a um usuário (professor)
+
+    // HAE pertence a um usuário (professor)
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // 🔗 TIPOS DE HAE (1:1)
+    // TIPOS DE HAE (1:1)
 
     public function graduacao()
     {
@@ -73,13 +70,13 @@ class Haes extends Model
         return $this->hasOne(HaeAms::class, 'hae_id');
     }
 
-    // 🔗 PARECERES (relatores)
+    // PARECERES (relatores)
     public function pareceres()
     {
         return $this->hasMany(Parecer::class, 'hae_id');
     }
 
-    // 🔗 DECISÕES (coordenação/direção)
+    // DECISÕES (coordenação/direção)
     public function decisoes()
     {
         return $this->hasMany(Decisao::class, 'hae_id');
@@ -92,7 +89,7 @@ class Haes extends Model
 
     // SEMESTRE
     public function semestre()
-{
-    return $this->belongsTo(Semestres::class);
-}
+    {
+        return $this->belongsTo(Semestres::class);
+    }
 }

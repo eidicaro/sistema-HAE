@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('decisoes', function (Blueprint $table) {
             $table->id();
-        
-            $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade');
-            $table->foreignId('avaliador_id')->constrained('users')->onDelete('cascade');
-        
+            $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade'); //hae
+            $table->foreignId('avaliador_id')->constrained('users')->onDelete('cascade');  //direção ou coord       
             $table->string('decisao'); // aprovado, recusado, diligencia
             $table->text('comentario')->nullable();
         

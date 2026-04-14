@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('haes', function (Blueprint $table) {
             $table->id();
             $table->boolean('edital_aceito');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); //usuario
             $table->foreignId('semestre_id')->constrained()->cascadeOnDelete(); //semestres
             $table->string('tipo');
 
+            //infos gerais
             $table->string('curso');
             $table->string('titulo');
             $table->integer('carga_horaria');
-        
             $table->text('resumo');
             $table->text('justificativa');
         

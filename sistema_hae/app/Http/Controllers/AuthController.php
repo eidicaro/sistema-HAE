@@ -30,7 +30,7 @@ class AuthController extends Controller
             return redirect('/' . $user->role);
         }
 
-        return back()->with('erro', 'Login inválido');
+        return back()->with('erro', 'Login inválido'); //redireciona pra tela inicial
     }
 
     public function logout(Request $request)
@@ -40,7 +40,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/login'); //tira o login e manda para a página inicial
     }
 
    

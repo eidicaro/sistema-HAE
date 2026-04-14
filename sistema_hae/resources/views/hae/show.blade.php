@@ -19,6 +19,7 @@
 
     <h1 class="titulo">{{ $hae->titulo }}</h1>
 
+    <!-- infos Principais -->
     <div class="info">
         <p><strong>Tipo de HAE:</strong> 
             {{
@@ -37,6 +38,12 @@
         <p><strong>Professor:</strong> {{ $hae->user->name }}</p>
         <p><strong>Curso:</strong> {{ $hae->curso }}</p>
         <p><strong>Carga Horária:</strong> {{ $hae->carga_horaria }}</p>
+        @if( $hae->edital_aceito == 1)
+            <p style="color: #009908"><strong style="color: #000">Carga Horária:</strong>Aceito</p>
+            @else
+            <p style="color: #FF0000"><strong style="color: #000">Carga Horária:</strong>Recusado</p>
+        @endif
+
 
         <p>
             <strong>Status:</strong> 
@@ -62,6 +69,8 @@
         @endif
     </div>
 
+
+        <!-- infos principais -->
     <div class="bloco">
         <h2>Resumo</h2>
         <p>{{ $hae->resumo }}</p>
@@ -85,8 +94,9 @@
         @includeIf('components.hae.' . $hae->tipo, ['hae' => $hae])
     </div>
 
-    {{-- ================= PARECERES ================= --}}
+    <!-- PARECERES -->
     <div class="bloco">
+        <!-- mostra o parecer -->
         <h2>Pareceres</h2>
 
         @forelse($hae->pareceres as $parecer)
@@ -101,6 +111,7 @@
             <p class="vazio">Sem pareceres ainda</p>
         @endforelse
 
+        <!-- se o usuario for relator daquela hae, ele pode dar o parecer -->
         @php
             $usuarioEhRelator = $hae->relatores->contains(auth()->id());
             $jaDeuParecer = $hae->pareceres->where('user_id', auth()->id())->count();
@@ -123,8 +134,9 @@
         @endif
     </div>
 
-    {{-- ================= DECISÕES ================= --}}
+    <!-- DECISOES -->
     <div class="bloco">
+        <!-- Mostra as Decisões -->
         <h2>Decisões</h2>
 
         @forelse($hae->decisoes as $decisao)
@@ -163,7 +175,7 @@
             </div>
         @endif
 
-        {{-- 🔥 BOTÕES DIREÇÃO --}}
+        <!-- se for a direção, ele pode dar a decisão -->
         @if($user->role == 'direcao' && !in_array($hae->status, ['finalizada', 'recusada', 'em_execucao']))
             
             <div class="bloco-decisao">

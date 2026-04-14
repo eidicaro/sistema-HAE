@@ -17,6 +17,7 @@ class HaeGraduacao extends Model
         'indicador'
     ];
 
+    //relacionamento
     public function hae() {
         return $this->belongsTo(Haes::class);
     }

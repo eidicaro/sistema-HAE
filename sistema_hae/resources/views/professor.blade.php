@@ -44,6 +44,7 @@
         });
     </script>
 
+<!-- se ele for denominado como relator, as haes que ele precisa ver estão aqui -->
 <h2>HAEs para Parecer</h2>
 
 <div class="relator">

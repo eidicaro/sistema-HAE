@@ -18,6 +18,7 @@ class HaeAms extends Model
         'outra_acao'
     ];
 
+    //relaiconamento
     public function hae() {
         return $this->belongsTo(Haes::class);
     }

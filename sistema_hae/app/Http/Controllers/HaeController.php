@@ -21,6 +21,8 @@ class HaeController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    // joga infos do banco para as views e retorna  elas
     public function index()
     {
         $user = auth()->user();
@@ -88,14 +90,14 @@ class HaeController extends Controller
     
         $haes = $query->get();
     
-        // 📊 separação por status (como você já fazia)
+        // separação por status
         $pendentes = $haes->where('status', 'pendente');
         $diligencia = $haes->where('status', 'com_diligencia');
         $emExecucao = $haes->where('status', 'em_execucao');
         $finalizadas = $haes->where('status', 'finalizada');
         $recusadas = $haes->where('status', 'recusada');
     
-        // 🔥 NOVO: HAEs onde o usuário é relator
+        // NOVO: HAEs onde o usuário é relator
         $haesRelator = Haes::whereHas('relatores', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })
@@ -106,7 +108,7 @@ class HaeController extends Controller
         ->orderBy('created_at', 'desc')
         ->get();
     
-        // 🔥 retorno das views
+        // retorno das views
         if ($user->role == 'professor') {
             return view('professor', compact(
                 'pendentes','diligencia','finalizadas','recusadas','haesRelator', 'emExecucao'
@@ -161,15 +163,17 @@ class HaeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+     //salva as haes novas
     public function store(Request $request)
     {
-                // 🔎 pega semestre ativo
+        // pega semestre ativo
         $semestre = Semestres::where('ativo', true)->first();
 
         if (!$semestre) {
             return back()->with('erro', 'Nenhum semestre ativo encontrado.');
         }
-        // 🧾 VALIDAÇÃO BÁSICA
+        // VALIDAÇÃO BÁSICA
         $request->validate([
             'tipo' => 'required',
             'titulo' => 'required',
@@ -179,7 +183,7 @@ class HaeController extends Controller
             'justificativa' => 'required',
         ]);
 
-        // 📄 1. CRIA HAE
+        // 1. CRIA HAE
         $hae = Haes::create([
             'user_id' => auth()->id(),
             'tipo' => $request->tipo,
@@ -198,7 +202,7 @@ class HaeController extends Controller
             'semestre_id' => $semestre->id
         ]);
 
-        // 🧩 2. SALVA ESPECÍFICO
+        // 2. SALVA ESPECÍFICO
         switch ($request->tipo) {
 
             case 'graduacao':
@@ -290,6 +294,7 @@ class HaeController extends Controller
     /**
      * Display the specified resource.
      */
+    // mostrar haes
     public function show($id)
     {
         $hae = Haes::with([
@@ -311,23 +316,26 @@ class HaeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+
     public function edit($id)
     {
         $hae = Haes::findOrFail($id);
-
+        
         $tipo = $hae->tipo;
-
+        
         return view('formulario', compact('hae', 'tipo'));
     }
-
+    
     /**
      * Update the specified resource in storage.
      */
+
+    // edita as haes com diligencia
     public function update(Request $request, $id)
     {
         $hae = Haes::findOrFail($id);
     
-        // 🔒 Só pode editar se foi reprovado
+        // Só pode editar se foi marcado como DILIGENCIA
         if ($hae->status != Haes::STATUS_DILIGENCIA) {
             return back()->with('error', 'Só é possível editar HAE com diligencia.');
         }

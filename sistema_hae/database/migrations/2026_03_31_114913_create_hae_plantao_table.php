@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('hae_plantao', function (Blueprint $table) {
             $table->id();
             $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade');
-        
+
+            // infos da hae
             $table->string('tipo_plantao')->nullable();
         
             $table->integer('alunos_atendidos')->nullable();
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->integer('relatorios')->nullable();
             $table->integer('acoes')->nullable();
         
+            //infos gerais
             $table->string('indicador')->nullable();
             $table->string('outra_acao')->nullable();
         

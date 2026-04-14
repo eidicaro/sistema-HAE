@@ -15,6 +15,7 @@ class Decisao extends Model
         'comentario'
     ];
 
+    // relacionamentos
     public function hae()
     {
         return $this->belongsTo(Haes::class, 'hae_id');

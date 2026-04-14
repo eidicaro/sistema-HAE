@@ -13,6 +13,8 @@ class Relatores extends Model
         'user_id'
     ];
 
+    //relacionamento
+    
     public function hae() {
         return $this->belongsTo(Haes::class);
     }

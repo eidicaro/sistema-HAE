@@ -16,14 +16,16 @@ return new class extends Migration
         
             $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade');
         
+            //tipos de hae
             $table->string('tipo_admin')->nullable();
-        
+
             $table->integer('encontros')->nullable();
             $table->integer('relatorios')->nullable();
             $table->integer('acoes_interdisciplinares')->nullable();
             $table->integer('formacoes')->nullable();
             $table->integer('materiais')->nullable();
-        
+
+            // mais geral
             $table->string('indicador')->nullable();
             $table->string('outra_acao')->nullable();
         

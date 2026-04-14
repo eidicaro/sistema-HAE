@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('../css/formulario.css') }}">
 </head>
 <body>
+    <!-- não vou comentar tudo isso não, so o basico que precisa saber 
+     Boa Sorte Dev do futuro :)-->
 
 <h1>Nova HAE</h1>
 <a href="/professor">voltar</a>
@@ -34,7 +36,6 @@
 <h2>Das Informações Iniciais</h2>
 
 <label>Nome do Professor</label>
-<input type="text" name="nome" value="{{ old('nome') }}">
 
 <label>Curso com maior aderência ao projeto</label>
 <select name="curso">

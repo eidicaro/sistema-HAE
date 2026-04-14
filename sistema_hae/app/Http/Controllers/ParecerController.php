@@ -29,6 +29,8 @@ class ParecerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    //salva o novo parecer
     public function store(Request $request, $hae_id)
     {
         $hae = Haes::findOrFail($hae_id);

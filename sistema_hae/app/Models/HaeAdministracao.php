@@ -20,6 +20,7 @@ class HaeAdministracao extends Model
         'outra_acao'
     ];
 
+    // relacionamento
     public function hae() {
         return $this->belongsTo(Haes::class);
     }
