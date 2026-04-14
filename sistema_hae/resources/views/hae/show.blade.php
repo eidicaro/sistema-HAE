@@ -74,13 +74,10 @@
 
     <div class="bloco">
         <h2>Cronograma</h2>
-        <ul class="cronograma">
-            <li><strong>Fevereiro:</strong> {{ $hae->fevereiro }}</li>
-            <li><strong>Março:</strong> {{ $hae->marco }}</li>
-            <li><strong>Abril:</strong> {{ $hae->abril }}</li>
-            <li><strong>Maio:</strong> {{ $hae->maio }}</li>
-            <li><strong>Junho:</strong> {{ $hae->junho }}</li>
-        </ul>
+
+        <p style="white-space: pre-line;">
+            {{ $hae->cronograma }}
+        </p>
     </div>
 
     <div class="bloco">

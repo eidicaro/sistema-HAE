@@ -190,11 +190,7 @@ class HaeController extends Controller
             'resumo' => $request->resumo,
             'justificativa' => $request->justificativa,
         
-            'fevereiro' => $request->fevereiro,
-            'marco' => $request->marco,
-            'abril' => $request->abril,
-            'maio' => $request->maio,
-            'junho' => $request->junho,
+            'cronograma' => $request->cronograma,
         
             'status' => 'pendente',
         

@@ -61,11 +61,17 @@
 
 <h2>Do Cronograma</h2>
 
-<input type="date" name="fevereiro" value="{{ old('fevereiro', $hae->fevereiro ?? '') }}" placeholder="Fevereiro">
-<input type="date" name="marco" value="{{ old('marco', $hae->marco ?? '') }}" placeholder="Março">
-<input type="date" name="abril" value="{{ old('abril', $hae->abril ?? '') }}" placeholder="Abril">
-<input type="date" name="maio" value="{{ old('maio', $hae->maio ?? '') }}" placeholder="Maio">
-<input type="date" name="junho" value="{{ old('junho', $hae->junho ?? '') }}" placeholder="Junho">
+<small style="color: #666;">
+    Informe os dias e horários das atividades.<br>
+    Exemplo: Segundas e Quartas - 19h às 21h
+</small>
+
+<textarea 
+    name="cronograma" 
+    rows="4" 
+    placeholder="Ex: Segundas e Quartas das 19h às 21h">
+{{ old('cronograma', $hae->cronograma ?? '') }}
+</textarea>
 
 <input type="hidden" name="tipo" value="{{ $tipo }}">
 

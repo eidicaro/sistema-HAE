@@ -24,11 +24,7 @@ class Haes extends Model
         'carga_horaria',
         'resumo',
         'justificativa',
-        'fevereiro',
-        'marco',
-        'abril',
-        'maio',
-        'junho',
+        'cronograma',
         'status',
         'semestre_id'
     ];
