@@ -221,16 +221,20 @@
         && $hae->status == 'em_execucao' 
         && isset($relatorio) 
         && $relatorio->status == 'enviado')
+        <div style="display: flex;
+                    justify-content: space-around;
+                    margin: 2% 0 0 0;">
         
         <form method="POST" action="/relatorio/{{ $relatorio->id }}/aprovar">
             @csrf
-            <button>Aprovar Relatório</button>
+            <button class="btn-rel-aprov">Aprovar Relatório</button>
         </form>
 
         <form method="POST" action="/relatorio/{{ $relatorio->id }}/reprovar">
             @csrf
-            <button>Reprovar Relatório</button>
+            <button class="btn-rel-rec">Reprovar Relatório</button>
         </form>
+        </div>
     @endif
 
 </div>

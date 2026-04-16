@@ -179,3 +179,31 @@ a:hover::after {
     text-decoration: none;
     transition: 0.4s;
 }
+
+.btn-rel-aprov{
+    padding: 4%;
+    color: #fff;
+    background-color: #20af00;
+    border-style: none;
+    font-weight: 800;
+    border-radius: 10px;
+    transition: 0.4s;
+}
+.btn-rel-aprov:hover{
+    background-color: #188100;
+    transition: 0.4s;
+}
+
+.btn-rel-rec{
+    padding: 4%;
+    color: #fff;
+    background-color: #8f0200;
+    border-style: none;
+    font-weight: 800;
+    border-radius: 10px;
+    transition: 0.4s;
+}
+.btn-rel-rec:hover{
+    background-color: #7b0503;
+    transition: 0.4s;
+}
