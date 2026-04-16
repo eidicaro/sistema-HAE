@@ -92,4 +92,10 @@ class Haes extends Model
     {
         return $this->belongsTo(Semestres::class);
     }
+
+    // RELATORIOS
+    public function relatorio()
+    {
+        return $this->hasOne(Relatorio::class, 'hae_id');
+    }
 }

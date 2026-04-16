@@ -14,8 +14,14 @@
 
     <h2>HAEs Submetidas</h2>
 
+
     @include('components.exibir-hae2')
 
     <h2>Estatísticas</h2>
+
+    <div class="bloco">
+        <p>Total de HAEs Finalizadas: {{ $finalizadas->count() }}</p>
+        <p>Total de HAEs Recusadas: {{ $recusadas->count() }}</p>
+    </div>
 </body>
 </html>

@@ -193,7 +193,6 @@ class HaeController extends Controller
             'carga_horaria' => $request->carga_horaria,
             'resumo' => $request->resumo,
             'justificativa' => $request->justificativa,
-        
             'cronograma' => $request->cronograma,
         
             'status' => 'pendente',
@@ -297,6 +296,7 @@ class HaeController extends Controller
     // mostrar haes
     public function show($id)
     {
+        
         $hae = Haes::with([
             'user',
             'graduacao',
@@ -307,10 +307,14 @@ class HaeController extends Controller
             'ams',
             'pareceres.user',
             'relatores',
-            'decisoes'
+            'decisoes',
+            'relatorio.resultados'
+
         ])->findOrFail($id);
+
+        $relatorio = $hae->relatorio;
     
-        return view('hae.show', compact('hae'));
+        return view('hae.show', compact('hae', 'relatorio'));
     }
 
     /**

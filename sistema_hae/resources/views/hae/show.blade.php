@@ -67,6 +67,12 @@
                 Editar e reenviar
             </a>
         @endif
+
+        @if($hae->status == 'em_execucao')
+            <a href="/hae/{{ $hae->id }}/relatorio">
+                Preencher Relatório
+            </a>
+        @endif
     </div>
 
 
@@ -203,7 +209,29 @@
             </div>
 
         @endif
+
+
     </div>
+
+    @if(isset($relatorio) && $relatorio->status != 'pendente')
+        @include('relatorio.comparacao', ['relatorio' => $relatorio])
+    @endif
+
+    @if($user->role == 'direcao' 
+        && $hae->status == 'em_execucao' 
+        && isset($relatorio) 
+        && $relatorio->status == 'enviado')
+        
+        <form method="POST" action="/relatorio/{{ $relatorio->id }}/aprovar">
+            @csrf
+            <button>Aprovar Relatório</button>
+        </form>
+
+        <form method="POST" action="/relatorio/{{ $relatorio->id }}/reprovar">
+            @csrf
+            <button>Reprovar Relatório</button>
+        </form>
+    @endif
 
 </div>
 

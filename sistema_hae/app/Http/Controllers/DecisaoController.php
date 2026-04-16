@@ -40,7 +40,7 @@ class DecisaoController extends Controller
         $hae = Hae::find($request->hae_id);
 
         if ($request->decisao == 'aprovado') {
-            $hae->status = 'finalizada';
+            $hae->status = 'em_execucao';
         } elseif ($request->decisao == 'recusado') {
             $hae->status = 'recusada';
         } else {

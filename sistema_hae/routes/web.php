@@ -7,6 +7,7 @@ use App\Http\Controllers\HaeController;
 use App\Http\Controllers\ParecerController;
 use App\Http\Controllers\DirecaoController;
 use App\Http\Controllers\SemestresController;
+use App\Http\Controllers\RelatorioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,4 +137,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/semestres', [SemestresController::class, 'index']);
     Route::post('/semestres', [SemestresController::class, 'store']);
     Route::post('/semestres/{id}/ativar', [SemestresController::class, 'ativar']);
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | GERAR RELATORIO
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/hae/{id}/relatorio', [RelatorioController::class, 'create']);
+    Route::post('/hae/{id}/relatorio', [RelatorioController::class, 'store']);
+
+    Route::post('/relatorio/{id}/aprovar', [RelatorioController::class, 'aprovar']);
+    Route::post('/relatorio/{id}/reprovar', [RelatorioController::class, 'reprovar']);
 });
