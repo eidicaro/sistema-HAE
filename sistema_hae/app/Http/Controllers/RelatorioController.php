@@ -98,4 +98,23 @@ class RelatorioController extends Controller
 
         return back()->with('error', 'Relatório reprovado!');
     }
+
+
+    public function download($id)
+    {
+        $arquivo = RelatorioArquivo::findOrFail($id);
+    
+        return response()->download(
+            storage_path('app/private/' . $arquivo->caminho)
+        );
+    }
+
+    public function ver($id)
+    {
+        $arquivo = RelatorioArquivo::findOrFail($id);
+
+        return response()->file(
+            storage_path('app/private/' . $arquivo->caminho)
+        );
+    }
 }

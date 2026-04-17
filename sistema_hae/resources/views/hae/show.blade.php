@@ -213,6 +213,7 @@
 
     </div>
 
+<!-- Relatorio -->
     @if(isset($relatorio) && $relatorio->status != 'pendente')
         @include('relatorio.comparacao', ['relatorio' => $relatorio])
     @endif
@@ -235,6 +236,56 @@
             <button class="btn-rel-rec">Reprovar Relatório</button>
         </form>
         </div>
+    @endif
+
+    <!-- vizualizar relatorio -->
+    @if(isset($relatorio))
+    <div class="bloco">
+        <h2>Arquivos do Relatório</h2>
+
+        @php
+            $principal = $relatorio->arquivos->where('tipo', 'principal')->first();
+            $comprovacoes = $relatorio->arquivos->where('tipo', 'comprovacao');
+        @endphp
+
+        {{-- 📄 Arquivo principal --}}
+        @if($principal)
+            <div class="item">
+                <p><strong>Arquivo Principal:</strong></p>
+
+                <a href="{{ route('arquivo.ver', $principal->id) }}" target="_blank">
+                    Visualizar
+                </a>
+
+                <a href="{{ route('arquivo.download', $principal->id) }}">
+                    Download
+                </a>
+            </div>
+        @endif
+
+        {{-- 📎 Comprovações --}}
+        @if($comprovacoes->count())
+            <div class="item">
+                <p><strong>Comprovações:</strong></p>
+
+                @foreach($comprovacoes as $arquivo)
+                    <div>
+                        <a href="{{ route('arquivo.ver', $arquivo->id) }}" target="_blank">
+                            👁️ Visualizar
+                        </a>
+
+                        <a href="{{ route('arquivo.download', $arquivo->id) }}">
+                            ⬇️ Download
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        @if(!$principal && !$comprovacoes->count())
+            <p class="vazio">Nenhum arquivo enviado</p>
+        @endif
+    </div>
     @endif
 
 </div>

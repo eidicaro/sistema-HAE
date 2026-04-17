@@ -308,11 +308,12 @@ class HaeController extends Controller
             'pareceres.user',
             'relatores',
             'decisoes',
-            'relatorio.resultados'
+            'relatorio.resultados',
+            'relatorio.arquivos'
 
         ])->findOrFail($id);
 
-        $relatorio = $hae->relatorio;
+        $relatorio = $hae->relatorio ?? null;
     
         return view('hae.show', compact('hae', 'relatorio'));
     }

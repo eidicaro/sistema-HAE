@@ -149,4 +149,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/relatorio/{id}/aprovar', [RelatorioController::class, 'aprovar']);
     Route::post('/relatorio/{id}/reprovar', [RelatorioController::class, 'reprovar']);
+
+    Route::get('/arquivo/{id}/download', [RelatorioController::class, 'download'])->name('arquivo.download');
+    Route::get('/arquivo/{id}/ver', [RelatorioController::class, 'ver'])->name('arquivo.ver');
 });
