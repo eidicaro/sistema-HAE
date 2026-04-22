@@ -35,8 +35,13 @@ class ParecerController extends Controller
     {
         $hae = Haes::findOrFail($hae_id);
     
-        // valida se é relator
-        if (!$hae->relatores->contains(auth()->id())) {
+        $usuario = auth()->user();
+        
+        $ehRelator = $hae->relatores->contains($usuario->id);
+        $ehCoordenador = $usuario->role == 'coordenador';
+        
+        // valida se é relator ou coordenador
+        if (!$ehRelator && !$ehCoordenador) {
             abort(403);
         }
     

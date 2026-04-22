@@ -119,11 +119,17 @@
 
         <!-- se o usuario for relator daquela hae, ele pode dar o parecer -->
         @php
-            $usuarioEhRelator = $hae->relatores->contains(auth()->id());
+            $usuario = auth()->user();
+
+            $usuarioEhRelator = $hae->relatores->contains($usuario->id);
+            $usuarioEhCoordenador = $usuario->role == 'coordenador';
+
+            $podeDarParecer = $usuarioEhRelator || $usuarioEhCoordenador;
+
             $jaDeuParecer = $hae->pareceres->where('user_id', auth()->id())->count();
         @endphp
 
-        @if($usuarioEhRelator && !$jaDeuParecer)
+        @if($podeDarParecer && !$jaDeuParecer)
             <div class="bloco-parecer">
                 <h3>Dar Parecer</h3>
 
