@@ -220,7 +220,7 @@
     </div>
 
 <!-- Relatorio -->
-    @if(isset($relatorio) && $relatorio->status != 'pendente')
+    @if(isset($relatorio) && in_array($relatorio->status, ['enviado', 'reprovado', 'aprovado']))
         @include('relatorio.comparacao', ['relatorio' => $relatorio])
     @endif
 
@@ -277,11 +277,11 @@
                 @foreach($comprovacoes as $arquivo)
                     <div>
                         <a href="{{ route('arquivo.ver', $arquivo->id) }}" target="_blank">
-                            👁️ Visualizar
+                            Visualizar
                         </a>
 
                         <a href="{{ route('arquivo.download', $arquivo->id) }}">
-                            ⬇️ Download
+                            Download
                         </a>
                     </div>
                 @endforeach

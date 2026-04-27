@@ -20,19 +20,36 @@ class RelatorioController extends Controller
 
     public function store(Request $request, $id)
     {
-        $relatorio = Relatorio::create([
-            'hae_id' => $id,
-            'titulo' => $request->titulo,
-            'sumario' => $request->sumario,
-            'resultados_texto' => $request->resultados_texto,
-            'status' => 'enviado',
-        ]);
+        // 🔍 busca último relatório da HAE
+        $relatorio = Relatorio::where('hae_id', $id)->latest()->first();
 
-        // salvar comparações
+        if ($relatorio && $relatorio->status == 'reprovado') {
+            // 🔄 ATUALIZA relatório existente
+            $relatorio->update([
+                'titulo' => $request->titulo,
+                'sumario' => $request->sumario,
+                'resultados_texto' => $request->resultados_texto,
+                'status' => 'enviado',
+            ]);
+
+            // 🧹 limpa dados antigos
+            $relatorio->resultados()->delete();
+            $relatorio->arquivos()->delete();
+
+        } else {
+            // 🆕 CRIA novo relatório
+            $relatorio = Relatorio::create([
+                'hae_id' => $id,
+                'titulo' => $request->titulo,
+                'sumario' => $request->sumario,
+                'resultados_texto' => $request->resultados_texto,
+                'status' => 'enviado',
+            ]);
+        }
+
+        // 📊 salvar comparações
         if ($request->has('resultados')) {
-
             foreach ($request->resultados as $campo => $valores) {
-        
                 RelatorioResultado::create([
                     'relatorio_id' => $relatorio->id,
                     'campo' => $campo,
@@ -42,7 +59,7 @@ class RelatorioController extends Controller
             }
         }
 
-        // arquivo principal
+        // 📄 arquivo principal
         if ($request->hasFile('arquivo_principal')) {
             $path = $request->file('arquivo_principal')->store('relatorios');
 
@@ -53,7 +70,7 @@ class RelatorioController extends Controller
             ]);
         }
 
-        // comprovacoes
+        // 📎 comprovacoes
         if ($request->hasFile('comprovacoes')) {
             foreach ($request->file('comprovacoes') as $file) {
                 $path = $file->store('relatorios');
@@ -68,8 +85,6 @@ class RelatorioController extends Controller
 
         return redirect("/hae/$id")->with('success', 'Relatório enviado!');
     }
-
-
 
     public function aprovar($id)
     {
@@ -99,22 +114,29 @@ class RelatorioController extends Controller
         return back()->with('error', 'Relatório reprovado!');
     }
 
-
     public function download($id)
     {
         $arquivo = RelatorioArquivo::findOrFail($id);
-    
-        return response()->download(
-            storage_path('app/private/' . $arquivo->caminho)
-        );
+
+        $path = storage_path('app/private/' . $arquivo->caminho);
+
+        if (!file_exists($path)) {
+            abort(404, 'Arquivo não encontrado.');
+        }
+
+        return response()->download($path);
     }
 
     public function ver($id)
     {
         $arquivo = RelatorioArquivo::findOrFail($id);
 
-        return response()->file(
-            storage_path('app/private/' . $arquivo->caminho)
-        );
+        $path = storage_path('app/private/' . $arquivo->caminho);
+
+        if (!file_exists($path)) {
+            abort(404, 'Arquivo não encontrado.');
+        }
+
+        return response()->file($path);
     }
 }

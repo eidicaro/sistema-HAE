@@ -14,6 +14,7 @@ use App\Models\HaeAms;
 use App\Models\User;
 use App\Models\LimiteHae;
 use App\Models\Semestres;
+use App\Models\Relatorio;
 
 
 class HaeController extends Controller
@@ -313,7 +314,10 @@ class HaeController extends Controller
 
         ])->findOrFail($id);
 
-        $relatorio = $hae->relatorio ?? null;
+        $relatorio = Relatorio::with(['arquivos', 'resultados'])
+        ->where('hae_id', $id)
+        ->latest()
+        ->first();
     
         return view('hae.show', compact('hae', 'relatorio'));
     }
