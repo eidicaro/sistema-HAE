@@ -14,9 +14,36 @@
     
     <div class="container">
 
-        <h2 class="titulo-secao">Usuários disponíveis</h2>
+        <div class="usuarios-header">
+            <h2 class="titulo-secao">Usuários disponíveis</h2>
 
-        <div class="usuarios-lista">
+            <button onclick="toggleUsuarios()" class="btn-toggle">
+                Mostrar usuários ⬇
+            </button>
+        </div>
+
+        <div id="usuariosContainer" style="display:none;">
+            
+            <input 
+                type="text" 
+                id="buscarUsuario" 
+                placeholder="Buscar professor..."
+                onkeyup="filtrarUsuarios()"
+                class="input-busca"
+            />
+
+            <div class="usuarios-lista">
+                @foreach($usuarios as $user)
+                    <div class="usuario-item">
+                        {{ $user->name }}
+                        <span class="role">({{ $user->role }})</span>
+                    </div>
+                @endforeach
+            </div>
+
+        </div>
+
+        <div class="usuarios-lista" id="usuariosLista" style="display:none;">
             @foreach($usuarios as $user)
                 <div class="usuario-item">
                     {{ $user->name }}
@@ -64,5 +91,32 @@
         @endforeach
 
     </div>
+
+    <script>
+        function toggleUsuarios() {
+            const container = document.getElementById('usuariosContainer');
+            const btn = document.querySelector('.btn-toggle');
+
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                btn.textContent = 'Ocultar usuários ⬆';
+            } else {
+                container.style.display = 'none';
+                btn.textContent = 'Mostrar usuários ⬇';
+            }
+        }
+
+
+        function filtrarUsuarios() {
+            let input = document.getElementById('buscarUsuario');
+            let filtro = input.value.toLowerCase();
+            let itens = document.querySelectorAll('.usuario-item');
+
+            itens.forEach(item => {
+                let texto = item.textContent.toLowerCase();
+                item.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        }
+    </script>
 </body>
 </html>
