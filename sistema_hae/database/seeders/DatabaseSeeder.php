@@ -10,29 +10,16 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ======== USUARIOS DE TESTE =========
-        User::create([
-            'name' => 'prof',
-            'email' => 'prof',
-            'password' => '123', // Laravel já faz hash automático
-            'role' => 'professor',
-        ]);
-        User::create([
-            'name' => 'coord',
-            'email' => 'coord',
-            'password' => '123',
-            'curso' => 'AMS - Análise e Desenvolvimento de Sistemas',
-            'role' => 'coordenador',
-        ]);
+        // ======== DIREÇÃO =========
         User::create([
             'name' => 'dir',
-            'email' => 'dir',
-            'password' => '123', 
+            'email' => 'dir@fatec',
+            'password' => 'f132.dir', 
             'role' => 'direcao',
         ]);
-
         // ================== USUARIOS =================
         // COORDENADORES
+    
         //ads
         User::create([
             'name' => 'coord ads',
