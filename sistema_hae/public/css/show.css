@@ -37,6 +37,22 @@ body {
     border-top: 1px solid #ddd;
 }
 
+.bloco p {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    overflow-x: auto;
+    text-align: justify;
+    line-height: 1.5;
+}
+
+.sub-bloco p {
+    white-space: pre-line;
+    word-break: break-word;
+    text-align: justify;
+    line-height: 1.5;
+}
+
 /* CRONOGRAMA */
 .cronograma {
     list-style: none;

@@ -247,6 +247,24 @@
     <!-- vizualizar relatorio -->
     @if(isset($relatorio))
     <div class="bloco">
+        <h2>Relatório do Professor</h2>
+
+        <p><strong>Título:</strong> {{ $relatorio->titulo }}</p>
+
+        <div class="sub-bloco">
+            <h3>Sumário Executivo</h3>
+            <p>{{ $relatorio->sumario }}</p>
+        </div>
+
+        <div class="sub-bloco">
+            <h3>Principais Resultados</h3>
+            <p>{{ $relatorio->resultados_texto }}</p>
+        </div>
+    </div>
+    @endif
+
+    @if(isset($relatorio))
+    <div class="bloco">
         <h2>Arquivos do Relatório</h2>
 
         @php
