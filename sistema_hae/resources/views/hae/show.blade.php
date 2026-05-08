@@ -224,26 +224,6 @@
         @include('relatorio.comparacao', ['relatorio' => $relatorio])
     @endif
 
-    @if($user->role == 'direcao' 
-        && $hae->status == 'em_execucao' 
-        && isset($relatorio) 
-        && $relatorio->status == 'enviado')
-        <div style="display: flex;
-                    justify-content: space-around;
-                    margin: 2% 0 0 0;">
-        
-        <form method="POST" action="/relatorio/{{ $relatorio->id }}/aprovar">
-            @csrf
-            <button class="btn-rel-aprov">Aprovar Relatório</button>
-        </form>
-
-        <form method="POST" action="/relatorio/{{ $relatorio->id }}/reprovar">
-            @csrf
-            <button class="btn-rel-rec">Reprovar Relatório</button>
-        </form>
-        </div>
-    @endif
-
     <!-- vizualizar relatorio -->
     @if(isset($relatorio))
     <div class="bloco">
@@ -310,6 +290,26 @@
             <p class="vazio">Nenhum arquivo enviado</p>
         @endif
     </div>
+    @endif
+
+    @if($user->role == 'direcao' 
+        && $hae->status == 'em_execucao' 
+        && isset($relatorio) 
+        && $relatorio->status == 'enviado')
+        <div style="display: flex;
+                    justify-content: space-around;
+                    margin: 2% 0 0 0;">
+        
+        <form method="POST" action="/relatorio/{{ $relatorio->id }}/aprovar">
+            @csrf
+            <button class="btn-rel-aprov">Aprovar Relatório</button>
+        </form>
+
+        <form method="POST" action="/relatorio/{{ $relatorio->id }}/reprovar">
+            @csrf
+            <button class="btn-rel-rec">Reprovar Relatório</button>
+        </form>
+        </div>
     @endif
 
 </div>
