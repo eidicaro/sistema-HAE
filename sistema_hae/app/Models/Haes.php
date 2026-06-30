@@ -38,37 +38,6 @@ class Haes extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // TIPOS DE HAE (1:1)
-
-    public function graduacao()
-    {
-        return $this->hasOne(HaeGraduacao::class, 'hae_id');
-    }
-
-    public function administracao()
-    {
-        return $this->hasOne(HaeAdministracao::class, 'hae_id');
-    }
-
-    public function estudos()
-    {
-        return $this->hasOne(HaeEstudos::class, 'hae_id');
-    }
-
-    public function extensao()
-    {
-        return $this->hasOne(HaeExtensao::class, 'hae_id');
-    }
-
-    public function plantao()
-    {
-        return $this->hasOne(HaePlantao::class, 'hae_id');
-    }
-
-    public function ams()
-    {
-        return $this->hasOne(HaeAms::class, 'hae_id');
-    }
 
     // PARECERES (relatores)
     public function pareceres()
@@ -97,5 +66,10 @@ class Haes extends Model
     public function relatorio()
     {
         return $this->hasOne(Relatorio::class, 'hae_id');
+    }
+
+    //TIPOS HAE
+    public function tipoHae() {
+        return $this->Hasone(TipoHae::class);
     }
 }

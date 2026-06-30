@@ -55,13 +55,10 @@
             @csrf
 
             <label>Tipo de HAE</label>
-            <select name="tipo">
-                <option value="ams">AMS</option>
-                <option value="graduacao">Graduação</option>
-                <option value="administracao">Administração</option>
-                <option value="estudos">Estudos</option>
-                <option value="extensao">Extensão</option>
-                <option value="plantao">Plantão</option>
+            <select name="tipo_hae_id">
+                @foreach ($nomes as $item)
+                    <option value="{{$item->id}}">{{ $item->nome}}</option>
+                @endforeach
             </select>
 
             <label>Carga Horária Total</label>

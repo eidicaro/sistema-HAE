@@ -8,6 +8,7 @@ use App\Http\Controllers\ParecerController;
 use App\Http\Controllers\DirecaoController;
 use App\Http\Controllers\SemestresController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\TipoHaeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,19 +105,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
     Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
     // limitação de qtde de hae
-    Route::get('/direcao/limites', function () {
-        return view('direcao.limites');
-    });
+    Route::get('/direcao/limites', [TipoHaeController::class, 'index']);
 
-    Route::post('/direcao/limites', function (Request $request) {
-
-        \App\Models\LimiteHae::updateOrCreate(
-            ['tipo' => $request->tipo],
-            ['carga_total' => $request->carga_total]
-        );
-
-        return back()->with('success', 'Limite salvo!');
-    })->name('direcao.limites.salvar');
+    Route::post('/direcao/limites', [TipoHaeController::class, 'store'])->name('direcao.limites.salvar');
 
 
 
