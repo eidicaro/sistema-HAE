@@ -8,6 +8,8 @@
 <body>
     <!-- não vou comentar tudo isso não, so o basico que precisa saber 
      Boa Sorte Dev do futuro :)-->
+    <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
+
 
 <h1>Nova HAE</h1>
 <a href="/professor">voltar</a>

@@ -9,6 +9,8 @@
 </head>
 <body>
     @include('components.header')
+        <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
+
 
     <h1>Olá Professor!</h1>
     <form method="POST" action="/logout" >

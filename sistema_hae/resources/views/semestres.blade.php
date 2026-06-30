@@ -9,6 +9,8 @@
 
 <body style="font-family: Arial; padding:20px;">
 <a href="{{ route($user->role) }}">Voltar</a>
+    <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
+
 
 <h1 style="color:#B30A07;">Gerenciar Semestres</h1>
 
