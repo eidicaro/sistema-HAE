@@ -3,73 +3,83 @@
 namespace App\Http\Controllers;
 
 use App\Models\TipoHae;
+use App\Models\Haes;
 use Illuminate\Http\Request;
 
 class TipoHaeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $nomes = \App\Models\TipoHae::where('ativo', true)->orderBy('nome')->get();
+        $tipos = TipoHae::orderBy('nome')->get();
 
-            return view('direcao.limites', [
-                'nomes' => $nomes,
-            ]);
-
+        return view('direcao.tipos_hae.index', compact('tipos'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('direcao.tipos_hae.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-            \App\Models\TipoHae::updateOrCreate(
-                ['nome' => $request->nome],
-                ['limite' => $request->limite]
-            );
-    
-            return back()->with('success', 'Limite salvo!');
+        $validated = $request->validate([
+            'nome'      => 'required|string|max:255|unique:tipo_haes,nome',
+            'descricao' => 'nullable|string',
+            'limite'    => 'required|integer|min:0',
+        ]);
+
+        $validated['ativo'] = $request->boolean('ativo');
+
+        TipoHae::create($validated);
+
+        return redirect()
+            ->route('direcao.tipos-hae.index')
+            ->with('success', 'Tipo de HAE criado com sucesso!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(TipoHae $tipoHae)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(TipoHae $tipoHae)
     {
-        //
+        return view('direcao.tipos_hae.edit', compact('tipoHae'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, TipoHae $tipoHae)
     {
-        //
+        $validated = $request->validate([
+            'nome'      => 'required|string|max:255|unique:tipo_haes,nome,' . $tipoHae->id,
+            'descricao' => 'nullable|string',
+            'limite'    => 'required|integer|min:0',
+        ]);
+
+        $validated['ativo'] = $request->boolean('ativo');
+
+        $tipoHae->update($validated);
+
+        return redirect()
+            ->route('direcao.tipos-hae.index')
+            ->with('success', 'Tipo de HAE atualizado com sucesso!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function toggle(TipoHae $tipoHae)
+    {
+        $tipoHae->update(['ativo' => !$tipoHae->ativo]);
+
+        return back()->with('success', 'Status atualizado!');
+    }
+
     public function destroy(TipoHae $tipoHae)
     {
-        //
+        // haes.tipo guarda o nome do tipo como string (não tem FK pra tipo_haes.id),
+        // então checo por nome antes de deixar excluir
+        $emUso = Haes::where('tipo_hae_id', $tipoHae->id)->exists();
+
+        if ($emUso) {
+            return back()->with('error', 'Este tipo possui HAEs vinculadas e não pode ser excluído. Desative-o em vez disso.');
+        }
+
+        $tipoHae->delete();
+
+        return redirect()
+            ->route('direcao.tipos-hae.index')
+            ->with('success', 'Tipo de HAE excluído.');
     }
 }

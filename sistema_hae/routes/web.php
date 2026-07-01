@@ -105,9 +105,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
     Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
     // limitação de qtde de hae
-    Route::get('/direcao/limites', [TipoHaeController::class, 'index']);
-
-    Route::post('/direcao/limites', [TipoHaeController::class, 'store'])->name('direcao.limites.salvar');
+   Route::prefix('direcao')->name('direcao.')->group(function(){
+        Route::resource('tipos-hae', TipoHaeController::class)
+            ->parameters(['tipo-hae' => 'tipoHae'])
+            ->except(['show']);
+        Route::post('tipos-hae/{tipoHae/toggle}', [TipoHaeController::class, 'toggle'])
+            ->name('tipos-hae.toggle');
+   });
 
 
 
