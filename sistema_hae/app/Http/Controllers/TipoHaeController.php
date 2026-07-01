@@ -12,12 +12,12 @@ class TipoHaeController extends Controller
     {
         $tipos = TipoHae::orderBy('nome')->get();
 
-        return view('direcao.tipos_hae.index', compact('tipos'));
+        return view('direcao.tipoHae.index', compact('tipos'));
     }
 
     public function create()
     {
-        return view('direcao.tipos_hae.create');
+        return view('direcao.tipoHae.create');
     }
 
     public function store(Request $request)
@@ -39,7 +39,7 @@ class TipoHaeController extends Controller
 
     public function edit(TipoHae $tipoHae)
     {
-        return view('direcao.tipos_hae.edit', compact('tipoHae'));
+        return view('direcao.tipoHae.edit', compact('tipoHae'));
     }
 
     public function update(Request $request, TipoHae $tipoHae)

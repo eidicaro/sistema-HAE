@@ -91,7 +91,11 @@ class HaeController extends Controller
 
     public function create()
     {
-        //
+        return view('formulario', [
+            'nomes' => TipoHae::where('ativo', true)
+                ->orderBy('nome')
+                ->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -110,6 +114,7 @@ class HaeController extends Controller
             'resumo'         => 'required|string',
             'justificativa'  => 'required|string',
             'cronograma'     => 'nullable|string',
+            'especificacoes' => 'nullable|string',
         ]);
 
         $tipo = TipoHae::findOrFail($validated['tipo_hae_id']);
@@ -137,6 +142,7 @@ class HaeController extends Controller
             'resumo'        => $validated['resumo'],
             'justificativa' => $validated['justificativa'],
             'cronograma'    => $validated['cronograma'] ?? null,
+            'especificacoes'=> $validated['especificacoes'] ?? null,
             'status'        => 'pendente',
             'semestre_id'   => $semestre->id,
         ]);
@@ -198,6 +204,7 @@ class HaeController extends Controller
             'resumo'         => 'required|string',
             'justificativa'  => 'required|string',
             'cronograma'     => 'nullable|string',
+            'especificacoes' => 'nullable|string',
         ]);
 
         $tipo = TipoHae::findOrFail($validated['tipo_hae_id']);

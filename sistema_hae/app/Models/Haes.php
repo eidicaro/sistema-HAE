@@ -26,7 +26,9 @@ class Haes extends Model
         'justificativa',
         'cronograma',
         'status',
-        'semestre_id'
+        'semestre_id',
+        'especificacoes',
+        'tipo_hae_id',
     ];
 
     //  RELACIONAMENTOS
@@ -69,7 +71,8 @@ class Haes extends Model
     }
 
     //TIPOS HAE
-    public function tipoHae() {
-        return $this->Hasone(TipoHae::class);
+    public function tipoHae()
+    {
+        return $this->belongsTo(TipoHae::class);
     }
 }

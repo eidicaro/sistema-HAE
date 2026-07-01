@@ -12,8 +12,7 @@ class RelatorioController extends Controller
 {
     public function create($id)
     {
-        $hae = Haes::with(['ams','extensao','plantao','administracao','estudos','graduacao'])
-            ->findOrFail($id);
+        $hae = Haes::with(['tipoHae'])->findOrFail($id);
 
         return view('relatorio.create', compact('hae'));
     }

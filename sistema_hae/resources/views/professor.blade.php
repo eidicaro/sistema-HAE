@@ -19,32 +19,12 @@
 </form>
 
     <div class="nova-hae">
-        <label for="tipoHAE">Nova HAE</label>
-
-        <select id="tipoHAE" class="select-hae">
-            <option value="">Escolha o tipo de HAE</option>
-            <option value="graduacao">Projeto de Graduação</option>
-            <option value="administracao">Administração Acadêmica</option>
-            <option value="estudos">Estudos e Projetos</option>
-            <option value="extensao">Extensão</option>
-            <option value="plantao">Plantão Didático</option>
-            <option value="ams">Programa AMS</option>
-        </select>
+        <a href="{{ route('hae.create') }}" class="btn-create"> Nova HAE</a>
     </div>
 
     <h2>Minhas HAEs</h2>
     @include('components.exibir-hae')
     @include('components.exibir-hae2')
-
-    <script>
-        document.getElementById("tipoHAE").addEventListener("change", function () {
-            let tipo = this.value;
-
-            if (tipo) {
-                window.location.href = `/formulario?tipo=${tipo}`;
-            }
-        });
-    </script>
 
 <!-- se ele for denominado como relator, as haes que ele precisa ver estão aqui -->
 <h2>HAEs para Parecer</h2>
