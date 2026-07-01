@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
 </head>
 <body>
+        <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
+
     @include('components.header')
 
     <h1>Olá Coordenador!</h1>

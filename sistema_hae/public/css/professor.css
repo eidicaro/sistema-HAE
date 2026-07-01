@@ -46,3 +46,22 @@ h2{
     background-color: #9b0300;
     transform: translateX(10px);
 }
+
+/* btn semestres */
+.btn-create{
+    display: block; /* importante aqui */
+    width: 100%; /* não esticar */
+    
+    background-color: #484848d2;
+    margin: auto;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.4s;
+}
+.btn-create:hover{
+    background-color: #393939de;
+    transition: 0.4s;
+}

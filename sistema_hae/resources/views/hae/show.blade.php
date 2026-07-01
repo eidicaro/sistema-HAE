@@ -22,17 +22,7 @@
     <!-- infos Principais -->
     <div class="info">
         <p><strong>Tipo de HAE:</strong> 
-            {{
-                match($hae->tipo) {
-                    'graduacao' => 'Projeto de Graduação',
-                    'administracao' => 'Administração Acadêmica',
-                    'estudos' => 'Estudos e Projetos',
-                    'extensao' => 'Extensão',
-                    'plantao' => 'Plantão Didático',
-                    'ams' => 'Programa AMS',
-                    default => ucfirst($hae->tipo)
-                }
-            }}
+            {{ $hae->tipoHae->nome ?? 'Não definido'}}
         </p>
 
         <p><strong>Professor:</strong> {{ $hae->user->name }}</p>

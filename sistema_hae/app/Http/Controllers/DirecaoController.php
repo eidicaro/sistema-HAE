@@ -8,7 +8,7 @@ use App\Models\Haes;
 use App\Http\Controllers\HaeController;
 use App\Http\Controllers\SemestresController;
 use App\Models\Decisao;
-use App\Models\LimiteHae;
+use App\Models\TipoHae;
 use App\Models\Semestres;
 
 
@@ -22,9 +22,9 @@ class DirecaoController extends Controller
 
         // todas as HAEs com relatores
         $haes = Haes::with('relatores')
-        ->where('semestre_id', $semestreAtivo->id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('semestre_id', $semestreAtivo->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('ver-relatores', compact('usuarios', 'haes'));
     }
@@ -45,51 +45,48 @@ class DirecaoController extends Controller
     public function decisao(Request $request, $id)
     {
         $hae = Haes::findOrFail($id);
-    
+
+        $tipo = $hae->tipoHae; // ou TipoHae::findOrFail($hae->tipo_hae_id)
+
+        if (!$tipo) {
+            return back()->with('error', 'Tipo de HAE inválido.');
+        }
+
         switch ($request->acao) {
-    
+
             case 'aprovada':
 
-                $limite = LimiteHae::where('tipo', $hae->tipo)->first();
-            
-                if (!$limite) {
-                    return back()->with('error', 'Limite não definido para esse tipo de HAE.');
-                }
-            
-                // agora soma EM_EXECUCAO + FINALIZADA
-                $totalUsado = Haes::where('tipo', $hae->tipo)
+                $totalUsado = Haes::where('tipo_hae_id', $tipo->id)
                     ->whereIn('status', ['em_execucao', 'finalizada'])
                     ->sum('carga_horaria');
-            
-                if (($totalUsado + $hae->carga_horaria) > $limite->carga_total) {
+
+                if (($totalUsado + $hae->carga_horaria) > $tipo->limite) {
                     return back()->with('error', 'Limite de carga horária excedido!');
                 }
-            
+
                 $status = 'em_execucao';
-            
+
                 break;
-    
+
             case 'recusada':
                 $status = 'recusada';
                 break;
-    
+
             case 'diligencia':
                 $status = 'com_diligencia';
                 break;
         }
-    
-        // atualiza status
+
         $hae->status = $status;
         $hae->save();
-    
-        // salva decisão
+
         Decisao::create([
             'hae_id' => $hae->id,
             'avaliador_id' => auth()->id(),
             'decisao' => $request->acao,
             'comentario' => $request->comentario
         ]);
-    
+
         return back()->with('sucesso', 'Decisão aplicada!');
     }
 

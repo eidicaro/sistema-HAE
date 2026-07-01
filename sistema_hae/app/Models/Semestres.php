@@ -12,6 +12,6 @@ class Semestres extends Model
     
     public function haes()
     {
-        return $this->hasMany(Hae::class);
+        return $this->hasMany(Haes::class);
     }
 }

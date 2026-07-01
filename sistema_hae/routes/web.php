@@ -8,6 +8,7 @@ use App\Http\Controllers\ParecerController;
 use App\Http\Controllers\DirecaoController;
 use App\Http\Controllers\SemestresController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\TipoHaeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,10 +65,7 @@ Route::middleware('auth')->group(function () {
     */
 
     // abre formulário com tipo dinâmico (?tipo=graduacao)
-    Route::get('/formulario', function () {
-        $tipo = request('tipo');
-        return view('formulario', compact('tipo'));
-    });
+    Route::get('/formulario', [HaeController::class, 'create'])->name('hae.create');
 
     // salvar HAE
     Route::post('/salvar-hae', [HaeController::class, 'store']);
@@ -104,19 +102,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
     Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
     // limitação de qtde de hae
-    Route::get('/direcao/limites', function () {
-        return view('direcao.limites');
+    Route::prefix('direcao')->name('direcao.')->group(function () {
+
+        Route::resource('tipos-hae', TipoHaeController::class)
+            ->except(['show'])
+            ->parameters([
+                'tipos-hae' => 'tipoHae'
+            ]);
+    
+        Route::post('tipos-hae/{tipoHae}/toggle', [TipoHaeController::class, 'toggle'])
+            ->name('tipos-hae.toggle');
     });
-
-    Route::post('/direcao/limites', function (Request $request) {
-
-        \App\Models\LimiteHae::updateOrCreate(
-            ['tipo' => $request->tipo],
-            ['carga_total' => $request->carga_total]
-        );
-
-        return back()->with('success', 'Limite salvo!');
-    })->name('direcao.limites.salvar');
 
 
 

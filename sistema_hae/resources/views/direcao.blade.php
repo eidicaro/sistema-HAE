@@ -8,24 +8,27 @@
     <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
 </head>
 <body>
+    <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
     @include('components.header')
 
     <h1>Olá Direção!</h1>
-    <form method="POST" action="/logout" >
-    @csrf
-    <button type="submit" class="logout">Logout</button>
+    <form method="POST" action="/logout">
+        @csrf
+        <button type="submit" class="logout">Logout</button>
     </form>
 
-    <h2>HAEs Submetidas</h2>
-    <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
+    <section>
+        <h2>HAEs Submetidas</h2>
+        <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
 
-    @include('components.exibir-hae')
-    <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
+        @include('components.exibir-hae')
+        <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
+    </section>
 
-    <!-- Carga horaria -->
-    <h2>Controle de Carga Horária</h2>
+    <section>
+        <h2>Controle de Carga Horária</h2>
 
-        <table cellpadding="10" style="" class="carga-hora">
+        <table cellpadding="10" class="carga-hora">
             <tr>
                 <th>Tipo</th>
                 <th>Limite</th>
@@ -38,42 +41,20 @@
                     <td>{{ ucfirst($dado['tipo']) }}</td>
                     <td>{{ $dado['limite'] }}h</td>
                     <td>{{ $dado['usado'] }}h</td>
-
-                    <td style="
-                        color: {{ $dado['restante'] < 0 ? 'red' : 'green' }};
-                        font-weight: bold;
-                    ">
+                    <td style="color: {{ $dado['restante'] < 0 ? 'red' : 'green' }}; font-weight: bold;">
                         {{ $dado['restante'] }}h
                     </td>
                 </tr>
             @endforeach
         </table>
 
-    <h2>Definir Limite de Carga Horária</h2>
+        <a href="{{ route('direcao.tipos-hae.index') }}" class="btn-results">Gerenciar Tipos de HAE</a>
+    </section>
 
-        <form method="POST" action="{{ route('direcao.limites.salvar') }}" class="definir-hora">
-            @csrf
-
-            <label>Tipo de HAE</label>
-            <select name="tipo">
-                <option value="ams">AMS</option>
-                <option value="graduacao">Graduação</option>
-                <option value="administracao">Administração</option>
-                <option value="estudos">Estudos</option>
-                <option value="extensao">Extensão</option>
-                <option value="plantao">Plantão</option>
-            </select>
-
-            <label>Carga Horária Total</label>
-            <input type="number" name="carga_total" required>
-
-            <button type="submit">Salvar Limite</button>
-        </form>
-
-        <!-- semestre -->
-        <div class="semestre">
-            <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
-            <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>
-        </div>
+    <!-- semestre -->
+    <section class="semestre">
+        <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
+        <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>
+    </section>
 </body>
 </html>

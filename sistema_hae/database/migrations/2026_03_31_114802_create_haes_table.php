@@ -16,7 +16,7 @@ return new class extends Migration
             $table->boolean('edital_aceito');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete(); //usuario
             $table->foreignId('semestre_id')->constrained()->cascadeOnDelete(); //semestres
-            $table->string('tipo');
+            $table->foreignId('tipo_hae_id')->constrained('tipo_haes')->restrictOnDelete();
 
             //infos gerais
             $table->string('curso');
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('carga_horaria');
             $table->text('resumo');
             $table->text('justificativa');
+            $table->text('especificacoes');
         
             // cronograma
             $table->text('cronograma')->nullable();
