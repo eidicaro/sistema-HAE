@@ -173,3 +173,40 @@ a::after {
 a:hover::after {
     transform: scaleX(1);
 }
+
+.cronograma-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+}
+
+.cronograma-table th{
+    background:#b20000;
+    color:#fff;
+    padding:12px;
+    text-align:left;
+}
+
+.cronograma-table td{
+    border:1px solid #ddd;
+    padding:10px;
+    vertical-align:middle;
+}
+
+.cronograma-table td:first-child{
+    width:120px;
+    font-weight:600;
+}
+
+.cronograma-table input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    box-sizing:border-box;
+}
+
+.cronograma-table input:focus{
+    outline:none;
+    border-color:#b20000;
+}

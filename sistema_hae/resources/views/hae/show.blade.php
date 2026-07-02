@@ -91,13 +91,35 @@
         </p>
     </div>
 
-    <div class="bloco">
-        <h2>Cronograma</h2>
+<div class="bloco">
+    <h2>Cronograma</h2>
 
-        <p style="white-space: pre-line;">
-            {{ $hae->cronograma }}
-        </p>
-    </div>
+    <table class="cronograma-table">
+        <thead>
+            <tr>
+                <th>Mês</th>
+                <th>Atividade Prevista</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @for($i = 1; $i <= 5; $i++)
+                <tr>
+                    <td>Mês {{ $i }}</td>
+                    <td>{{ $hae->{'mes_'.$i} }}</td>
+                </tr>
+            @endfor
+        </tbody>
+    </table>
+</div>
+
+<div class="bloco">
+    <h2>Horários da HAE</h2>
+
+    <p style="white-space: pre-line;">
+        {{ $hae->horarios_hae }}
+    </p>
+</div>
 
     <!-- PARECERES -->
     <div class="bloco">

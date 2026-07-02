@@ -104,19 +104,41 @@
         placeholder="Informe os indicadores que serão utilizados para avaliar os resultados.">{{ old('indicadores', $hae->indicadores ?? '') }}</textarea>
 </div>
 
-<h2>Do Cronograma</h2>
+<h2>Cronograma</h2>
 
-<small style="color: #666;">
-    Informe os dias e horários das atividades.<br>
-    Exemplo: Segundas e Quartas - 19h às 21h
-</small>
+<table class="cronograma-table">
+    <thead>
+        <tr>
+            <th>Mês</th>
+            <th>Desenvolvimento Previsto</th>
+        </tr>
+    </thead>
 
-<textarea 
-    name="cronograma" 
-    rows="4" 
-    placeholder="Ex: Segundas e Quartas das 19h às 21h">
-{{ old('cronograma', $hae->cronograma ?? '') }}
-</textarea>
+    <tbody>
+        @for($i = 1; $i <= 5; $i++)
+            <tr>
+                <td>Mês {{ $i }}</td>
+                <td>
+                    <input
+                        type="text"
+                        name="mes_{{ $i }}"
+                        value="{{ old('mes_'.$i, $hae->{'mes_'.$i} ?? '') }}"
+                        placeholder="Descreva as atividades previstas para este mês">
+                </td>
+            </tr>
+        @endfor
+    </tbody>
+</table>
+
+<div class="mb-3">
+    <label for="horarios_hae">Horários da HAE</label>
+
+    <textarea
+        id="horarios_hae"
+        name="horarios_hae"
+        rows="4"
+        placeholder="Ex.: Segundas e Quartas das 19h às 21h">{{ old('horarios_hae', $hae->horarios_hae ?? '') }}</textarea>
+</div>
 
 <input type="hidden" name="tipo" value="{{ $tipo }}">
 

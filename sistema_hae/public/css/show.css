@@ -223,3 +223,43 @@ a:hover::after {
     background-color: #7b0503;
     transition: 0.4s;
 }
+
+/* ===== Cronograma ===== */
+
+.cronograma-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.cronograma-table th{
+    background: #b20000;
+    color: #fff;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.cronograma-table td{
+    padding: 12px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+    word-break: break-word;
+}
+
+.cronograma-table tbody tr:nth-child(even){
+    background: #f8f8f8;
+}
+
+.cronograma-table tbody tr:hover{
+    background: #f1f1f1;
+}
+
+.cronograma-table td:first-child{
+    width: 110px;
+    font-weight: 600;
+    text-align: center;
+}

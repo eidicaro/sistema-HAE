@@ -27,8 +27,15 @@ return new class extends Migration
             $table->text('resultados_esperados')->nullable();
             $table->text('indicadores')->nullable();
         
-            // cronograma
-            $table->text('cronograma')->nullable();
+            // desenvolvimento por mês
+            $table->text('mes_1')->nullable();
+            $table->text('mes_2')->nullable();
+            $table->text('mes_3')->nullable();
+            $table->text('mes_4')->nullable();
+            $table->text('mes_5')->nullable();
+
+            // horários
+            $table->text('horarios_hae')->nullable();
         
             $table->string('status')->default('pendente');
         
