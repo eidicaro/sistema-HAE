@@ -79,20 +79,29 @@
 <textarea name="justificativa">{{ old('justificativa', $hae->justificativa ?? '') }}</textarea>
 
 <div class="mb-3">
-    <label for="especificacoes" class="form-label">
-        Especificações da HAE
+    <label for="resultados_esperados" class="form-label">
+        Resultados Esperados
     </label>
 
     <textarea
         class="form-control"
-        id="especificacoes"
-        name="especificacoes"
+        id="resultados_esperados"
+        name="resultados_esperados"
         rows="4"
-        placeholder="Caso esta HAE possua alguma especificação ou detalhe importante, informe aqui.">{{ old('especificacoes', $hae->especificacoes ?? '') }}</textarea>
+        placeholder="Descreva os resultados esperados da HAE.">{{ old('resultados_esperados', $hae->resultados_esperados ?? '') }}</textarea>
+</div>
 
-    <small class="text-muted">
-        Campo opcional.
-    </small>
+<div class="mb-3">
+    <label for="indicadores" class="form-label">
+        Indicadores
+    </label>
+
+    <textarea
+        class="form-control"
+        id="indicadores"
+        name="indicadores"
+        rows="4"
+        placeholder="Informe os indicadores que serão utilizados para avaliar os resultados.">{{ old('indicadores', $hae->indicadores ?? '') }}</textarea>
 </div>
 
 <h2>Do Cronograma</h2>

@@ -114,7 +114,8 @@ class HaeController extends Controller
             'resumo'         => 'required|string',
             'justificativa'  => 'required|string',
             'cronograma'     => 'nullable|string',
-            'especificacoes' => 'nullable|string',
+            'resultados_esperados' => 'nullable|string',
+            'indicadores'          => 'nullable|string',
         ]);
 
         $tipo = TipoHae::findOrFail($validated['tipo_hae_id']);
@@ -142,7 +143,8 @@ class HaeController extends Controller
             'resumo'        => $validated['resumo'],
             'justificativa' => $validated['justificativa'],
             'cronograma'    => $validated['cronograma'] ?? null,
-            'especificacoes'=> $validated['especificacoes'] ?? null,
+            'resultados_esperados' => $validated['resultados_esperados'] ?? null,
+            'indicadores'          => $validated['indicadores'] ?? null,
             'status'        => 'pendente',
             'semestre_id'   => $semestre->id,
         ]);
@@ -204,7 +206,8 @@ class HaeController extends Controller
             'resumo'         => 'required|string',
             'justificativa'  => 'required|string',
             'cronograma'     => 'nullable|string',
-            'especificacoes' => 'nullable|string',
+            'resultados_esperados' => 'nullable|string',
+            'indicadores'          => 'nullable|string',
         ]);
 
         $tipo = TipoHae::findOrFail($validated['tipo_hae_id']);

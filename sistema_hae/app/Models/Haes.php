@@ -27,7 +27,8 @@ class Haes extends Model
         'cronograma',
         'status',
         'semestre_id',
-        'especificacoes',
+        'resultados_esperados',
+        'indicadores',
         'tipo_hae_id',
     ];
 

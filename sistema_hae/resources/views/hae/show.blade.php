@@ -78,16 +78,25 @@
     </div>
 
     <div class="bloco">
+        <h2>Resultados Esperados</h2>
+        <p style="white-space: pre-line;">
+            {{ $hae->resultados_esperados }}
+        </p>
+    </div>
+
+    <div class="bloco">
+        <h2>Indicadores</h2>
+        <p style="white-space: pre-line;">
+            {{ $hae->indicadores }}
+        </p>
+    </div>
+
+    <div class="bloco">
         <h2>Cronograma</h2>
 
         <p style="white-space: pre-line;">
             {{ $hae->cronograma }}
         </p>
-    </div>
-
-    <div class="bloco">
-        <h2>Detalhes Específicos</h2>
-        @includeIf('components.hae.' . $hae->tipo, ['hae' => $hae])
     </div>
 
     <!-- PARECERES -->

@@ -24,7 +24,8 @@ return new class extends Migration
             $table->integer('carga_horaria');
             $table->text('resumo');
             $table->text('justificativa');
-            $table->text('especificacoes');
+            $table->text('resultados_esperados')->nullable();
+            $table->text('indicadores')->nullable();
         
             // cronograma
             $table->text('cronograma')->nullable();
