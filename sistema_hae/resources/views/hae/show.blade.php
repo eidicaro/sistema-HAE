@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HAE</title>
-    <link rel="stylesheet" href="{{ asset('../../css/show.css') }}">
-    <link rel="stylesheet" href="{{ asset('../../css/fonte.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/show.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/fonte.css') }}">
 </head>
 <body>
 
@@ -59,7 +59,7 @@
         @endif
 
         @if($hae->status == 'em_execucao')
-            <a href="/hae/{{ $hae->id }}/relatorio">
+            <a href="{{ url('/hae/' . $hae->id . '/relatorio') }}">
                 Preencher Relatório
             </a>
         @endif
@@ -154,7 +154,7 @@
             <div class="bloco-parecer">
                 <h3>Dar Parecer</h3>
 
-                <form method="POST" action="/parecer/{{ $hae->id }}">
+                <form method="POST" action="{{ url('/parecer/' . $hae->id) }}">
                     @csrf
 
                     <textarea name="comentario" required class="comentario"></textarea>
@@ -214,7 +214,7 @@
             <div class="bloco-decisao">
                 <h3>Tomar decisão</h3>
 
-                <form method="POST" action="/direcao/decisao/{{ $hae->id }}">
+                <form method="POST" action="{{ url('/direcao/decisao/' . $hae->id) }}">
                     @csrf
 
                     <textarea name="comentario" placeholder="Comentário (opcional)" class="comentario"></textarea>
@@ -321,12 +321,12 @@
                     justify-content: space-around;
                     margin: 2% 0 0 0;">
         
-        <form method="POST" action="/relatorio/{{ $relatorio->id }}/aprovar">
+        <form method="POST" action="{{ url('/relatorio/' . $relatorio->id . '/aprovar') }}">
             @csrf
             <button class="btn-rel-aprov">Aprovar Relatório</button>
         </form>
 
-        <form method="POST" action="/relatorio/{{ $relatorio->id }}/reprovar">
+        <form method="POST" action="{{ url('/relatorio/' . $relatorio->id . '/reprovar') }}">
             @csrf
             <button class="btn-rel-rec">Reprovar Relatório</button>
         </form>

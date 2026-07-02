@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Nova HAE</title>
-    <link rel="stylesheet" href="{{ asset('../css/formulario.css') }}">
-</head>
+    <link rel="stylesheet" href="{{ asset('css/formulario.css') }}"></head>
 <body>
     <!-- não vou comentar tudo isso não, so o basico que precisa saber 
      Boa Sorte Dev do futuro :)-->
@@ -12,13 +11,13 @@
 
 
 <h1>Nova HAE</h1>
-<a href="/professor">voltar</a>
+<a href="{{ route(auth()->user()->role) }}">Voltar</a>
 
 @php
     $tipo = request('tipo');
 @endphp
 
-<form method="POST" action="{{ isset($hae) ? route('hae.update', $hae->id) : '/salvar-hae' }}">
+<form method="POST" action="{{ isset($hae) ? route('hae.update', $hae->id) : url('/salvar-hae') }}">
     @csrf
 
     @if(isset($hae))
