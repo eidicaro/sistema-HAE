@@ -50,7 +50,33 @@
 
 /* lista */
 .hae-list {
+
     padding: 10px 15px;
+
+    max-height: 450px;
+
+    overflow-y: auto;
+
+}
+
+.hae-list::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.hae-list::-webkit-scrollbar-thumb{
+
+    background:#bcbcbc;
+
+    border-radius:10px;
+
+}
+
+.hae-list::-webkit-scrollbar-track{
+
+    background:#ececec;
+
 }
 
 /* item */
@@ -83,10 +109,6 @@
     width: 80%;
 }
 
-/* container da lista */
-.hae-list {
-    padding: 10px 15px;
-}
 
 /* card clicável */
 .hae-item {
@@ -136,4 +158,30 @@
     font-weight: 500;
     font-size: 18px;
     margin-left: 0.6%;
+}
+
+.professor{
+
+    font-size:14px;
+
+    color:#444;
+
+    margin-top:5px;
+
+}
+
+.titulo{
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    color:#222;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
 }

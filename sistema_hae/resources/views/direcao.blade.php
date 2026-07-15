@@ -21,6 +21,14 @@
         <h2>HAEs Submetidas</h2>
         <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
 
+        <div class="pesquisa-hae">
+            <input
+                type="text"
+                id="pesquisaHae"
+                placeholder="Pesquisar por título ou professor..."
+            >
+        </div>
+
         @include('components.exibir-hae')
         <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
     </section>
@@ -56,5 +64,41 @@
         <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
         <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>
     </section>
+
+
+    <script>
+
+    const pesquisa = document.getElementById('pesquisaHae');
+
+    pesquisa.addEventListener('keyup', function(){
+
+        const texto = this.value.toLowerCase();
+
+        document.querySelectorAll('.hae-item').forEach(item=>{
+
+            const titulo = item.querySelector('.titulo').textContent.toLowerCase();
+
+            const professor = item.querySelector('.professor').textContent.toLowerCase();
+
+            if(
+                titulo.includes(texto)
+                ||
+                professor.includes(texto)
+            ){
+
+                item.style.display='block';
+
+            }else{
+
+                item.style.display='none';
+
+            }
+
+        });
+
+    });
+
+    </script>
+
 </body>
 </html>

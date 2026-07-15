@@ -279,3 +279,37 @@ td{
     justify-content: space-between;
 }
 
+.pesquisa-hae{
+
+    width:80%;
+
+    margin:20px auto;
+
+}
+
+.pesquisa-hae input{
+
+    width:100%;
+
+    padding:12px;
+
+    font-size:16px;
+
+    border-radius:8px;
+
+    border:1px solid #bdbdbd;
+
+    outline:none;
+
+    transition:.2s;
+
+}
+
+.pesquisa-hae input:focus{
+
+    border-color:#005dce;
+
+    box-shadow:0 0 5px rgba(0,93,206,.3);
+
+}
+
