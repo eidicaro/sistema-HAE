@@ -9,6 +9,7 @@ use App\Http\Controllers\DirecaoController;
 use App\Http\Controllers\SemestresController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\TipoHaeController;
+use App\Http\Controllers\ProfessorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,9 +102,16 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
     Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
+
     // limitação de qtde de hae
     Route::prefix('direcao')->name('direcao.')->group(function () {
 
+        /*
+        |--------------------------------------------------------------------------
+        | TIPOS DE HAE
+        |--------------------------------------------------------------------------
+        */
+    
         Route::resource('tipos-hae', TipoHaeController::class)
             ->except(['show'])
             ->parameters([
@@ -112,8 +120,19 @@ Route::middleware('auth')->group(function () {
     
         Route::post('tipos-hae/{tipoHae}/toggle', [TipoHaeController::class, 'toggle'])
             ->name('tipos-hae.toggle');
+    
+        /*
+        |--------------------------------------------------------------------------
+        | PROFESSORES
+        |--------------------------------------------------------------------------
+        */
+    
+        Route::resource('professores', ProfessorController::class)
+            ->parameters([
+                'professores' => 'professor'
+            ])
+            ->except(['show']);
     });
-
 
 
     /*

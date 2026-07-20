@@ -57,6 +57,7 @@
         </table>
 
         <a href="{{ route('direcao.tipos-hae.index') }}" class="btn-results">Gerenciar Tipos de HAE</a>
+        <a href="/direcao/professores" class="btn-results">Gerenciar Professores</a>
     </section>
 
     <!-- semestre -->
