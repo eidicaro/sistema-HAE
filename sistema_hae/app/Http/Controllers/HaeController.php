@@ -32,7 +32,7 @@ class HaeController extends Controller
                 'professor'   => view('professor', $baseData)->with('erro', 'Nenhum semestre ativo.'),
                 'coordenador' => view('coordenador', $baseData)->with('erro', 'Nenhum semestre ativo.'),
                 default       => view('direcao', array_merge($baseData, ['dadosLimites' => []]))
-                                    ->with('erro', 'Nenhum semestre ativo.'),
+                    ->with('erro', 'Nenhum semestre ativo.'),
             };
         }
 
@@ -44,7 +44,7 @@ class HaeController extends Controller
             $query->where('user_id', $user->id);
         } elseif ($user->role == 'coordenador') {
             $query->where('curso', $user->curso)
-                  ->whereIn('status', ['pendente', 'com_diligencia']);
+                ->whereIn('status', ['pendente', 'com_diligencia']);
         }
 
         $haes = $query->get();
@@ -55,9 +55,9 @@ class HaeController extends Controller
         $finalizadas = $haes->where('status', 'finalizada');
         $recusadas   = $haes->where('status', 'recusada');
 
-        $haesRelator = Haes::whereHas('relatores', fn ($q) => $q->where('user_id', $user->id))
+        $haesRelator = Haes::whereHas('relatores', fn($q) => $q->where('user_id', $user->id))
             ->where('semestre_id', $semestreAtual->id)
-            ->when($user->role == 'coordenador', fn ($q) => $q->where('curso', $user->curso))
+            ->when($user->role == 'coordenador', fn($q) => $q->where('curso', $user->curso))
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -78,14 +78,25 @@ class HaeController extends Controller
             })->values()->all();
 
             return view('direcao', array_merge($baseData, compact(
-                'pendentes', 'diligencia', 'finalizadas', 'recusadas', 'haesRelator', 'emExecucao', 'dadosLimites'
+                'pendentes',
+                'diligencia',
+                'finalizadas',
+                'recusadas',
+                'haesRelator',
+                'emExecucao',
+                'dadosLimites'
             )));
         }
 
         $view = $user->role == 'coordenador' ? 'coordenador' : 'professor';
 
         return view($view, array_merge($baseData, compact(
-            'pendentes', 'diligencia', 'finalizadas', 'recusadas', 'haesRelator', 'emExecucao'
+            'pendentes',
+            'diligencia',
+            'finalizadas',
+            'recusadas',
+            'haesRelator',
+            'emExecucao'
         )));
     }
 
@@ -124,12 +135,12 @@ class HaeController extends Controller
             ->whereIn('status', ['pendente', 'com_diligencia', 'em_execucao', 'finalizada'])
             ->sum('carga_horaria');
 
-        if(($horasUsadas + $validated['carga_horaria']) > $tipo->limite){
+        if (($horasUsadas + $validated['carga_horaria']) > $tipo->limite) {
             return back()
-                    ->withInput()
-                    ->withErrors([
-                        'carga_horaria' => "A carga horaria excede o limite disponivel para {$tipo->nome}. Restam" . max(0, $tipo->limite - $horasUsadas) . "horas"
-                    ]);
+                ->withInput()
+                ->withErrors([
+                    'carga_horaria' => "A carga horaria excede o limite disponivel para {$tipo->nome}. Restam" . max(0, $tipo->limite - $horasUsadas) . "horas"
+                ]);
         }
 
         Haes::create([
@@ -142,7 +153,7 @@ class HaeController extends Controller
             'resumo'        => $validated['resumo'],
             'justificativa' => $validated['justificativa'],
             'cronograma'    => $validated['cronograma'] ?? null,
-            'especificacoes'=> $validated['especificacoes'] ?? null,
+            'especificacoes' => $validated['especificacoes'] ?? null,
             'status'        => 'pendente',
             'semestre_id'   => $semestre->id,
         ]);
@@ -153,8 +164,12 @@ class HaeController extends Controller
     public function show($id)
     {
         $hae = Haes::with([
-            'user', 'pareceres.user', 'relatores', 'decisoes',
-            'relatorio.resultados', 'relatorio.arquivos',
+            'user',
+            'pareceres.user',
+            'relatores',
+            'decisoes',
+            'relatorio.resultados',
+            'relatorio.arquivos',
         ])->findOrFail($id);
 
         $user = auth()->user();
@@ -210,16 +225,16 @@ class HaeController extends Controller
         $tipo = TipoHae::findOrFail($validated['tipo_hae_id']);
 
         $horasUsadas = Haes::where('tipo_hae_id', $tipo->id)
-                ->where('semestre_id', $hae->semestre_id)
-                ->where('id', '!=', $hae->id)
-                ->whereIn('status', ['pendente', 'com_diligencia', 'em_execucao', 'finalizada'])
-                ->sum('carga_horaria');
+            ->where('semestre_id', $hae->semestre_id)
+            ->where('id', '!=', $hae->id)
+            ->whereIn('status', ['pendente', 'com_diligencia', 'em_execucao', 'finalizada'])
+            ->sum('carga_horaria');
 
-        if (($horasUsadas + $validated['carga_horaria']) > $tipo->limite){
+        if (($horasUsadas + $validated['carga_horaria']) > $tipo->limite) {
             return back()
                 ->withInput()
                 ->withErrors([
-                     'carga_horaria' => "A carga horária excede o limite disponível para {$tipo->nome}. Restam " . max(0, $tipo->limite - $horasUsadas) . " horas."
+                    'carga_horaria' => "A carga horária excede o limite disponível para {$tipo->nome}. Restam " . max(0, $tipo->limite - $horasUsadas) . " horas."
                 ]);
         }
 
@@ -235,5 +250,126 @@ class HaeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function exportarcsv()
+    {
+        $semestreAtual = Semestres::where('ativo', true)->first();
+
+        if (!$semestreAtual) {
+            return back()->with('erro', 'nenhum semestre ativo encontrado');
+        }
+
+        $haes = Haes::with([
+            'user',
+            'tipoHae',
+            'semestre',
+            'relatores',
+        ])
+            ->where('semestre_id', $semestreAtual->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $nomeArquivo = 'haes_' . str_replace(['', '/'], ['_', '-'], $semestreAtual->nome) . '.csv';
+
+        $headers = [
+            'content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$nomeArquivo\"",
+        ];
+
+        return response()->stream(function () use ($haes) {
+            $arquivo = fopen('php://output', 'w');
+
+            // Para o excel reconhecer utf-8
+
+            fprintf($arquivo, chr(0xEF).chr(0xBB).chr(0xBF));
+            // cabeçalho da planilha
+
+            fputcsv($arquivo, [
+                'ID',
+                'Professor',
+                'E-mail',
+                'Relatores',
+                'Curso',
+                'Semestre',
+                'Tipo HAE',
+                'Edital Aceito',
+                'Status',
+            
+                'Título',
+                'Carga Horária',
+            
+                'Resumo',
+                'Justificativa',
+                'Especificações',
+                'Cronograma',
+            
+                'Indicadores',
+                'Horários HAE',
+            
+                'Mês 1',
+                'Mês 2',
+                'Mês 3',
+                'Mês 4',
+                'Mês 5',
+            
+                'Criado em',
+                'Atualizado em',
+            ], ';');
+
+            foreach ($haes as $hae) {
+
+                $relatores = $hae->relatores
+                    ->pluck('name')
+                    ->implode(' | ');
+            
+                $status = match ($hae->status) {
+                    'pendente'       => 'Pendente',
+                    'com_diligencia' => 'Com diligência',
+                    'aprovada'       => 'Aprovada',
+                    'em_execucao'    => 'Em execução',
+                    'finalizada'     => 'Finalizada',
+                    'recusada'       => 'Recusada',
+                    default          => ucfirst($hae->status),
+                };
+            
+                fputcsv($arquivo, [
+                    $hae->id,
+                    $hae->user->name ?? '',
+                    $hae->user->email ?? '',
+                    $relatores,
+            
+                    $hae->curso,
+                    $hae->semestre->nome ?? '',
+                    $hae->tipoHae->nome ?? '',
+            
+                    $hae->edital_aceito ? 'Sim' : 'Não',
+                    $status,
+            
+                    $hae->titulo,
+                    $hae->carga_horaria,
+            
+                    $hae->resumo,
+                    $hae->justificativa,
+                    $hae->especificacoes,
+                    $hae->cronograma,
+            
+                    $hae->indicadores ?? '',
+                    $hae->horarios_hae ?? '',
+            
+                    $hae->mes_1 ?? '',
+                    $hae->mes_2 ?? '',
+                    $hae->mes_3 ?? '',
+                    $hae->mes_4 ?? '',
+                    $hae->mes_5 ?? '',
+            
+                    optional($hae->created_at)->format('d/m/Y H:i'),
+                    optional($hae->updated_at)->format('d/m/Y H:i'),
+            
+                ], ';');
+            }
+
+            fclose($arquivo);
+        }, 200, $headers);
     }
 }
