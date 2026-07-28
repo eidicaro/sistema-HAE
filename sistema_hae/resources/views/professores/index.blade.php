@@ -14,6 +14,8 @@
 
 <h1>Gerenciar Professores</h1>
 
+<a href="/direcao" class="btn-voltar">Voltar</a>
+
 @if(session('sucesso'))
     <div class="success">
         {{ session('sucesso') }}
@@ -78,7 +80,6 @@
 </div>
 <br>
 
-<a href="/direcao" class="btn-voltar">Voltar</a>
 
 </body>
 </html>

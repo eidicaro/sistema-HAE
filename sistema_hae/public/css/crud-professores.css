@@ -297,22 +297,21 @@
 =========================================== */
 
 .btn-voltar{
-
-    display:inline-block;
-    margin-top:20px;
-    background:#555;
+    display: block;
+    max-width: 5%;
+    margin: 2% 0 0 10%;
+    background:#b20000;
     color:white;
     text-decoration:none;
     padding:10px 18px;
     border-radius:8px;
-    transition:.2s;
+    transition:0.2s;
 
 }
 
 .btn-voltar:hover{
-
-    background:#333;
-
+    background:#8b0000;
+    transition: 0.2s;
 }
 
 .tr-nomes{
