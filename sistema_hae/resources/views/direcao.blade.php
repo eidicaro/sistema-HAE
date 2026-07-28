@@ -12,32 +12,42 @@
     @include('components.header')
 
     <h1>Olá Direção!</h1>
+    <div class="container">
 
-    <form method="POST" action="/logout">
-        @csrf
-        <button type="submit" class="logout">Logout</button>
-    </form>
-
-    <section>
-        <h2>HAEs Submetidas</h2>
-        <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
-
-        <div class="pesquisa-hae">
-            <input
-                type="text"
-                id="pesquisaHae"
-                placeholder="Pesquisar por título ou professor..."
-            >
-        </div>
-
-        @include('components.exibir-hae')
-        <a href="/direcao/exportar-csv" class="btn-results">Exportar CSV</a>
-        <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
+        
+        <form method="POST" action="/logout">
+            @csrf
+            <button type="submit" class="logout">Logout</button>
+        </form>
+        
+        <!-- semestre -->
+    <section class="semestre">
+        <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
+        <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>
     </section>
 
-    <section>
-        <h2>Controle de Carga Horária</h2>
+        <section>
+            <h2>HAEs Submetidas</h2>
+            
+            
+        <div class="pesquisa-hae">
+            <input
+            type="text"
+            id="pesquisaHae"
+            placeholder="Pesquisar por título ou professor..."
+            >
+        </div>
+        
+        @include('components.exibir-hae')
+        
+        <a href="/direcao/exportar-csv" class="btn-export">Exportar CSV</a>
+        
+    </section>
+    
+    <h2>Controle de Carga Horária</h2>
 
+    <section class="tipo-hae">
+        
         <table cellpadding="10" class="carga-hora">
             <tr>
                 <th>Tipo</th>
@@ -45,30 +55,29 @@
                 <th>Usado</th>
                 <th>Restante</th>
             </tr>
-
+            
             @foreach($dadosLimites as $dado)
-                <tr>
-                    <td>{{ ucfirst($dado['tipo']) }}</td>
-                    <td>{{ $dado['limite'] }}h</td>
-                    <td>{{ $dado['usado'] }}h</td>
+            <tr>
+                <td>{{ ucfirst($dado['tipo']) }}</td>
+                <td>{{ $dado['limite'] }}h</td>
+                <td>{{ $dado['usado'] }}h</td>
                     <td style="color: {{ $dado['restante'] < 0 ? 'red' : 'green' }}; font-weight: bold;">
                         {{ $dado['restante'] }}h
                     </td>
                 </tr>
             @endforeach
         </table>
-
         <a href="{{ route('direcao.tipos-hae.index') }}" class="btn-results">Gerenciar Tipos de HAE</a>
-        <a href="/direcao/professores" class="btn-results">Gerenciar Professores</a>
+
     </section>
-
-    <!-- semestre -->
-    <section class="semestre">
-        <h2>Semestre atual: {{ $semestreAtual->nome ?? 'Nenhum ativo' }}</h2>
-        <a href="/semestres" class="btn-semestres">Gerenciar Semestres</a>
-    </section>
-
-
+    
+    <h2>Outras Ações</h2>
+    <div class="botoes">
+            <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
+            <a href="/direcao/relatores" class="btn-results">Ver Relatores</a>
+            <a href="/direcao/professores" class="btn-results">Gerenciar Professores</a>
+        </div>
+    
     <script>
 
     const pesquisa = document.getElementById('pesquisaHae');
@@ -102,6 +111,8 @@
     });
 
     </script>
+
+</div>
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 h2{
-    margin: 3% 0 0 10%;
+    margin-top: 3%;
 }
 
 .btn-voltar {
@@ -29,24 +29,6 @@ h2{
     transform: scaleX(1);
 }
 
-.btn-results {
-    display: block; /* importante aqui */
-    width: fit-content; /* não esticar */
-    margin: 0 10% 30px auto; /* joga pra direita + margem embaixo */
-    
-    background-color: #B30A07;
-    padding: 15px 80px;
-    border-radius: 10px;
-    font-weight: 800;
-    color: #fff;
-    text-decoration: none;
-    transition: 0.4s;
-}
-
-.btn-results:hover{
-    background-color: #7b0503;
-    transition: 0.4s;
-}
 
 /* ver relatores */
 
@@ -153,22 +135,6 @@ h2{
     font-weight: bold;
 }
 
-/* logout */
-.logout{
-    padding: 10px;
-    background-color: #B30A07;
-    color: #fff;
-    border-style: none;
-    font-weight: 800;
-    border-radius: 10px;
-    transition: 0.2s;
-}
-.logout:hover{
-    transition: 0.2s;
-    background-color: #9b0300;
-    transform: translateX(10px);
-}
-
 .usuarios-header {
     display: flex;
     justify-content: space-between;
@@ -255,24 +221,7 @@ td{
     transition: 0.3s;
 }
 
-/* btn semestres */
-.btn-semestres{
-    display: block; /* importante aqui */
-    width: fit-content; /* não esticar */
-    margin: 2% 20%; /* joga pra direita + margem embaixo */
-    
-    background-color: #B30A07;
-    padding: 15px 50px;
-    border-radius: 10px;
-    font-weight: 800;
-    color: #fff;
-    text-decoration: none;
-    transition: 0.4s;
-}
-.btn-semestres:hover{
-    background-color: #7b0503;
-    transition: 0.4s;
-}
+
 
 .semestre{
     display: flex;
@@ -313,3 +262,248 @@ td{
 
 }
 
+/* =========================================================
+   BOTÕES PRINCIPAIS
+========================================================= */
+
+.btn-results {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-height: 44px;
+    margin: 0;
+    padding: 11px 22px;
+    background-color: #B30A07;
+    color: #fff;
+    border: 1px solid #B30A07;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(179, 10, 7, 0.18);
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-results:hover {
+    background-color: #8F0805;
+    border-color: #8F0805;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(179, 10, 7, 0.25);
+}
+
+
+/* =========================================================
+   BOTÃO LOGOUT
+========================================================= */
+
+.logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    min-height: 42px;
+    padding: 10px 18px;
+    background-color: #B30A07;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(179, 10, 7, 0.18);
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.logout:hover {
+    background-color: #8F0805;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(179, 10, 7, 0.25);
+}
+
+
+/* =========================================================
+   SEMESTRE
+========================================================= */
+
+.btn-semestres {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    margin: 0;
+    padding: 11px 22px;
+    background-color: #B30A07;
+    color: #fff;
+    border: 1px solid #B30A07;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(179, 10, 7, 0.18);
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-semestres:hover {
+    background-color: #8F0805;
+    border-color: #8F0805;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(179, 10, 7, 0.25);
+}
+
+
+/* =========================================================
+   SEMESTRE
+========================================================= */
+
+.semestre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 20px 25px;
+    margin: 25px 0 35px;
+    background-color: #fff;
+    border-left: 5px solid #B30A07;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.264);
+}
+
+.semestre h2 {
+    margin: 0;
+}
+
+
+/* =========================================================
+   BOTÕES DE OUTRAS AÇÕES
+========================================================= */
+
+.botoes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 20px 25px;
+    margin: 25px 0 35px;
+    background-color: #fff;
+    border-left: 5px solid #B30A07;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.264);
+}
+
+.botoes .btn-results {
+    flex: 1 1 180px;
+    max-width: 230px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    background-color: #b20000;
+    padding: 2%;
+    border-radius: 15px;
+
+    transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   CONTROLE DE TIPOS DE HAE
+========================================================= */
+
+.tipo-hae {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.tipo-hae .carga-hora {
+    margin: 0;
+}
+.tipo-hae .btn-results {
+    flex-shrink: 0;
+    background-color: #b20000;
+    color: #fff;
+    text-decoration: none;
+    padding: 2%;
+    border-radius: 10px;
+    font-weight: 700;
+}
+/* =========================================================
+   AÇÕES DE EXPORTAÇÃO
+========================================================= */
+.pesquisa-hae + .hae-item {
+    margin-top: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE DOS BOTÕES
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .semestre {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .btn-semestres {
+        width: 100%;
+    }
+    .botoes {
+        flex-direction: column;
+    }
+    .botoes .btn-results {
+        width: 100%;
+        max-width: none;
+    }
+    .tipo-hae {
+        flex-direction: column;
+    }
+    .tipo-hae .btn-results {
+        width: 100%;
+    }
+    .logout {
+        min-width: 90px;
+    }
+
+}
+
+.btn-export{
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    padding: 1%;
+    border-radius: 10px;
+    background-color: #b20000;
+
+    transition: 0.5s
+}
+
+.btn-export:hover{
+    transition: 0.5s;
+    background-color: #8F0805;
+
+}
