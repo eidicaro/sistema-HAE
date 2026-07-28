@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Haes;
 use App\Models\Semestres;
 use App\Models\Relatorio;
 use App\Models\TipoHae;
 use Illuminate\Http\Request;
+use App\Exports\HaesExport;
 
 class HaeController extends Controller
 {
@@ -32,7 +34,7 @@ class HaeController extends Controller
                 'professor'   => view('professor', $baseData)->with('erro', 'Nenhum semestre ativo.'),
                 'coordenador' => view('coordenador', $baseData)->with('erro', 'Nenhum semestre ativo.'),
                 default       => view('direcao', array_merge($baseData, ['dadosLimites' => []]))
-                                    ->with('erro', 'Nenhum semestre ativo.'),
+                    ->with('erro', 'Nenhum semestre ativo.'),
             };
         }
 
@@ -44,7 +46,7 @@ class HaeController extends Controller
             $query->where('user_id', $user->id);
         } elseif ($user->role == 'coordenador') {
             $query->where('curso', $user->curso)
-                  ->whereIn('status', ['pendente', 'com_diligencia']);
+                ->whereIn('status', ['pendente', 'com_diligencia']);
         }
 
         $haes = $query->get();
@@ -55,9 +57,9 @@ class HaeController extends Controller
         $finalizadas = $haes->where('status', 'finalizada');
         $recusadas   = $haes->where('status', 'recusada');
 
-        $haesRelator = Haes::whereHas('relatores', fn ($q) => $q->where('user_id', $user->id))
+        $haesRelator = Haes::whereHas('relatores', fn($q) => $q->where('user_id', $user->id))
             ->where('semestre_id', $semestreAtual->id)
-            ->when($user->role == 'coordenador', fn ($q) => $q->where('curso', $user->curso))
+            ->when($user->role == 'coordenador', fn($q) => $q->where('curso', $user->curso))
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -78,14 +80,25 @@ class HaeController extends Controller
             })->values()->all();
 
             return view('direcao', array_merge($baseData, compact(
-                'pendentes', 'diligencia', 'finalizadas', 'recusadas', 'haesRelator', 'emExecucao', 'dadosLimites'
+                'pendentes',
+                'diligencia',
+                'finalizadas',
+                'recusadas',
+                'haesRelator',
+                'emExecucao',
+                'dadosLimites'
             )));
         }
 
         $view = $user->role == 'coordenador' ? 'coordenador' : 'professor';
 
         return view($view, array_merge($baseData, compact(
-            'pendentes', 'diligencia', 'finalizadas', 'recusadas', 'haesRelator', 'emExecucao'
+            'pendentes',
+            'diligencia',
+            'finalizadas',
+            'recusadas',
+            'haesRelator',
+            'emExecucao'
         )));
     }
 
@@ -124,12 +137,12 @@ class HaeController extends Controller
             ->whereIn('status', ['pendente', 'com_diligencia', 'em_execucao', 'finalizada'])
             ->sum('carga_horaria');
 
-        if(($horasUsadas + $validated['carga_horaria']) > $tipo->limite){
+        if (($horasUsadas + $validated['carga_horaria']) > $tipo->limite) {
             return back()
-                    ->withInput()
-                    ->withErrors([
-                        'carga_horaria' => "A carga horaria excede o limite disponivel para {$tipo->nome}. Restam" . max(0, $tipo->limite - $horasUsadas) . "horas"
-                    ]);
+                ->withInput()
+                ->withErrors([
+                    'carga_horaria' => "A carga horaria excede o limite disponivel para {$tipo->nome}. Restam" . max(0, $tipo->limite - $horasUsadas) . "horas"
+                ]);
         }
 
         Haes::create([
@@ -142,7 +155,7 @@ class HaeController extends Controller
             'resumo'        => $validated['resumo'],
             'justificativa' => $validated['justificativa'],
             'cronograma'    => $validated['cronograma'] ?? null,
-            'especificacoes'=> $validated['especificacoes'] ?? null,
+            'especificacoes' => $validated['especificacoes'] ?? null,
             'status'        => 'pendente',
             'semestre_id'   => $semestre->id,
         ]);
@@ -153,8 +166,12 @@ class HaeController extends Controller
     public function show($id)
     {
         $hae = Haes::with([
-            'user', 'pareceres.user', 'relatores', 'decisoes',
-            'relatorio.resultados', 'relatorio.arquivos',
+            'user',
+            'pareceres.user',
+            'relatores',
+            'decisoes',
+            'relatorio.resultados',
+            'relatorio.arquivos',
         ])->findOrFail($id);
 
         $user = auth()->user();
@@ -210,16 +227,16 @@ class HaeController extends Controller
         $tipo = TipoHae::findOrFail($validated['tipo_hae_id']);
 
         $horasUsadas = Haes::where('tipo_hae_id', $tipo->id)
-                ->where('semestre_id', $hae->semestre_id)
-                ->where('id', '!=', $hae->id)
-                ->whereIn('status', ['pendente', 'com_diligencia', 'em_execucao', 'finalizada'])
-                ->sum('carga_horaria');
+            ->where('semestre_id', $hae->semestre_id)
+            ->where('id', '!=', $hae->id)
+            ->whereIn('status', ['pendente', 'com_diligencia', 'em_execucao', 'finalizada'])
+            ->sum('carga_horaria');
 
-        if (($horasUsadas + $validated['carga_horaria']) > $tipo->limite){
+        if (($horasUsadas + $validated['carga_horaria']) > $tipo->limite) {
             return back()
                 ->withInput()
                 ->withErrors([
-                     'carga_horaria' => "A carga horária excede o limite disponível para {$tipo->nome}. Restam " . max(0, $tipo->limite - $horasUsadas) . " horas."
+                    'carga_horaria' => "A carga horária excede o limite disponível para {$tipo->nome}. Restam " . max(0, $tipo->limite - $horasUsadas) . " horas."
                 ]);
         }
 
@@ -235,5 +252,21 @@ class HaeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function exportarcsv()
+    {
+        $semestreAtual = Semestres::where('ativo', true)->first();
+    
+        if (!$semestreAtual) {
+            return back()->with('erro', 'Nenhum semestre ativo encontrado');
+        }
+    
+        $nomeArquivo = 'relatorio_HAEs_' . $semestreAtual->nome . '.xlsx';
+
+        return Excel::download(
+            new HaesExport($semestreAtual->id),
+            $nomeArquivo
+        );
     }
 }

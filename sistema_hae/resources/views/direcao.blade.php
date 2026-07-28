@@ -12,6 +12,7 @@
     @include('components.header')
 
     <h1>Olá Direção!</h1>
+
     <form method="POST" action="/logout">
         @csrf
         <button type="submit" class="logout">Logout</button>
@@ -30,6 +31,7 @@
         </div>
 
         @include('components.exibir-hae')
+        <a href="/direcao/exportar-csv" class="btn-results">Exportar CSV</a>
         <a href="/resultados-dir" class="btn-results">Ver Resultados</a>
     </section>
 

@@ -16,6 +16,7 @@ use App\Http\Controllers\ProfessorController;
 | ROTA INICIAL
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -111,27 +112,36 @@ Route::middleware('auth')->group(function () {
         | TIPOS DE HAE
         |--------------------------------------------------------------------------
         */
-    
+
         Route::resource('tipos-hae', TipoHaeController::class)
             ->except(['show'])
             ->parameters([
                 'tipos-hae' => 'tipoHae'
             ]);
-    
+
         Route::post('tipos-hae/{tipoHae}/toggle', [TipoHaeController::class, 'toggle'])
             ->name('tipos-hae.toggle');
-    
+
         /*
         |--------------------------------------------------------------------------
         | PROFESSORES
         |--------------------------------------------------------------------------
         */
-    
+
         Route::resource('professores', ProfessorController::class)
             ->parameters([
                 'professores' => 'professor'
             ])
             ->except(['show']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Exportar CSV
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/exportar-csv', [HaeController::class, 'exportarcsv'])
+            ->name('direcao.exportarcsv');
     });
 
 
@@ -154,7 +164,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/semestres/{id}/ativar', [SemestresController::class, 'ativar']);
 
 
-        /*
+    /*
     |--------------------------------------------------------------------------
     | GERAR RELATORIO
     |--------------------------------------------------------------------------

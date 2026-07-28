@@ -12,11 +12,7 @@ class ProfessorController extends Controller
      * Lista todos os professores.
      */
 
-     public function __construct()
-     {
-         abort_unless(auth()->check() && auth()->user()->role === 'direcao', 403);
-     }
-     
+
     public function index(Request $request)
     {
         $busca = $request->busca;
