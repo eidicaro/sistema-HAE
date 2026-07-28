@@ -8,12 +8,12 @@
 </head>
 
 <body style="font-family: Arial; padding:20px;">
-<a href="{{ route($user->role) }}">Voltar</a>
     <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
-
-
-<h1 style="color:#B30A07;">Gerenciar Semestres</h1>
-
+    
+    
+    <h1>Gerenciar Semestres</h1>
+    <a href="{{ route($user->role) }}" class="btn-voltar">Voltar</a>
+    
 <!-- MENSAGEM -->
 @if(session('success'))
     <p style="color:green;">{{ session('success') }}</p>
