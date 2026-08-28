@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Haes;
+use App\Models\TipoHae;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use RuntimeException;
@@ -57,8 +58,49 @@ class UsuariosTesteSeeder extends Seeder
             );
         }
 
+        $tiposHae = [
+            [
+                'nome' => 'Ensino (teste manual)',
+                'descricao' => 'Tipo provisório para testar submissões ligadas ao ensino.',
+                'limite' => 100,
+                'ativo' => true,
+                'subtipos' => ['Monitoria', 'Nivelamento'],
+            ],
+            [
+                'nome' => 'Pesquisa (teste manual)',
+                'descricao' => 'Tipo provisório para testar submissões ligadas à pesquisa.',
+                'limite' => 100,
+                'ativo' => true,
+                'subtipos' => ['Iniciação científica', 'Grupo de pesquisa'],
+            ],
+            [
+                'nome' => 'Extensão (teste manual)',
+                'descricao' => 'Tipo provisório para testar submissões ligadas à extensão.',
+                'limite' => 100,
+                'ativo' => true,
+                'subtipos' => ['Projeto comunitário', 'Evento institucional'],
+            ],
+        ];
+
+        foreach ($tiposHae as $tipoHae) {
+            $subtipos = $tipoHae['subtipos'];
+            unset($tipoHae['subtipos']);
+
+            $tipo = TipoHae::updateOrCreate(
+                ['nome' => $tipoHae['nome']],
+                $tipoHae
+            );
+
+            foreach ($subtipos as $subtipo) {
+                $tipo->subtipos()->updateOrCreate(
+                    ['nome' => $subtipo],
+                    ['ativo' => true]
+                );
+            }
+        }
+
         $this->command?->info(
-            'Criados/atualizados 2 professores e 2 coordenadores para testes manuais.'
+            'Criados/atualizados 2 professores, 2 coordenadores, 3 tipos e 6 subtipos de HAE para testes manuais.'
         );
     }
 }

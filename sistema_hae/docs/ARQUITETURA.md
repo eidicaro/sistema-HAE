@@ -12,6 +12,7 @@ Aplicação monolítica server-side em Laravel 12. As requisições entram por `
 - Laravel session/auth para login;
 - filesystem `local` para anexos privados;
 - `maatwebsite/excel` para exportação XLSX;
+- `barryvdh/laravel-dompdf` para geração do PDF individual da proposta;
 - sistema visual unificado em `public/css/app.css`;
 - Vite/Tailwind instalados, mas ainda não são o pipeline principal das telas.
 
@@ -20,12 +21,13 @@ Aplicação monolítica server-side em Laravel 12. As requisições entram por `
 | Área | Responsabilidade principal |
 |---|---|
 | `AuthController` | login por perfil e logout |
-| `HaeController` | dashboards, submissão, consulta, diligência e exportação |
+| `HaeController` | dashboards, submissão, consulta, diligência e exportações XLSX/PDF |
 | `ParecerController` | parecer único de relator/coordenador |
 | `DirecaoController` | relatores, decisão e resultados |
 | `RelatorioController` | entrega, reenvio, arquivos e avaliação do relatório |
 | `SemestresController` | cadastro e ativação do período letivo |
 | `TipoHaeController` | catálogo e limite de tipos de HAE |
+| `SubtipoHaeController` | catálogo de subtipos vinculados a cada tipo pai |
 | `ProfessorController` | cadastro administrativo de professores |
 
 ## Estrutura relevante
@@ -76,8 +78,9 @@ Pareceres são informações de apoio e não alteram o status. A decisão regist
 
 - Papéis continuam em `users.role`, pois o sistema possui apenas três perfis fixos.
 - Cursos continuam como texto, tanto no usuário coordenador quanto na HAE. Isso exige igualdade exata.
-- Tipos de HAE são registros configuráveis e carregam o limite de horas.
-- O limite é isolado por tipo e semestre.
+- Tipos de HAE são categorias pai configuráveis e carregam o limite de horas.
+- Subtipos pertencem a um tipo pai, não possuem limite próprio e identificam a modalidade escolhida na proposta.
+- O limite é isolado por tipo pai e semestre; as horas de todos os seus subtipos são somadas.
 - Alterações concorrentes de limite, status e relatório usam transações e locks de linha.
 - Arquivos ficam privados e só saem pelos endpoints autorizados.
 - Reenvio de relatório reaproveita o registro reprovado e substitui resultados/anexos.
@@ -86,6 +89,6 @@ Pareceres são informações de apoio e não alteram o status. A decisão regist
 
 - `DecisaoController`: não possuía rota e duplicava a decisão implementada na direção, além de referenciar modelos inexistentes.
 - modelos `LimiteHae` e `Relatores`: não eram utilizados; limite pertence a `TipoHae` e relatores usam a relação many-to-many.
-- componentes antigos por subtipo de HAE: dependiam de colunas e relações inexistentes. `especificacoes` é agora a fonte exibida.
+- componentes antigos por subtipo de HAE: dependiam de colunas e relações inexistentes. Eles não foram reativados; a estrutura atual usa o catálogo `subtipo_haes`, mantendo um único formulário institucional compartilhado.
 
 A migration de `limites_hae` foi preservada por ser parte do histórico já potencialmente executado em produção. Não use essa tabela em código novo.

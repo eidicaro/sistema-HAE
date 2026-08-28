@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Exports\HaesExport;
 use App\Models\Haes;
 use App\Models\Semestres;
+use App\Models\SubtipoHae;
 use App\Models\TipoHae;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -106,9 +109,7 @@ class HaeController extends Controller
     public function create()
     {
         return view('formulario', [
-            'nomes' => TipoHae::where('ativo', true)
-                ->orderBy('nome')
-                ->get(),
+            'nomes' => $this->tiposDisponiveis(),
             'cursos' => Haes::CURSOS,
         ]);
     }
@@ -130,6 +131,7 @@ class HaeController extends Controller
                 ->where('ativo', true)
                 ->lockForUpdate()
                 ->firstOrFail();
+            $subtipo = $this->obterSubtipoAtivo($tipo, $validated['subtipo_hae_id']);
 
             $horasUsadas = Haes::where('tipo_hae_id', $tipo->id)
                 ->where('semestre_id', $semestre->id)
@@ -141,14 +143,21 @@ class HaeController extends Controller
             Haes::create([
                 'user_id' => auth()->id(),
                 'tipo_hae_id' => $validated['tipo_hae_id'],
+                'subtipo_hae_id' => $subtipo->id,
                 'edital_aceito' => $request->boolean('edital'),
                 'curso' => $validated['curso'],
                 'titulo' => $validated['titulo'],
                 'carga_horaria' => $validated['carga_horaria'],
                 'resumo' => $validated['resumo'],
                 'justificativa' => $validated['justificativa'],
-                'cronograma' => $validated['cronograma'] ?? null,
-                'especificacoes' => $validated['especificacoes'] ?? '',
+                'resultados_esperados' => $validated['resultados_esperados'] ?? null,
+                'indicadores' => $validated['indicadores'] ?? null,
+                'mes_1' => $validated['mes_1'] ?? null,
+                'mes_2' => $validated['mes_2'] ?? null,
+                'mes_3' => $validated['mes_3'] ?? null,
+                'mes_4' => $validated['mes_4'] ?? null,
+                'mes_5' => $validated['mes_5'] ?? null,
+                'horarios_hae' => $validated['horarios_hae'] ?? null,
                 'status' => Haes::STATUS_PENDENTE,
                 'semestre_id' => $semestre->id,
             ]);
@@ -166,6 +175,9 @@ class HaeController extends Controller
             'decisoes',
             'relatorio.resultados',
             'relatorio.arquivos',
+            'tipoHae',
+            'subtipoHae',
+            'semestre',
         ])->findOrFail($id);
 
         $user = auth()->user();
@@ -186,7 +198,7 @@ class HaeController extends Controller
 
         return view('formulario', [
             'hae' => $hae,
-            'nomes' => TipoHae::where('ativo', true)->orderBy('nome')->get(),
+            'nomes' => $this->tiposDisponiveis(),
             'cursos' => Haes::CURSOS,
         ]);
     }
@@ -218,6 +230,7 @@ class HaeController extends Controller
                 ->where('ativo', true)
                 ->lockForUpdate()
                 ->firstOrFail();
+            $this->obterSubtipoAtivo($tipo, $validated['subtipo_hae_id']);
 
             $horasUsadas = Haes::where('tipo_hae_id', $tipo->id)
                 ->where('semestre_id', $hae->semestre_id)
@@ -229,7 +242,6 @@ class HaeController extends Controller
 
             $hae->update([
                 ...$validated,
-                'especificacoes' => $validated['especificacoes'] ?? '',
                 'edital_aceito' => $request->boolean('edital'),
                 'status' => Haes::STATUS_PENDENTE,
             ]);
@@ -246,12 +258,28 @@ class HaeController extends Controller
             return back()->with('erro', 'Nenhum semestre ativo encontrado');
         }
 
-        $nomeArquivo = 'relatorio_HAEs_'.$semestreAtual->nome.'.xlsx';
+        $semestreArquivo = Str::slug(str_replace(['/', '\\'], '-', $semestreAtual->nome), '-');
+        $nomeArquivo = 'relatorio_HAEs_'.($semestreArquivo ?: $semestreAtual->id).'.xlsx';
 
         return Excel::download(
             new HaesExport($semestreAtual->id),
             $nomeArquivo
         );
+    }
+
+    public function downloadPdf($id)
+    {
+        $hae = Haes::with(['user', 'semestre', 'tipoHae', 'subtipoHae'])
+            ->findOrFail($id);
+
+        abort_unless($hae->podeSerVistaPor(auth()->user()), 403);
+
+        $tituloArquivo = Str::slug(Str::limit($hae->titulo, 80, ''), '-');
+        $nomeArquivo = 'hae-'.$hae->id.'-'.($tituloArquivo ?: 'proposta').'.pdf';
+
+        return Pdf::loadView('hae.pdf', compact('hae'))
+            ->setPaper('a4')
+            ->download($nomeArquivo);
     }
 
     private function regrasValidacao(): array
@@ -261,14 +289,25 @@ class HaeController extends Controller
                 'required',
                 Rule::exists('tipo_haes', 'id')->where('ativo', true),
             ],
+            'subtipo_hae_id' => [
+                'required',
+                'integer',
+                Rule::exists('subtipo_haes', 'id')->where('ativo', true),
+            ],
             'edital' => ['required', 'accepted'],
             'titulo' => ['required', 'string', 'max:255'],
             'curso' => ['required', 'string', Rule::in(Haes::CURSOS)],
             'carga_horaria' => ['required', 'integer', 'min:1'],
             'resumo' => ['required', 'string', 'max:60000'],
             'justificativa' => ['required', 'string', 'max:60000'],
-            'cronograma' => ['nullable', 'string', 'max:60000'],
-            'especificacoes' => ['nullable', 'string', 'max:60000'],
+            'resultados_esperados' => ['nullable', 'string', 'max:60000'],
+            'indicadores' => ['nullable', 'string', 'max:60000'],
+            'mes_1' => ['nullable', 'string', 'max:60000'],
+            'mes_2' => ['nullable', 'string', 'max:60000'],
+            'mes_3' => ['nullable', 'string', 'max:60000'],
+            'mes_4' => ['nullable', 'string', 'max:60000'],
+            'mes_5' => ['nullable', 'string', 'max:60000'],
+            'horarios_hae' => ['nullable', 'string', 'max:60000'],
         ];
     }
 
@@ -279,8 +318,33 @@ class HaeController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'carga_horaria' => "A carga horária excede o limite disponível para {$tipo->nome}. Restam "
-                .max(0, $tipo->limite - $horasUsadas).' horas.',
+            'carga_horaria' => 'A carga horária solicitada excede o limite disponível para este tipo de HAE.',
         ]);
+    }
+
+    private function obterSubtipoAtivo(TipoHae $tipo, int $subtipoId): SubtipoHae
+    {
+        $subtipo = SubtipoHae::whereKey($subtipoId)
+            ->where('tipo_hae_id', $tipo->id)
+            ->where('ativo', true)
+            ->lockForUpdate()
+            ->first();
+
+        if (! $subtipo) {
+            throw ValidationException::withMessages([
+                'subtipo_hae_id' => 'Selecione um subtipo ativo pertencente ao tipo de HAE informado.',
+            ]);
+        }
+
+        return $subtipo;
+    }
+
+    private function tiposDisponiveis()
+    {
+        return TipoHae::where('ativo', true)
+            ->whereHas('subtipos', fn ($query) => $query->where('ativo', true))
+            ->with(['subtipos' => fn ($query) => $query->where('ativo', true)->orderBy('nome')])
+            ->orderBy('nome')
+            ->get();
     }
 }

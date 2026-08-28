@@ -15,6 +15,13 @@ Este arquivo separa limitações conhecidas de defeitos já corrigidos. A ordem 
 
 Melhorias futuras de experiência: parametrizar o texto do edital, tornar cursos configuráveis, eliminar os poucos estilos inline de valores dinâmicos e realizar teste de usabilidade com usuários reais.
 
+## Ajustes validados com a direção
+
+- PDF individual da proposta disponível para usuários autorizados;
+- tipos de HAE transformados em categorias pai com limite compartilhado por subtipos;
+- cadastro, edição, ativação e exclusão segura de subtipos na área da direção;
+- mensagem de limite excedido sem divulgação do saldo restante.
+
 ## Parte 3 — segurança concluída
 
 - rate limiting, mensagem genérica e registro de eventos no login;
@@ -39,7 +46,6 @@ Controles futuros, caso o risco ou o número de usuários aumente: MFA, bloqueio
 - auditar relatórios duplicados e então adicionar unique em `relatorios.hae_id`;
 - auditar duplicidades existentes em `relatores` antes de adicionar constraint retroativa na produção;
 - transformar curso em entidade/enum configurável; hoje igualdade textual controla visibilidade do coordenador;
-- revisar `HaesExport`: `indicadores`, `horarios_hae` e `mes_1` a `mes_5` não existem na migration atual;
 - normalizar nomes singulares/plurais (`Haes`, `Semestres`, tabela `parecer`);
 - ampliar a cobertura para parecer, diligência e todos os casos de erro dos CRUDs administrativos;
 - criar ambiente de homologação semelhante à HostGator;

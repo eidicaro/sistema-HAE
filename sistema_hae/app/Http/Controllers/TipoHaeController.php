@@ -10,7 +10,7 @@ class TipoHaeController extends Controller
 {
     public function index()
     {
-        $tipos = TipoHae::orderBy('nome')->get();
+        $tipos = TipoHae::withCount('subtipos')->orderBy('nome')->get();
 
         return view('direcao.tipoHae.index', compact('tipos'));
     }
@@ -39,6 +39,8 @@ class TipoHaeController extends Controller
 
     public function edit(TipoHae $tipoHae)
     {
+        $tipoHae->load(['subtipos' => fn ($query) => $query->orderBy('nome')]);
+
         return view('direcao.tipoHae.edit', compact('tipoHae'));
     }
 
@@ -68,8 +70,6 @@ class TipoHaeController extends Controller
 
     public function destroy(TipoHae $tipoHae)
     {
-        // haes.tipo guarda o nome do tipo como string (não tem FK pra tipo_haes.id),
-        // então checo por nome antes de deixar excluir
         $emUso = Haes::where('tipo_hae_id', $tipoHae->id)->exists();
 
         if ($emUso) {

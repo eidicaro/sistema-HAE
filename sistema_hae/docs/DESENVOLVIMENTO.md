@@ -25,6 +25,8 @@ O arquivo `tests/Feature/HaeWorkflowTest.php` cobre atualmente:
 - acesso do relator e bloqueio de professor sem vínculo;
 - bloqueio da edição de HAE alheia;
 - submissão válida no semestre ativo;
+- vínculo entre tipo pai e subtipo, além do limite compartilhado;
+- autorização e conteúdo básico do PDF individual da HAE;
 - autorização, envio e aprovação do relatório;
 - rejeição de anexo inseguro e autorização de download;
 - política de senha e neutralização de fórmula na exportação;
@@ -78,4 +80,6 @@ Ele cria ou atualiza as contas abaixo:
 | Coordenador | `coordenador.teste1@fatec.sp.gov.br` | primeiro curso de `Haes::CURSOS` |
 | Coordenador | `coordenador.teste2@fatec.sp.gov.br` | segundo curso de `Haes::CURSOS` |
 
-A senha compartilhada é `teste123` por padrão. Para usar outra, defina `SEED_TEST_PASSWORD` no `.env` antes de executar o comando. O seeder é idempotente e não é chamado pelo `DatabaseSeeder`.
+A senha compartilhada é `teste123` por padrão. Para usar outra, defina `SEED_TEST_PASSWORD` no `.env` antes de executar o comando.
+
+O mesmo seeder cria três tipos provisórios e ativos — Ensino, Pesquisa e Extensão — identificados por `(teste manual)`, cada um com limite de 100 horas e dois subtipos. Eles servem apenas para exercitar os formulários até que o catálogo institucional definitivo seja informado. O seeder é idempotente e não é chamado pelo `DatabaseSeeder`.

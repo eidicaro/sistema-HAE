@@ -7,6 +7,7 @@ use App\Models\Haes;
 use App\Models\Relatorio;
 use App\Models\RelatorioArquivo;
 use App\Models\Semestres;
+use App\Models\SubtipoHae;
 use App\Models\TipoHae;
 use App\Models\User;
 use Database\Seeders\UsuariosTesteSeeder;
@@ -32,6 +33,14 @@ class HaeWorkflowTest extends TestCase
         $this->assertDatabaseCount('users', 4);
         $this->assertSame(2, User::where('role', User::ROLE_PROFESSOR)->count());
         $this->assertSame(2, User::where('role', User::ROLE_COORDENADOR)->count());
+        $this->assertDatabaseCount('tipo_haes', 3);
+        $this->assertSame(3, TipoHae::where('ativo', true)->count());
+        $this->assertDatabaseCount('subtipo_haes', 6);
+        $this->assertDatabaseHas('tipo_haes', [
+            'nome' => 'Extensão (teste manual)',
+            'limite' => 100,
+            'ativo' => true,
+        ]);
         $this->assertDatabaseHas('users', [
             'email' => 'coordenador.teste1@fatec.sp.gov.br',
             'curso' => Haes::CURSOS[0],
@@ -127,23 +136,61 @@ class HaeWorkflowTest extends TestCase
             'ativo' => true,
         ]);
         $tipo = TipoHae::create(['nome' => 'Extensão', 'limite' => 20, 'ativo' => true]);
+        $subtipo = SubtipoHae::create([
+            'tipo_hae_id' => $tipo->id,
+            'nome' => 'Projeto comunitário',
+            'ativo' => true,
+        ]);
 
         $this->actingAs($professor)->post(route('hae.store'), [
             'tipo_hae_id' => $tipo->id,
+            'subtipo_hae_id' => $subtipo->id,
             'edital' => '1',
             'curso' => Haes::CURSOS[0],
             'titulo' => 'Projeto institucional',
             'carga_horaria' => 4,
             'resumo' => 'Resumo',
             'justificativa' => 'Justificativa',
+            'resultados_esperados' => 'Resultados esperados',
+            'indicadores' => 'Indicadores de avaliação',
+            'mes_1' => 'Planejamento',
+            'mes_2' => 'Execução inicial',
+            'mes_3' => 'Execução intermediária',
+            'mes_4' => 'Conclusão',
+            'mes_5' => 'Avaliação',
+            'horarios_hae' => 'Segundas, das 19h às 21h',
         ])->assertRedirect(route('professor'));
 
         $this->assertDatabaseHas('haes', [
             'user_id' => $professor->id,
             'semestre_id' => $semestre->id,
+            'subtipo_hae_id' => $subtipo->id,
             'status' => Haes::STATUS_PENDENTE,
-            'especificacoes' => '',
+            'resultados_esperados' => 'Resultados esperados',
+            'indicadores' => 'Indicadores de avaliação',
+            'mes_5' => 'Avaliação',
+            'horarios_hae' => 'Segundas, das 19h às 21h',
         ]);
+    }
+
+    public function test_hae_form_keeps_all_institutional_questions(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+
+        $response = $this->actingAs($professor)->get(route('hae.create'))->assertOk();
+
+        foreach ([
+            'resultados_esperados',
+            'indicadores',
+            'mes_1',
+            'mes_2',
+            'mes_3',
+            'mes_4',
+            'mes_5',
+            'horarios_hae',
+        ] as $campo) {
+            $response->assertSee('name="'.$campo.'"', false);
+        }
     }
 
     public function test_report_follows_owner_and_direction_workflow(): void
@@ -236,9 +283,11 @@ class HaeWorkflowTest extends TestCase
         $hae = $this->criarHae($professor, ['titulo' => '=HYPERLINK("https://example.test")']);
         $hae->load(['user', 'tipoHae', 'semestre', 'relatores']);
 
-        $linha = (new HaesExport($hae->semestre_id))->map($hae);
+        $exportacao = new HaesExport($hae->semestre_id);
+        $linha = $exportacao->map($hae);
 
-        $this->assertSame('\'=HYPERLINK("https://example.test")', $linha[9]);
+        $this->assertSame('\'=HYPERLINK("https://example.test")', $linha[10]);
+        $this->assertCount(count($exportacao->headings()), $linha);
     }
 
     public function test_direction_cannot_create_professor_with_password_shorter_than_six_characters(): void
@@ -323,6 +372,142 @@ class HaeWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_export_uses_safe_filename_when_semester_contains_slash(): void
+    {
+        $direcao = User::factory()->create(['role' => User::ROLE_DIRECAO]);
+        Semestres::create([
+            'nome' => '2026/1',
+            'data_inicio' => '2026-01-01',
+            'data_fim' => '2026-06-30',
+            'ativo' => true,
+        ]);
+
+        $this->actingAs($direcao)
+            ->get(route('direcao.exportarcsv'))
+            ->assertOk()
+            ->assertDownload('relatorio_HAEs_2026-1.xlsx');
+    }
+
+    public function test_subtypes_share_the_parent_type_hour_limit(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $semestre = Semestres::create([
+            'nome' => '2026/2',
+            'data_inicio' => '2026-08-01',
+            'data_fim' => '2026-12-31',
+            'ativo' => true,
+        ]);
+        $tipo = TipoHae::create(['nome' => 'Projetos', 'limite' => 10, 'ativo' => true]);
+        $subtipoA = SubtipoHae::create(['tipo_hae_id' => $tipo->id, 'nome' => 'Projeto A', 'ativo' => true]);
+        $subtipoB = SubtipoHae::create(['tipo_hae_id' => $tipo->id, 'nome' => 'Projeto B', 'ativo' => true]);
+
+        $this->criarHae($professor, [
+            'semestre_id' => $semestre->id,
+            'tipo_hae_id' => $tipo->id,
+            'subtipo_hae_id' => $subtipoA->id,
+            'carga_horaria' => 8,
+        ]);
+
+        $this->actingAs($professor)
+            ->post(route('hae.store'), [
+                'tipo_hae_id' => $tipo->id,
+                'subtipo_hae_id' => $subtipoB->id,
+                'edital' => '1',
+                'curso' => Haes::CURSOS[0],
+                'titulo' => 'Segunda proposta',
+                'carga_horaria' => 3,
+                'resumo' => 'Resumo',
+                'justificativa' => 'Justificativa',
+            ])
+            ->assertSessionHasErrors([
+                'carga_horaria' => 'A carga horária solicitada excede o limite disponível para este tipo de HAE.',
+            ]);
+
+        $this->assertDatabaseMissing('haes', ['titulo' => 'Segunda proposta']);
+    }
+
+    public function test_subtype_must_belong_to_selected_parent_type(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        Semestres::create([
+            'nome' => '2026/2',
+            'data_inicio' => '2026-08-01',
+            'data_fim' => '2026-12-31',
+            'ativo' => true,
+        ]);
+        $tipoA = TipoHae::create(['nome' => 'Tipo A', 'limite' => 20, 'ativo' => true]);
+        $tipoB = TipoHae::create(['nome' => 'Tipo B', 'limite' => 20, 'ativo' => true]);
+        $subtipoB = SubtipoHae::create(['tipo_hae_id' => $tipoB->id, 'nome' => 'Subtipo B', 'ativo' => true]);
+
+        $this->actingAs($professor)
+            ->post(route('hae.store'), [
+                'tipo_hae_id' => $tipoA->id,
+                'subtipo_hae_id' => $subtipoB->id,
+                'edital' => '1',
+                'curso' => Haes::CURSOS[0],
+                'titulo' => 'Combinação inválida',
+                'carga_horaria' => 3,
+                'resumo' => 'Resumo',
+                'justificativa' => 'Justificativa',
+            ])
+            ->assertSessionHasErrors('subtipo_hae_id');
+    }
+
+    public function test_only_direction_can_create_and_manage_subtypes(): void
+    {
+        $direcao = User::factory()->create(['role' => User::ROLE_DIRECAO]);
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $tipo = TipoHae::create(['nome' => 'Atividades acadêmicas', 'limite' => 30, 'ativo' => true]);
+
+        $this->actingAs($professor)
+            ->post(route('direcao.tipos-hae.subtipos.store', $tipo), [
+                'nome' => 'Monitoria',
+                'ativo' => '1',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($direcao)
+            ->post(route('direcao.tipos-hae.subtipos.store', $tipo), [
+                'nome' => 'Monitoria',
+                'descricao' => 'Acompanhamento de estudantes',
+                'ativo' => '1',
+            ])
+            ->assertSessionHas('success');
+
+        $subtipo = SubtipoHae::where('tipo_hae_id', $tipo->id)->firstOrFail();
+        $this->assertTrue($subtipo->ativo);
+
+        $this->actingAs($direcao)
+            ->get(route('direcao.tipos-hae.edit', $tipo))
+            ->assertOk()
+            ->assertSee('Monitoria');
+
+        $this->actingAs($direcao)
+            ->post(route('direcao.tipos-hae.subtipos.toggle', [$tipo, $subtipo]))
+            ->assertSessionHas('success');
+
+        $this->assertFalse($subtipo->fresh()->ativo);
+    }
+
+    public function test_authorized_user_can_download_hae_pdf(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $outro = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $hae = $this->criarHae($professor, ['titulo' => 'Projeto com ação']);
+
+        $this->actingAs($outro)
+            ->get(route('hae.pdf', $hae))
+            ->assertForbidden();
+
+        $response = $this->actingAs($professor)
+            ->get(route('hae.pdf', $hae))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf')
+            ->assertDownload('hae-'.$hae->id.'-projeto-com-acao.pdf');
+
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+    }
+
     private function criarHae(User $professor, array $attributes = []): Haes
     {
         $semestre = Semestres::find($attributes['semestre_id'] ?? null)
@@ -334,19 +519,31 @@ class HaeWorkflowTest extends TestCase
             ]);
         $tipo = TipoHae::find($attributes['tipo_hae_id'] ?? null)
             ?? TipoHae::create(['nome' => 'Extensão', 'limite' => 200, 'ativo' => true]);
+        $subtipo = SubtipoHae::find($attributes['subtipo_hae_id'] ?? null)
+            ?? SubtipoHae::firstOrCreate(
+                ['tipo_hae_id' => $tipo->id, 'nome' => 'Subtipo geral'],
+                ['ativo' => true]
+            );
 
         return Haes::create(array_merge([
             'user_id' => $professor->id,
             'semestre_id' => $semestre->id,
             'tipo_hae_id' => $tipo->id,
+            'subtipo_hae_id' => $subtipo->id,
             'edital_aceito' => true,
             'curso' => Haes::CURSOS[0],
             'titulo' => 'Projeto de teste',
             'carga_horaria' => 4,
             'resumo' => 'Resumo',
             'justificativa' => 'Justificativa',
-            'especificacoes' => '',
-            'cronograma' => null,
+            'resultados_esperados' => null,
+            'indicadores' => null,
+            'mes_1' => null,
+            'mes_2' => null,
+            'mes_3' => null,
+            'mes_4' => null,
+            'mes_5' => null,
+            'horarios_hae' => null,
             'status' => Haes::STATUS_PENDENTE,
         ], $attributes));
     }

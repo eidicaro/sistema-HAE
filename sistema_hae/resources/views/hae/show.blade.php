@@ -22,6 +22,7 @@
 @section('page-subtitle', 'Revise a proposta, os pareceres e o histórico de decisões.')
 
 @section('header-actions')
+    <a href="{{ route('hae.pdf', $hae->id) }}" class="button">Baixar PDF</a>
     <a href="{{ route($user->role) }}" class="button button--secondary">← Voltar ao painel</a>
 @endsection
 
@@ -30,7 +31,7 @@
         <div class="detail-main">
             <section class="detail-hero">
                 <div class="detail-hero__top">
-                    <div><h2>{{ $hae->titulo }}</h2><p class="detail-hero__type">{{ $hae->tipoHae->nome ?? 'Tipo não definido' }}</p></div>
+                    <div><h2>{{ $hae->titulo }}</h2><p class="detail-hero__type">{{ $hae->tipoHae->nome ?? 'Tipo não definido' }}@if($hae->subtipoHae) · {{ $hae->subtipoHae->nome }}@endif</p></div>
                     <span class="status-pill status-pill--{{ $hae->status }}">{{ $statusLabel }}</span>
                 </div>
                 <dl class="detail-meta">
@@ -45,8 +46,21 @@
 
             <section class="content-block"><h3>Resumo</h3><p>{{ $hae->resumo }}</p></section>
             <section class="content-block"><h3>Justificativa</h3><p>{{ $hae->justificativa }}</p></section>
-            <section class="content-block"><h3>Cronograma</h3><p>{{ $hae->cronograma ?: 'Não informado.' }}</p></section>
-            <section class="content-block"><h3>Especificações</h3><p>{{ $hae->especificacoes ?: 'Não informado.' }}</p></section>
+            <section class="content-block"><h3>Resultados esperados</h3><p>{{ $hae->resultados_esperados ?: 'Não informado.' }}</p></section>
+            <section class="content-block"><h3>Indicadores</h3><p>{{ $hae->indicadores ?: 'Não informado.' }}</p></section>
+
+            <section class="content-block">
+                <h3>Cronograma</h3>
+                <div class="table-wrap"><table class="data-table">
+                    <thead><tr><th>Mês</th><th>Desenvolvimento previsto</th></tr></thead>
+                    <tbody>
+                        @for($i = 1; $i <= 5; $i++)
+                            <tr><td><strong>Mês {{ $i }}</strong></td><td>{{ $hae->{'mes_'.$i} ?: 'Não informado.' }}</td></tr>
+                        @endfor
+                    </tbody>
+                </table></div>
+            </section>
+            <section class="content-block"><h3>Horários da HAE</h3><p>{{ $hae->horarios_hae ?: 'Não informado.' }}</p></section>
 
             <section class="content-block">
                 <h3>Pareceres</h3>

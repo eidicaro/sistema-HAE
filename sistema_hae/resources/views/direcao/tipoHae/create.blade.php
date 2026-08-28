@@ -9,7 +9,7 @@
 @section('content')
     <form action="{{ route('direcao.tipos-hae.store') }}" method="POST" class="form-card form-card--narrow">
         @csrf
-        <div class="form-card__intro"><h2>Dados do tipo</h2><p>O nome identifica a categoria em formulários, painéis e relatórios.</p></div>
+        <div class="form-card__intro"><h2>Dados do tipo pai</h2><p>O limite cadastrado será compartilhado por todos os seus subtipos. Depois de criar o tipo, abra a edição para cadastrar os subtipos.</p></div>
         <section class="form-section">@include('direcao.tipoHae._form')</section>
         <div class="form-actions"><a href="{{ route('direcao.tipos-hae.index') }}" class="button button--secondary">Cancelar</a><button type="submit" class="button">Criar tipo</button></div>
     </form>

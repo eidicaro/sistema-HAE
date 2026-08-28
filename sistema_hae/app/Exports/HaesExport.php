@@ -4,7 +4,6 @@ namespace App\Exports;
 
 use App\Models\Haes;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -34,6 +33,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
         return Haes::with([
             'user',
             'tipoHae',
+            'subtipoHae',
             'semestre',
             'relatores',
         ])
@@ -55,14 +55,14 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
             'Curso',
             'Período Letivo',
             'Tipo HAE',
+            'Subtipo HAE',
             'Edital Aceito',
             'Situação',
             'Título da Atividade',
             'Carga Horária Total',
             'Resumo',
             'Justificativa',
-            'Especificações',
-            'Cronograma',
+            'Resultados Esperados',
             'Indicadores',
             'Horários HAE',
             'Mês 1',
@@ -100,6 +100,9 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
             $this->formatarTexto(
                 $hae->tipoHae?->nome ?? 'Não informado'
             ),
+            $this->formatarTexto(
+                $hae->subtipoHae?->nome ?? 'Não informado'
+            ),
             $hae->edital_aceito ? 'Sim' : 'Não',
             $this->formatarStatus($hae->status),
             $this->formatarTexto($hae->titulo),
@@ -108,8 +111,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
                 : '',
             $this->formatarTexto($hae->resumo),
             $this->formatarTexto($hae->justificativa),
-            $this->formatarTexto($hae->especificacoes),
-            $this->formatarTexto($hae->cronograma),
+            $this->formatarTexto($hae->resultados_esperados),
             $this->formatarTexto($hae->indicadores),
             $this->formatarTexto($hae->horarios_hae),
             $this->formatarTexto($hae->mes_1),
@@ -126,7 +128,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
      * Define a largura de cada coluna.
      *
      * Isso é melhor que ShouldAutoSize para campos
-     * muito grandes como resumo, justificativa e cronograma.
+     * muito grandes como resumo, justificativa e resultados esperados.
      */
     public function columnWidths(): array
     {
@@ -139,18 +141,17 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
             'E' => 24,  // Curso
             'F' => 20,  // Período
             'G' => 25,  // Tipo HAE
+            'H' => 25,  // Subtipo HAE
 
-            'H' => 15,  // Edital
-            'I' => 18,  // Situação
+            'I' => 15,  // Edital
+            'J' => 18,  // Situação
 
-            'J' => 35,  // Título
-            'K' => 20,  // Carga horária
+            'K' => 35,  // Título
+            'L' => 20,  // Carga horária
 
-            'L' => 50,  // Resumo
-            'M' => 50,  // Justificativa
-            'N' => 50,  // Especificações
-            'O' => 50,  // Cronograma
-
+            'M' => 50,  // Resumo
+            'N' => 50,  // Justificativa
+            'O' => 50,  // Resultados esperados
             'P' => 40,  // Indicadores
             'Q' => 35,  // Horários
 
@@ -306,7 +307,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
                      */
 
                     $status = $sheet
-                        ->getCell("I{$row}")
+                        ->getCell("J{$row}")
                         ->getValue();
 
                     $statusStyle = match ($status) {
@@ -332,7 +333,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
                         ],
                     };
 
-                    $sheet->getStyle("I{$row}")
+                    $sheet->getStyle("J{$row}")
                         ->applyFromArray([
                             'font' => [
                                 'bold' => true,
@@ -364,12 +365,12 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
                      */
 
                     $edital = $sheet
-                        ->getCell("H{$row}")
+                        ->getCell("I{$row}")
                         ->getValue();
 
                     if ($edital === 'Sim') {
 
-                        $sheet->getStyle("H{$row}")
+                        $sheet->getStyle("I{$row}")
                             ->applyFromArray([
                                 'font' => [
                                     'bold' => true,
@@ -394,7 +395,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
 
                     } else {
 
-                        $sheet->getStyle("H{$row}")
+                        $sheet->getStyle("I{$row}")
                             ->applyFromArray([
                                 'font' => [
                                     'bold' => true,
@@ -432,13 +433,13 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
                         );
 
                     $sheet->getStyle(
-                        "F{$row}:I{$row}"
+                        "F{$row}:J{$row}"
                     )->getAlignment()
                         ->setHorizontal(
                             Alignment::HORIZONTAL_CENTER
                         );
                     $sheet->getStyle(
-                        "K{$row}:K{$row}"
+                        "L{$row}:L{$row}"
                     )->getAlignment()
                         ->setHorizontal(
                             Alignment::HORIZONTAL_CENTER
@@ -458,7 +459,7 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
                  */
 
                 $sheet->getStyle(
-                    'J2:J'.max(2, $highestRow)
+                    'K2:K'.max(2, $highestRow)
                 )->applyFromArray([
                     'font' => [
                         'bold' => true,

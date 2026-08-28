@@ -13,12 +13,13 @@
     <section class="panel">
         <div class="panel__header"><div><h2>Tipos cadastrados</h2></div><span class="count-badge">{{ $tipos->count() }}</span></div>
         <div class="table-wrap"><table class="data-table">
-            <thead><tr><th>Tipo</th><th>Descrição</th><th>Limite</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Descrição</th><th>Subtipos</th><th>Limite compartilhado</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody>
                 @forelse($tipos as $tipo)
                     <tr>
                         <td><strong>{{ $tipo->nome }}</strong></td>
                         <td>{{ $tipo->descricao ?: 'Sem descrição' }}</td>
+                        <td>{{ $tipo->subtipos_count }}</td>
                         <td><strong>{{ $tipo->limite }}h</strong> por semestre</td>
                         <td><span class="tag {{ $tipo->ativo ? 'tag--active' : 'tag--inactive' }}">{{ $tipo->ativo ? 'Ativo' : 'Inativo' }}</span></td>
                         <td><div class="data-table__actions">
@@ -28,7 +29,7 @@
                         </div></td>
                     </tr>
                 @empty
-                    <tr><td colspan="5"><div class="empty-state"><p>Nenhum tipo de HAE cadastrado.</p></div></td></tr>
+                    <tr><td colspan="6"><div class="empty-state"><p>Nenhum tipo de HAE cadastrado.</p></div></td></tr>
                 @endforelse
             </tbody>
         </table></div>

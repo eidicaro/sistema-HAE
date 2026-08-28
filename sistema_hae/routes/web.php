@@ -7,6 +7,7 @@ use App\Http\Controllers\ParecerController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\SemestresController;
+use App\Http\Controllers\SubtipoHaeController;
 use App\Http\Controllers\TipoHaeController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
         ->name('direcao');
 
     Route::get('/hae/{id}', [HaeController::class, 'show'])->name('hae.show');
+    Route::get('/hae/{id}/pdf', [HaeController::class, 'downloadPdf'])->name('hae.pdf');
     Route::get('/arquivo/{id}/download', [RelatorioController::class, 'download'])
         ->name('arquivo.download');
     Route::get('/arquivo/{id}/ver', [RelatorioController::class, 'ver'])
@@ -79,6 +81,14 @@ Route::middleware('auth')->group(function () {
                 ->parameters(['tipos-hae' => 'tipoHae']);
             Route::post('tipos-hae/{tipoHae}/toggle', [TipoHaeController::class, 'toggle'])
                 ->name('tipos-hae.toggle');
+            Route::post('tipos-hae/{tipoHae}/subtipos', [SubtipoHaeController::class, 'store'])
+                ->name('tipos-hae.subtipos.store');
+            Route::put('tipos-hae/{tipoHae}/subtipos/{subtipoHae}', [SubtipoHaeController::class, 'update'])
+                ->name('tipos-hae.subtipos.update');
+            Route::post('tipos-hae/{tipoHae}/subtipos/{subtipoHae}/toggle', [SubtipoHaeController::class, 'toggle'])
+                ->name('tipos-hae.subtipos.toggle');
+            Route::delete('tipos-hae/{tipoHae}/subtipos/{subtipoHae}', [SubtipoHaeController::class, 'destroy'])
+                ->name('tipos-hae.subtipos.destroy');
 
             Route::resource('professores', ProfessorController::class)
                 ->except(['show'])

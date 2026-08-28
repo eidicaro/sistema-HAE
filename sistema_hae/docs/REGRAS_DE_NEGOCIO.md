@@ -24,7 +24,8 @@
 - registra decisão final;
 - aprova ou reprova relatórios enviados;
 - administra semestres, tipos de HAE e professores;
-- exporta as HAEs do semestre ativo.
+- exporta as HAEs do semestre ativo em planilha;
+- baixa o PDF individual de qualquer HAE para compartilhamento institucional.
 
 ## Semestre
 
@@ -35,12 +36,13 @@
 
 ## Submissão
 
-- O tipo deve existir e estar ativo.
+- O tipo pai deve existir e estar ativo.
+- O subtipo deve existir, estar ativo e pertencer ao tipo pai informado.
 - O professor precisa aceitar o edital.
 - Curso precisa pertencer à lista `Haes::CURSOS`.
 - Título, carga horária, resumo e justificativa são obrigatórios.
 - Carga horária deve ser inteira e maior que zero.
-- Especificações e cronograma são opcionais; especificações vazias são persistidas como string vazia por compatibilidade com o esquema.
+- Resultados esperados, indicadores, planejamento dos meses 1 a 5 e horários da HAE compõem o formulário institucional e são opcionais para compatibilidade com registros legados.
 - Nova HAE começa como `pendente`.
 
 O texto do edital ainda está fixo na view e deve ser parametrizado em uma evolução futura.
@@ -57,15 +59,25 @@ O texto do edital ainda está fixo na view e deve ser parametrizado em uma evolu
 
 Decisão só pode ser aplicada a `pendente` ou `com_diligencia`. Todo reenvio da HAE volta para `pendente`.
 
-## Limite de carga horária
+## Tipos, subtipos e limite de carga horária
 
-- O limite está em `tipo_haes.limite`.
-- É calculado separadamente para cada combinação de tipo e semestre.
+- O limite está somente em `tipo_haes.limite`; subtipos não possuem limite individual.
+- É calculado separadamente para cada combinação de tipo pai e semestre.
+- Toda HAE consome horas do tipo pai, portanto HAEs de subtipos diferentes concorrem pelo mesmo limite.
 - Para impedir excesso já na submissão, reservam carga: `pendente`, `com_diligencia`, `em_execucao` e `finalizada`.
 - `recusada` não reserva carga.
 - Na decisão de aprovação, a direção confirma o total já comprometido em `em_execucao` e `finalizada` no mesmo semestre.
 - Ao editar uma HAE, a própria carga anterior é excluída do somatório antes da validação.
 - Submissão, edição e aprovação bloqueiam os registros envolvidos durante a transação para evitar consumo simultâneo do mesmo saldo.
+- Quando o limite é excedido, o professor recebe somente a informação de que a carga solicitada ultrapassou o limite; o saldo restante não é revelado.
+
+Tipos e subtipos em uso não podem ser excluídos. Eles devem ser desativados para preservar o histórico.
+
+## PDF da proposta
+
+- Todo usuário autenticado que pode consultar uma HAE também pode baixar seu PDF.
+- O PDF contém os dados da proposta e as perguntas institucionais, mas não inclui pareceres, decisões ou anexos do relatório.
+- O nome do arquivo é sanitizado e inclui o identificador da HAE.
 
 Essa regra evita receber mais propostas do que o teto, mas pode bloquear novas submissões enquanto propostas pendentes ainda reservam horas. Se a instituição preferir concorrência entre propostas, a regra deve ser alterada explicitamente e acompanhada de testes.
 
@@ -91,5 +103,5 @@ Essa regra evita receber mais propostas do que o teto, mas pode bloquear novas s
 ## Exclusões
 
 - Professor com HAE vinculada não pode ser excluído pela interface.
-- Tipo com HAE vinculada não pode ser excluído; deve ser desativado.
+- Tipo ou subtipo com HAE vinculada não pode ser excluído; deve ser desativado.
 - Exclusões em cascata existentes no banco são documentadas em `BANCO_DE_DADOS.md`, mas não devem ser acionadas manualmente em produção sem backup.

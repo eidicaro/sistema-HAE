@@ -41,6 +41,8 @@ Mantenha `APP_KEY` atual durante atualizações. Trocar a chave invalida sessõe
 
 ## Publicação segura
 
+Esta versão adiciona a tabela `subtipo_haes`, a coluna `haes.subtipo_hae_id` e a biblioteca Dompdf. Envie `composer.json` e `composer.lock` junto com o código; o `composer install` e o `php artisan migrate --force` abaixo são obrigatórios.
+
 Antes:
 
 1. faça backup do banco e de `storage/app/private/relatorios`;
@@ -113,13 +115,14 @@ Não use `migrate:rollback` automaticamente: migrations podem remover dados. Pre
 | arquivo 404 | existência em `storage/app/private/relatorios` e vínculo no banco |
 | rota antiga | `php artisan optimize:clear` e novo `route:cache` |
 | tela sem HAEs | semestre ativo e vínculo de curso/usuário |
-| limite inesperado | tipo, semestre, status e cargas das HAEs reservadas |
+| limite inesperado | tipo pai, semestre, status e cargas das HAEs reservadas em todos os seus subtipos |
+| PDF não é gerado | `composer install`, extensão PHP `mbstring`, permissões de `storage` e logs da aplicação |
 
 ## Tarefas recorrentes
 
 - monitorar tamanho de logs e anexos;
 - verificar backups;
 - revisar usuários e semestre ativo no início de cada período;
-- desativar tipos antigos em vez de excluir os que possuem histórico;
+- desativar tipos e subtipos antigos em vez de excluir os que possuem histórico;
 - acompanhar versões suportadas de PHP, Laravel e dependências antes de atualizar.
 - executar `composer audit --locked` e `npm audit --package-lock-only` ao menos mensalmente e antes de cada publicação.

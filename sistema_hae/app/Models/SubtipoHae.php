@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TipoHae extends Model
+class SubtipoHae extends Model
 {
-    public $table = 'tipo_haes';
+    protected $table = 'subtipo_haes';
 
     protected $fillable = [
+        'tipo_hae_id',
         'nome',
         'descricao',
-        'limite',
         'ativo',
     ];
 
@@ -19,17 +19,16 @@ class TipoHae extends Model
     {
         return [
             'ativo' => 'boolean',
-            'limite' => 'integer',
         ];
+    }
+
+    public function tipoHae()
+    {
+        return $this->belongsTo(TipoHae::class);
     }
 
     public function haes()
     {
         return $this->hasMany(Haes::class);
-    }
-
-    public function subtipos()
-    {
-        return $this->hasMany(SubtipoHae::class);
     }
 }

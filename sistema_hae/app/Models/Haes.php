@@ -51,11 +51,18 @@ class Haes extends Model
         'carga_horaria',
         'resumo',
         'justificativa',
-        'cronograma',
+        'resultados_esperados',
+        'indicadores',
+        'mes_1',
+        'mes_2',
+        'mes_3',
+        'mes_4',
+        'mes_5',
+        'horarios_hae',
         'status',
         'semestre_id',
-        'especificacoes',
         'tipo_hae_id',
+        'subtipo_hae_id',
     ];
 
     protected function casts(): array
@@ -119,5 +126,10 @@ class Haes extends Model
     public function tipoHae()
     {
         return $this->belongsTo(TipoHae::class);
+    }
+
+    public function subtipoHae()
+    {
+        return $this->belongsTo(SubtipoHae::class);
     }
 }

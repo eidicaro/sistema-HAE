@@ -24,10 +24,18 @@ return new class extends Migration
             $table->integer('carga_horaria');
             $table->text('resumo');
             $table->text('justificativa');
-            $table->text('especificacoes');
+            $table->text('resultados_esperados')->nullable();
+            $table->text('indicadores')->nullable();
 
-            // cronograma
-            $table->text('cronograma')->nullable();
+            // desenvolvimento previsto por mês
+            $table->text('mes_1')->nullable();
+            $table->text('mes_2')->nullable();
+            $table->text('mes_3')->nullable();
+            $table->text('mes_4')->nullable();
+            $table->text('mes_5')->nullable();
+
+            // dias e horários de execução
+            $table->text('horarios_hae')->nullable();
 
             $table->string('status')->default('pendente');
 

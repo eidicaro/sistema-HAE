@@ -41,4 +41,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    const tipoHae = document.getElementById('tipo_hae_id');
+    const subtipoHae = document.getElementById('subtipo_hae_id');
+
+    const filtrarSubtipos = (manterSelecao = false) => {
+        if (!tipoHae || !subtipoHae) {
+            return;
+        }
+
+        const tipoSelecionado = tipoHae.value;
+        const subtipoSelecionado = subtipoHae.value;
+        let selecaoContinuaValida = false;
+
+        subtipoHae.querySelectorAll('option[data-tipo-hae]').forEach((option) => {
+            const pertenceAoTipo = option.dataset.tipoHae === tipoSelecionado;
+            option.disabled = !pertenceAoTipo;
+            option.hidden = !pertenceAoTipo;
+
+            if (pertenceAoTipo && option.value === subtipoSelecionado) {
+                selecaoContinuaValida = true;
+            }
+        });
+
+        if (!manterSelecao || !selecaoContinuaValida) {
+            subtipoHae.value = selecaoContinuaValida ? subtipoSelecionado : '';
+        }
+
+        subtipoHae.disabled = tipoSelecionado === '';
+    };
+
+    filtrarSubtipos(true);
+    tipoHae?.addEventListener('change', () => filtrarSubtipos());
 });

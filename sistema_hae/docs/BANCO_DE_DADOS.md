@@ -4,7 +4,8 @@
 
 ```text
 users 1 ---- N haes N ---- 1 semestres
-                    N ---- 1 tipo_haes
+                    N ---- 1 tipo_haes 1 ---- N subtipo_haes
+                    N ------------------------ 1 subtipo_haes
 users N ---- N haes          via relatores
 users 1 ---- N parecer N --- 1 haes
 users 1 ---- N decisoes N -- 1 haes
@@ -25,15 +26,21 @@ Períodos letivos com nome, datas e flag `ativo`. A unicidade de semestre ativo 
 
 ### `tipo_haes`
 
-Catálogo configurável com `nome`, `descricao`, `limite` e `ativo`. O limite é um inteiro não negativo.
+Catálogo de categorias pai com `nome`, `descricao`, `limite` e `ativo`. O limite é um inteiro não negativo, pertence somente ao tipo pai e é compartilhado por seus subtipos.
+
+### `subtipo_haes`
+
+Modalidades vinculadas a `tipo_haes`, com `nome`, `descricao` e `ativo`. Não há coluna de limite. O nome é único dentro do mesmo tipo pai, mas pode se repetir em tipos diferentes.
 
 ### `haes`
 
-Entidade central. Liga professor, semestre e tipo, armazena curso, título, carga, textos, aceite do edital e status.
+Entidade central. Liga professor, semestre, tipo pai e subtipo, armazena curso, título, carga, aceite do edital, descrição da proposta, cronograma mensal e status.
 
 - exclusão do usuário ou semestre: cascade;
 - exclusão do tipo: restrict;
-- `especificacoes` é NOT NULL na migration atual;
+- exclusão do subtipo: restrict;
+- `subtipo_hae_id` é nullable somente para manter compatibilidade com HAEs criadas antes da implantação dos subtipos; novas submissões exigem o campo;
+- `resultados_esperados`, `indicadores`, `mes_1` a `mes_5` e `horarios_hae` são textos opcionais para preservar registros legados;
 - status é string e validado pela aplicação.
 
 ### `relatores`
@@ -71,6 +78,8 @@ Comparações numéricas por campo, com previsto e realizado.
 1. confirme que não há dados exclusivos nela em produção;
 2. gere e teste backup;
 3. crie migration nova, nunca edite apenas o banco manualmente.
+
+Algumas instalações locais antigas podem conter `especificacoes` e `cronograma`. Esses campos não pertencem ao formulário institucional atual e deixaram de ser usados, mas não são removidos automaticamente para evitar perda de dados. A migration `2026_08_28_000001_reconcile_hae_form_fields` acrescenta somente campos ausentes, torna `especificacoes` nullable quando ele existir e possui rollback não destrutivo.
 
 ## Cuidados com migrations
 
