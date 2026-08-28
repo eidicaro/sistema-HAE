@@ -40,6 +40,8 @@ npm run build
 composer test
 vendor/bin/pint --test
 php artisan route:list --except-vendor
+composer audit --locked
+npm audit --package-lock-only
 ```
 
 `composer test` usa `.env.testing` e SQLite em memória; nenhum banco local ou de produção é alterado.
@@ -53,6 +55,7 @@ php artisan route:list --except-vendor
 - [Rotas e permissões](docs/ROTAS_E_PERMISSOES.md)
 - [Desenvolvimento e testes](docs/DESENVOLVIMENTO.md)
 - [Sistema visual](docs/SISTEMA_VISUAL.md)
+- [Segurança](docs/SEGURANCA.md)
 - [Operação e deploy](docs/OPERACAO_E_DEPLOY.md)
 - [Pendências e próximos passos](docs/PENDENCIAS.md)
 

@@ -29,7 +29,7 @@
 ## Semestre
 
 - Deve existir um semestre ativo para criar HAE e para exibir os dashboards correntes.
-- A aplicação mantém somente um semestre ativo ao ativar outro, dentro de transação.
+- A aplicação mantém somente um semestre ativo ao ativar outro, dentro de transação com lock dos períodos.
 - `data_fim` não pode ser anterior a `data_inicio`.
 - Ativar um semestre não move HAEs entre períodos.
 
@@ -65,6 +65,7 @@ Decisão só pode ser aplicada a `pendente` ou `com_diligencia`. Todo reenvio da
 - `recusada` não reserva carga.
 - Na decisão de aprovação, a direção confirma o total já comprometido em `em_execucao` e `finalizada` no mesmo semestre.
 - Ao editar uma HAE, a própria carga anterior é excluída do somatório antes da validação.
+- Submissão, edição e aprovação bloqueiam os registros envolvidos durante a transação para evitar consumo simultâneo do mesmo saldo.
 
 Essa regra evita receber mais propostas do que o teto, mas pode bloquear novas submissões enquanto propostas pendentes ainda reservam horas. Se a instituição preferir concorrência entre propostas, a regra deve ser alterada explicitamente e acompanhada de testes.
 
@@ -80,6 +81,8 @@ Essa regra evita receber mais propostas do que o teto, mas pode bloquear novas s
 - Só o autor envia, e apenas quando a HAE está em execução.
 - Título, sumário e principais resultados são obrigatórios.
 - Cada arquivo aceita no máximo 10 MiB; são aceitos até dez comprovantes por envio.
+- Os formatos permitidos são PDF, JPG/JPEG, PNG, DOC/DOCX, ODT e XLS/XLSX.
+- Somente PDF e imagens são exibidos no navegador; os demais formatos são baixados.
 - Um relatório `enviado` aguarda direção e não pode ser reenviado.
 - Reprovação devolve a HAE para `em_execucao` e habilita o reenvio.
 - Reenvio substitui textos, resultados e anexos antigos; os arquivos substituídos são apagados do disco.

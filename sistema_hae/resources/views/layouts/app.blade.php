@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Sistema HAE') · Fatec Tatuí</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 <body class="app-shell">
     @php($usuarioAtual = auth()->user())
@@ -102,20 +103,5 @@
         </main>
     </div>
 
-    <script>
-        (() => {
-            const sidebar = document.getElementById('appSidebar');
-            const button = document.getElementById('menuButton');
-            const overlay = document.getElementById('sidebarOverlay');
-            const setOpen = (open) => {
-                sidebar.classList.toggle('is-open', open);
-                overlay.classList.toggle('is-open', open);
-                button.setAttribute('aria-expanded', String(open));
-            };
-            button?.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open')));
-            overlay?.addEventListener('click', () => setOpen(false));
-        })();
-    </script>
-    @stack('scripts')
 </body>
 </html>

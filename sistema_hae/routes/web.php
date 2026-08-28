@@ -17,7 +17,8 @@ Route::get('/login', fn () => redirect('/'))->name('login');
 Route::get('/login/{tipo}', [AuthController::class, 'showLogin'])
     ->whereIn('tipo', User::ROLES);
 Route::post('/login/{tipo}', [AuthController::class, 'login'])
-    ->whereIn('tipo', User::ROLES);
+    ->whereIn('tipo', User::ROLES)
+    ->middleware('throttle:login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
 Route::middleware('auth')->group(function () {

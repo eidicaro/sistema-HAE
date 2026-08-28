@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class ProfessorController extends Controller
 {
@@ -41,15 +43,20 @@ class ProfessorController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'name' => trim((string) $request->input('name')),
+            'email' => Str::lower(trim((string) $request->input('email'))),
+        ]);
+
         $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', Password::min(6), 'confirmed'],
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => trim($request->name),
+            'email' => Str::lower(trim($request->email)),
             'password' => $request->password,
             'role' => 'professor',
         ]);
@@ -77,18 +84,24 @@ class ProfessorController extends Controller
     {
         $this->garantirProfessor($professor);
 
+        $request->merge([
+            'name' => trim((string) $request->input('name')),
+            'email' => Str::lower(trim((string) $request->input('email'))),
+        ]);
+
         $request->validate([
-            'name' => 'required|max:255',
+            'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'email',
+                'max:255',
                 Rule::unique('users')->ignore($professor->id),
             ],
-            'password' => 'nullable|min:6|confirmed',
+            'password' => ['nullable', Password::min(6), 'confirmed'],
         ]);
 
-        $professor->name = $request->name;
-        $professor->email = $request->email;
+        $professor->name = trim($request->name);
+        $professor->email = Str::lower(trim($request->email));
 
         if ($request->filled('password')) {
             $professor->password = $request->password;

@@ -2,12 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Exports\HaesExport;
 use App\Models\Haes;
 use App\Models\Relatorio;
+use App\Models\RelatorioArquivo;
 use App\Models\Semestres;
 use App\Models\TipoHae;
 use App\Models\User;
+use Database\Seeders\UsuariosTesteSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class HaeWorkflowTest extends TestCase
@@ -17,6 +22,69 @@ class HaeWorkflowTest extends TestCase
     public function test_public_home_is_available(): void
     {
         $this->get('/')->assertOk();
+    }
+
+    public function test_manual_test_users_seeder_creates_expected_profiles(): void
+    {
+        $this->seed(UsuariosTesteSeeder::class);
+        $this->seed(UsuariosTesteSeeder::class);
+
+        $this->assertDatabaseCount('users', 4);
+        $this->assertSame(2, User::where('role', User::ROLE_PROFESSOR)->count());
+        $this->assertSame(2, User::where('role', User::ROLE_COORDENADOR)->count());
+        $this->assertDatabaseHas('users', [
+            'email' => 'coordenador.teste1@fatec.sp.gov.br',
+            'curso' => Haes::CURSOS[0],
+        ]);
+        $this->assertDatabaseHas('users', [
+            'email' => 'coordenador.teste2@fatec.sp.gov.br',
+            'curso' => Haes::CURSOS[1],
+        ]);
+    }
+
+    public function test_responses_include_security_headers(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('X-Frame-Options', 'DENY')
+            ->assertHeader('Referrer-Policy', 'same-origin')
+            ->assertHeader('Content-Security-Policy');
+
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+
+        $this->actingAs($professor)
+            ->get(route('professor'))
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'no-store, private');
+    }
+
+    public function test_login_is_rate_limited(): void
+    {
+        $payload = ['email' => 'inexistente@fatec.sp.gov.br', 'password' => 'senha-invalida'];
+
+        for ($tentativa = 1; $tentativa <= 5; $tentativa++) {
+            $this->post('/login/professor', $payload)->assertRedirect();
+        }
+
+        $this->post('/login/professor', $payload)->assertTooManyRequests();
+    }
+
+    public function test_login_does_not_reveal_that_account_belongs_to_another_profile(): void
+    {
+        $direcao = User::factory()->create([
+            'role' => User::ROLE_DIRECAO,
+            'password' => 'Senha1234',
+        ]);
+
+        $this->post('/login/professor', [
+            'email' => $direcao->email,
+            'password' => 'Senha1234',
+        ])
+            ->assertRedirect()
+            ->assertSessionHas('erro', 'E-mail, senha ou perfil inválido.');
+
+        $this->assertGuest();
     }
 
     public function test_profiles_cannot_access_another_profiles_routes(): void
@@ -109,6 +177,84 @@ class HaeWorkflowTest extends TestCase
             'id' => $hae->id,
             'status' => Haes::STATUS_FINALIZADA,
         ]);
+    }
+
+    public function test_report_rejects_unsafe_attachment_type(): void
+    {
+        Storage::fake('local');
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $hae = $this->criarHae($professor, ['status' => Haes::STATUS_EM_EXECUCAO]);
+
+        $this->actingAs($professor)
+            ->post(route('relatorio.store', $hae), [
+                'titulo' => 'Relatório final',
+                'sumario' => 'Síntese',
+                'resultados_texto' => 'Resultados',
+                'arquivo_principal' => UploadedFile::fake()->createWithContent(
+                    'conteudo.html',
+                    '<script>alert(1)</script>'
+                ),
+            ])
+            ->assertSessionHasErrors('arquivo_principal');
+
+        $this->assertDatabaseMissing('relatorios', ['hae_id' => $hae->id]);
+        Storage::disk('local')->assertDirectoryEmpty('relatorios');
+    }
+
+    public function test_report_file_cannot_be_downloaded_by_unrelated_user(): void
+    {
+        Storage::fake('local');
+        $autor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $outro = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $hae = $this->criarHae($autor, ['status' => Haes::STATUS_EM_EXECUCAO]);
+        $relatorio = Relatorio::create([
+            'hae_id' => $hae->id,
+            'titulo' => 'Relatório',
+            'sumario' => 'Síntese',
+            'resultados_texto' => 'Resultados',
+            'status' => Relatorio::STATUS_ENVIADO,
+        ]);
+        Storage::disk('local')->put('relatorios/documento.docx', 'conteudo');
+        $arquivo = RelatorioArquivo::create([
+            'relatorio_id' => $relatorio->id,
+            'caminho' => 'relatorios/documento.docx',
+            'tipo' => 'principal',
+        ]);
+
+        $this->actingAs($outro)
+            ->get(route('arquivo.download', $arquivo))
+            ->assertForbidden();
+
+        $this->actingAs($autor)
+            ->get(route('arquivo.ver', $arquivo))
+            ->assertDownload();
+    }
+
+    public function test_spreadsheet_export_neutralizes_formula_injection(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $hae = $this->criarHae($professor, ['titulo' => '=HYPERLINK("https://example.test")']);
+        $hae->load(['user', 'tipoHae', 'semestre', 'relatores']);
+
+        $linha = (new HaesExport($hae->semestre_id))->map($hae);
+
+        $this->assertSame('\'=HYPERLINK("https://example.test")', $linha[9]);
+    }
+
+    public function test_direction_cannot_create_professor_with_password_shorter_than_six_characters(): void
+    {
+        $direcao = User::factory()->create(['role' => User::ROLE_DIRECAO]);
+
+        $this->actingAs($direcao)
+            ->post(route('direcao.professores.store'), [
+                'name' => 'Professor Teste',
+                'email' => 'professor@fatec.sp.gov.br',
+                'password' => '12345',
+                'password_confirmation' => '12345',
+            ])
+            ->assertSessionHasErrors('password');
+
+        $this->assertDatabaseMissing('users', ['email' => 'professor@fatec.sp.gov.br']);
     }
 
     public function test_main_pages_render_for_each_profile(): void

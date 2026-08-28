@@ -15,30 +15,33 @@ Este arquivo separa limitações conhecidas de defeitos já corrigidos. A ordem 
 
 Melhorias futuras de experiência: parametrizar o texto do edital, tornar cursos configuráveis, eliminar os poucos estilos inline de valores dinâmicos e realizar teste de usabilidade com usuários reais.
 
-## Parte 3 — segurança
+## Parte 3 — segurança concluída
 
-- substituir checagens manuais por Policies/Form Requests onde trouxer clareza;
-- adicionar rate limiting e registro de tentativas de login;
-- definir política de senha, troca inicial, bloqueio/desativação de usuário e recuperação, se desejada;
-- restringir MIME/extensões de anexos, validar conteúdo, nome de download e considerar antivírus;
-- revisar cabeçalhos HTTP, cookies de sessão, HTTPS e configuração HostGator;
-- adicionar trilha de auditoria para login, relatores, decisões, alterações e downloads;
-- revisar exposição de dados pessoais na exportação;
-- criar testes de autorização para cada endpoint e testes de upload malicioso;
-- avaliar exclusão em cascata de usuários: atualmente apagar usuário no banco pode apagar HAEs e histórico;
-- revisar dependências com `composer audit` e `npm audit` no ambiente com rede.
+- rate limiting, mensagem genérica e registro de eventos no login;
+- ciclo de sessão corrigido e configuração segura de cookies documentada;
+- senhas novas com mínimo de 6 caracteres por compatibilidade com as contas atuais;
+- autorização por perfil e por vínculo coberta por testes de regressão;
+- anexos privados restritos por MIME, extensão, quantidade e tamanho;
+- visualização inline limitada a PDF e imagens permitidas;
+- cabeçalhos HTTP defensivos e política de conteúdo sem scripts inline;
+- exportação protegida contra injeção de fórmulas;
+- transações e locks nas operações concorrentes de carga horária e relatórios;
+- logs de autenticação, relatores, decisões, relatórios e anexos;
+- dependências PHP atualizadas e `package-lock.json` criado;
+- auditorias Composer e npm sem vulnerabilidades conhecidas em 28/08/2026;
+- testes de segurança para login, cabeçalhos, anexos, autorização, senha e exportação.
+
+Controles futuros, caso o risco ou o número de usuários aumente: MFA, bloqueio/desativação de conta, recuperação de senha, troca inicial obrigatória, antivírus de anexos, auditoria imutável e teste de invasão da instalação real.
 
 ## Dívida técnica e integridade
 
 - criar migration futura para remover `limites_hae` depois de auditar produção;
 - auditar relatórios duplicados e então adicionar unique em `relatorios.hae_id`;
 - auditar duplicidades existentes em `relatores` antes de adicionar constraint retroativa na produção;
-- garantir um único semestre ativo também no banco ou com mecanismo de lock adequado;
-- proteger cálculo/reserva de carga contra duas submissões simultâneas com transação e lock;
 - transformar curso em entidade/enum configurável; hoje igualdade textual controla visibilidade do coordenador;
 - revisar `HaesExport`: `indicadores`, `horarios_hae` e `mes_1` a `mes_5` não existem na migration atual;
 - normalizar nomes singulares/plurais (`Haes`, `Semestres`, tabela `parecer`);
-- cobrir relatório, parecer, diligência, CRUD administrativo e exportação com testes;
+- ampliar a cobertura para parecer, diligência e todos os casos de erro dos CRUDs administrativos;
 - criar ambiente de homologação semelhante à HostGator;
 - comparar `php artisan migrate:status` e esquema real da produção com as migrations do repositório.
 

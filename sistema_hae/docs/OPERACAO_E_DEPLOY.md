@@ -19,7 +19,15 @@ DB_USERNAME=...
 DB_PASSWORD=...
 
 SESSION_DRIVER=database
+SESSION_ENCRYPT=true
+SESSION_SECURE_COOKIE=true
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=lax
 FILESYSTEM_DISK=local
+
+LOG_CHANNEL=daily
+LOG_LEVEL=info
+LOG_DAYS=14
 ```
 
 Mantenha `APP_KEY` atual durante atualizações. Trocar a chave invalida sessões e pode tornar dados criptografados ilegíveis. Nunca envie `.env`, dumps ou anexos para o Git.
@@ -37,7 +45,7 @@ Antes:
 
 1. faça backup do banco e de `storage/app/private/relatorios`;
 2. registre o commit/versão atualmente publicado;
-3. rode localmente `composer test`, Pint e `php artisan route:list`;
+3. rode localmente `composer test`, Pint, `php artisan route:list`, `composer audit --locked` e `npm audit --package-lock-only`;
 4. confira migrations pendentes com `php artisan migrate:status`.
 
 Na publicação:
@@ -80,7 +88,7 @@ App\Models\User::create([
 ]);
 ```
 
-Use o nome de curso exatamente como definido em `Haes::CURSOS`, entregue a senha por canal adequado e troque-a conforme a política institucional. Uma tela de gestão completa fica para a revisão de segurança/experiência.
+Use o nome de curso exatamente como definido em `Haes::CURSOS` e entregue a senha por canal adequado. A validação atual exige somente 6 caracteres para manter compatibilidade com as contas existentes. Evite usar CPF como senha permanente: ele é um dado pessoal previsível e não um segredo.
 
 ## Rollback
 
@@ -101,6 +109,7 @@ Não use `migrate:rollback` automaticamente: migrations podem remover dados. Pre
 | erro 500 | `storage/logs/laravel.log`, permissões, `APP_KEY`, versão PHP |
 | CSS/imagens ausentes | document root em `public`, URL e paths dos assets |
 | login não persiste | tabela `sessions`, cookie/domain, HTTPS e permissões do banco |
+| erro 419 | sessão, domínio do cookie, HTTPS, cache de configuração e token CSRF |
 | arquivo 404 | existência em `storage/app/private/relatorios` e vínculo no banco |
 | rota antiga | `php artisan optimize:clear` e novo `route:cache` |
 | tela sem HAEs | semestre ativo e vínculo de curso/usuário |
@@ -113,3 +122,4 @@ Não use `migrate:rollback` automaticamente: migrations podem remover dados. Pre
 - revisar usuários e semestre ativo no início de cada período;
 - desativar tipos antigos em vez de excluir os que possuem histórico;
 - acompanhar versões suportadas de PHP, Laravel e dependências antes de atualizar.
+- executar `composer audit --locked` e `npm audit --package-lock-only` ao menos mensalmente e antes de cada publicação.

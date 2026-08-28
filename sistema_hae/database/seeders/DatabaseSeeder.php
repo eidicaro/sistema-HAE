@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +20,16 @@ class DatabaseSeeder extends Seeder
 
             return;
         }
+
+        if (mb_strlen($password) < 6) {
+            $this->command?->error(
+                'SEED_DIRECAO_PASSWORD deve ter ao menos 6 caracteres.'
+            );
+
+            return;
+        }
+
+        $email = Str::lower(trim($email));
 
         User::updateOrCreate(
             ['email' => $email],

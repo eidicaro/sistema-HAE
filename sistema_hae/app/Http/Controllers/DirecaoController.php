@@ -9,7 +9,9 @@ use App\Models\TipoHae;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class DirecaoController extends Controller
 {
@@ -40,6 +42,7 @@ class DirecaoController extends Controller
         $validated = $request->validate([
             'relatores' => ['nullable', 'array'],
             'relatores.*' => [
+                'distinct',
                 'integer',
                 Rule::exists('users', 'id')->whereIn('role', ['professor', 'coordenador']),
             ],
@@ -47,56 +50,52 @@ class DirecaoController extends Controller
 
         $hae->relatores()->sync($validated['relatores'] ?? []);
 
+        Log::notice('Relatores de HAE atualizados', [
+            'hae_id' => $hae->id,
+            'direcao_id' => auth()->id(),
+            'relatores' => $validated['relatores'] ?? [],
+        ]);
+
         return back()->with('sucesso', 'Relatores definidos!');
     }
 
     // altera o status da hae conforme a decisão
     public function decisao(Request $request, $id)
     {
-        $hae = Haes::findOrFail($id);
-
         $validated = $request->validate([
             'acao' => ['required', Rule::in(['aprovada', 'recusada', 'diligencia'])],
-            'comentario' => ['nullable', 'string'],
+            'comentario' => ['nullable', 'string', 'max:10000'],
         ]);
 
-        if (! in_array($hae->status, [Haes::STATUS_PENDENTE, Haes::STATUS_DILIGENCIA], true)) {
-            return back()->with('error', 'Esta HAE não está aguardando decisão.');
-        }
+        $hae = DB::transaction(function () use ($id, $validated): Haes {
+            $hae = Haes::lockForUpdate()->findOrFail($id);
 
-        $tipo = $hae->tipoHae; // ou TipoHae::findOrFail($hae->tipo_hae_id)
+            if (! in_array($hae->status, [Haes::STATUS_PENDENTE, Haes::STATUS_DILIGENCIA], true)) {
+                throw ValidationException::withMessages([
+                    'acao' => 'Esta HAE não está aguardando decisão.',
+                ]);
+            }
 
-        if (! $tipo) {
-            return back()->with('error', 'Tipo de HAE inválido.');
-        }
+            $status = match ($validated['acao']) {
+                'aprovada' => Haes::STATUS_EM_EXECUCAO,
+                'recusada' => Haes::STATUS_RECUSADA,
+                'diligencia' => Haes::STATUS_DILIGENCIA,
+            };
 
-        switch ($validated['acao']) {
-
-            case 'aprovada':
-
+            if ($validated['acao'] === 'aprovada') {
+                $tipo = TipoHae::whereKey($hae->tipo_hae_id)->lockForUpdate()->firstOrFail();
                 $totalUsado = Haes::where('tipo_hae_id', $tipo->id)
                     ->where('semestre_id', $hae->semestre_id)
                     ->whereIn('status', [Haes::STATUS_EM_EXECUCAO, Haes::STATUS_FINALIZADA])
                     ->sum('carga_horaria');
 
                 if (($totalUsado + $hae->carga_horaria) > $tipo->limite) {
-                    return back()->with('error', 'Limite de carga horária excedido!');
+                    throw ValidationException::withMessages([
+                        'acao' => 'Limite de carga horária excedido.',
+                    ]);
                 }
+            }
 
-                $status = Haes::STATUS_EM_EXECUCAO;
-
-                break;
-
-            case 'recusada':
-                $status = Haes::STATUS_RECUSADA;
-                break;
-
-            case 'diligencia':
-                $status = Haes::STATUS_DILIGENCIA;
-                break;
-        }
-
-        DB::transaction(function () use ($hae, $status, $validated): void {
             $hae->update(['status' => $status]);
 
             Decisao::create([
@@ -105,7 +104,15 @@ class DirecaoController extends Controller
                 'decisao' => $validated['acao'],
                 'comentario' => $validated['comentario'] ?? null,
             ]);
-        });
+
+            return $hae;
+        }, 3);
+
+        Log::notice('Decisão de HAE registrada', [
+            'hae_id' => $hae->id,
+            'direcao_id' => auth()->id(),
+            'acao' => $validated['acao'],
+        ]);
 
         return back()->with('sucesso', 'Decisão aplicada!');
     }

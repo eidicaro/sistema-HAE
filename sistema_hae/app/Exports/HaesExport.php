@@ -539,7 +539,14 @@ class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHe
             $texto
         );
 
-        return trim($texto);
+        $texto = trim($texto);
+
+        // Impede que conteúdo vindo do usuário seja interpretado como fórmula.
+        if (preg_match('/^[=+\-@]/u', $texto) === 1) {
+            return "'".$texto;
+        }
+
+        return $texto;
     }
 
     /**

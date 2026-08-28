@@ -2,7 +2,7 @@
 
 ## Visão geral
 
-Aplicação monolítica server-side em Laravel 12. As requisições entram por `routes/web.php`, passam por autenticação e controle de papel, chegam aos controllers, usam modelos Eloquent e renderizam Blade. Não há API pública, SPA, jobs próprios ou integração externa ativa.
+Aplicação monolítica server-side em Laravel 12. As requisições entram por `routes/web.php`, passam por cabeçalhos defensivos, autenticação e controle de papel, chegam aos controllers, usam modelos Eloquent e renderizam Blade. Não há API pública, SPA, jobs próprios ou integração externa ativa.
 
 ## Tecnologias
 
@@ -34,12 +34,13 @@ Aplicação monolítica server-side em Laravel 12. As requisições entram por `
 app/
   Exports/                 exportação XLSX
   Http/Controllers/        casos de uso HTTP
-  Http/Middleware/         autorização por papel
+  Http/Middleware/         autorização por papel e cabeçalhos de segurança
   Models/                  entidades e relações Eloquent
 database/migrations/       histórico do esquema
 database/seeders/          criação opcional do acesso inicial
 resources/views/           telas e componentes Blade
 public/css/app.css        tokens e componentes visuais compartilhados
+public/js/app.js          interações da interface compatíveis com a CSP
 public/images/            marcas institucionais
 routes/web.php             rotas web e fronteiras de permissão
 tests/Feature/             regressões dos fluxos críticos
@@ -77,6 +78,7 @@ Pareceres são informações de apoio e não alteram o status. A decisão regist
 - Cursos continuam como texto, tanto no usuário coordenador quanto na HAE. Isso exige igualdade exata.
 - Tipos de HAE são registros configuráveis e carregam o limite de horas.
 - O limite é isolado por tipo e semestre.
+- Alterações concorrentes de limite, status e relatório usam transações e locks de linha.
 - Arquivos ficam privados e só saem pelos endpoints autorizados.
 - Reenvio de relatório reaproveita o registro reprovado e substitui resultados/anexos.
 

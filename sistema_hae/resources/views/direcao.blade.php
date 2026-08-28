@@ -90,17 +90,3 @@
         </table></div></div>
     </section>
 @endsection
-
-@push('scripts')
-    <script>
-        (() => {
-            const search = document.getElementById('pesquisaHae');
-            search?.addEventListener('input', () => {
-                const term = search.value.toLocaleLowerCase('pt-BR').trim();
-                document.querySelectorAll('[data-hae-item]').forEach((item) => {
-                    item.hidden = term !== '' && !item.textContent.toLocaleLowerCase('pt-BR').includes(term);
-                });
-            });
-        })();
-    </script>
-@endpush

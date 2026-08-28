@@ -34,7 +34,7 @@ class ParecerController extends Controller
     {
         $hae = Haes::findOrFail($hae_id);
         $validated = $request->validate([
-            'comentario' => ['required', 'string'],
+            'comentario' => ['required', 'string', 'max:10000'],
         ]);
 
         $usuario = auth()->user();

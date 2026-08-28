@@ -4,7 +4,7 @@ Todas as rotas abaixo, exceto início e login, exigem autenticação. O middlewa
 
 | Área | Métodos e caminhos | Papel |
 |---|---|---|
-| Início/login | `GET /`, `GET/POST /login/{tipo}` | público |
+| Início/login | `GET /`, `GET/POST /login/{tipo}` | público; POST possui rate limiting |
 | Logout | `POST /logout` | autenticado |
 | Dashboards | `GET /professor`, `/coordenador`, `/direcao` | papel correspondente |
 | Consulta de HAE | `GET /hae/{id}` | autor, relator, coordenador do curso ou direção |

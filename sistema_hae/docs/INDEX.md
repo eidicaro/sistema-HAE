@@ -10,8 +10,9 @@ Esta documentação descreve o comportamento suportado após a revisão de 28/08
 | [ROTAS_E_PERMISSOES.md](ROTAS_E_PERMISSOES.md) | Superfície HTTP e matriz de acesso |
 | [DESENVOLVIMENTO.md](DESENVOLVIMENTO.md) | Setup, convenções, testes e checklist de alteração |
 | [SISTEMA_VISUAL.md](SISTEMA_VISUAL.md) | Identidade, componentes de interface e responsividade |
+| [SEGURANCA.md](SEGURANCA.md) | Controles, configuração de produção, logs, incidentes e riscos residuais |
 | [OPERACAO_E_DEPLOY.md](OPERACAO_E_DEPLOY.md) | Configuração, publicação na HostGator, backup e diagnóstico |
-| [PENDENCIAS.md](PENDENCIAS.md) | Limitações conhecidas e escopo sugerido das partes 2 e 3 |
+| [PENDENCIAS.md](PENDENCIAS.md) | Limitações conhecidas e melhorias futuras |
 
 ## Leitura rápida para continuidade
 

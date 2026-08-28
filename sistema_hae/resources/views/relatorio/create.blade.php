@@ -26,8 +26,8 @@
         <section class="form-section">
             <div class="form-section__title"><span class="form-section__number">2</span><h3>Documentos</h3></div>
             <div class="form-grid">
-                <div class="field"><label for="arquivo_principal">Arquivo principal</label><input type="file" id="arquivo_principal" name="arquivo_principal"><span class="field__hint">Até 10 MB.</span></div>
-                <div class="field"><label for="comprovacoes">Comprovações</label><input type="file" id="comprovacoes" name="comprovacoes[]" multiple><span class="field__hint">Até 10 arquivos, com no máximo 10 MB cada.</span></div>
+                <div class="field"><label for="arquivo_principal">Arquivo principal</label><input type="file" id="arquivo_principal" name="arquivo_principal" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt,.xls,.xlsx"><span class="field__hint">PDF, imagem ou documento Office/OpenDocument, com até 10 MB.</span></div>
+                <div class="field"><label for="comprovacoes">Comprovações</label><input type="file" id="comprovacoes" name="comprovacoes[]" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt,.xls,.xlsx" multiple><span class="field__hint">Até 10 arquivos permitidos, com no máximo 10 MB cada.</span></div>
             </div>
         </section>
 

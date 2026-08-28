@@ -28,7 +28,7 @@
                         <td>{{ $professor->email }}</td>
                         <td><div class="data-table__actions">
                             <a href="{{ route('direcao.professores.edit', $professor) }}" class="button button--secondary button--small">Editar</a>
-                            <form action="{{ route('direcao.professores.destroy', $professor) }}" method="POST" onsubmit="return confirm('Deseja realmente excluir este professor?')">@csrf @method('DELETE')<button type="submit" class="button button--ghost button--small">Excluir</button></form>
+                            <form action="{{ route('direcao.professores.destroy', $professor) }}" method="POST" data-confirm="Deseja realmente excluir este professor?">@csrf @method('DELETE')<button type="submit" class="button button--ghost button--small">Excluir</button></form>
                         </div></td>
                     </tr>
                 @empty

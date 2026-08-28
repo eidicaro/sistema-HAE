@@ -24,7 +24,7 @@
                         <td><div class="data-table__actions">
                             <a href="{{ route('direcao.tipos-hae.edit', $tipo) }}" class="button button--secondary button--small">Editar</a>
                             <form action="{{ route('direcao.tipos-hae.toggle', $tipo) }}" method="POST">@csrf<button type="submit" class="button button--ghost button--small">{{ $tipo->ativo ? 'Desativar' : 'Ativar' }}</button></form>
-                            <form action="{{ route('direcao.tipos-hae.destroy', $tipo) }}" method="POST" onsubmit="return confirm('Deseja realmente excluir este tipo?')">@csrf @method('DELETE')<button type="submit" class="button button--ghost button--small">Excluir</button></form>
+                            <form action="{{ route('direcao.tipos-hae.destroy', $tipo) }}" method="POST" data-confirm="Deseja realmente excluir este tipo?">@csrf @method('DELETE')<button type="submit" class="button button--ghost button--small">Excluir</button></form>
                         </div></td>
                     </tr>
                 @empty

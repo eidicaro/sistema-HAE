@@ -41,12 +41,3 @@
         </div>
     </section>
 @endsection
-
-@push('scripts')
-    <script>
-        document.getElementById('buscarUsuario')?.addEventListener('input', (event) => {
-            const term = event.target.value.toLocaleLowerCase('pt-BR');
-            document.querySelectorAll('[data-user-chip]').forEach((item) => item.hidden = !item.textContent.toLocaleLowerCase('pt-BR').includes(term));
-        });
-    </script>
-@endpush

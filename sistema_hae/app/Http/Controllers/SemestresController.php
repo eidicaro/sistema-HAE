@@ -40,8 +40,11 @@ class SemestresController extends Controller
     public function ativar($id)
     {
         DB::transaction(function () use ($id): void {
+            Semestres::query()->orderBy('id')->lockForUpdate()->get();
+            Semestres::findOrFail($id);
+
             Semestres::where('ativo', true)->update(['ativo' => false]);
-            Semestres::findOrFail($id)->update(['ativo' => true]);
+            Semestres::whereKey($id)->update(['ativo' => true]);
         });
 
         return back()->with('success', 'Semestre ativado!');
