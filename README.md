@@ -7,7 +7,7 @@ O código da aplicação Laravel está em [`sistema_hae/`](sistema_hae/README.md
 ## Situação do projeto
 
 - Parte 1 concluída: documentação, formalização de regras, limpeza e correções de manutenção.
-- Parte 2 pendente: revisão completa de design, responsividade, componentes e acessibilidade.
+- Parte 2 concluída: identidade institucional, layout compartilhado, painel da direção e responsividade.
 - Parte 3 pendente: revisão aprofundada de segurança.
 
 Antes de publicar alterações no ambiente da HostGator, consulte o procedimento em [`sistema_hae/docs/OPERACAO_E_DEPLOY.md`](sistema_hae/docs/OPERACAO_E_DEPLOY.md).
