@@ -24,7 +24,7 @@ class DirecaoController extends Controller
         }
 
         // todas as HAEs com relatores
-        $haes = Haes::with('relatores')
+        $haes = Haes::with(['relatores', 'user'])
             ->where('semestre_id', $semestreAtivo->id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -116,7 +116,7 @@ class DirecaoController extends Controller
         $semestreAtivo = Semestres::where('ativo', true)->first();
 
         $haes = $semestreAtivo
-            ? Haes::where('semestre_id', $semestreAtivo->id)->get()
+            ? Haes::with('user')->where('semestre_id', $semestreAtivo->id)->get()
             : collect();
 
         $finalizadas = $haes->where('status', Haes::STATUS_FINALIZADA);

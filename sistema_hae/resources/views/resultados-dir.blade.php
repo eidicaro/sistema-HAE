@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>resultados-dir</title>
-    <link rel="stylesheet" href="{{ asset('../css/direcao.css') }}">
-    <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
-</head>
-<body>
-        <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
+@extends('layouts.app')
 
-    @include('components.header')
+@section('title', 'Resultados')
+@section('eyebrow', 'Direção acadêmica')
+@section('page-title', 'Resultados do semestre')
+@section('page-subtitle', 'Consulte as atividades encerradas e o resultado das submissões.')
 
-    <a href="/direcao" class="btn-voltar">Voltar</a>
+@section('content')
+    <section class="metrics-grid metrics-grid--compact">
+        <article class="metric-card metric-card--success"><span class="metric-card__label">Finalizadas</span><strong class="metric-card__value">{{ $finalizadas->count() }}</strong><span class="metric-card__detail">Atividades com relatório aprovado</span></article>
+        <article class="metric-card"><span class="metric-card__label">Recusadas</span><strong class="metric-card__value">{{ $recusadas->count() }}</strong><span class="metric-card__detail">Propostas não aprovadas</span></article>
+    </section>
 
-    <h2>HAEs Submetidas</h2>
-
-
-    @include('components.exibir-hae2')
-
-    <h2>Estatísticas</h2>
-
-    <div class="bloco">
-        <p>Total de HAEs Finalizadas: {{ $finalizadas->count() }}</p>
-        <p>Total de HAEs Recusadas: {{ $recusadas->count() }}</p>
-    </div>
-</body>
-</html>
+    <section class="section">
+        <div class="section-heading"><div><h2>Atividades encerradas</h2><p>Selecione uma HAE para consultar seu histórico completo.</p></div></div>
+        @include('components.hae-board', ['grupos' => [
+            ['status' => 'finalizada', 'titulo' => 'Finalizadas', 'descricao' => 'Relatório aprovado', 'tom' => 'success', 'itens' => $finalizadas],
+            ['status' => 'recusada', 'titulo' => 'Recusadas', 'descricao' => 'Submissões encerradas', 'tom' => 'danger', 'itens' => $recusadas],
+        ]])
+    </section>
+@endsection

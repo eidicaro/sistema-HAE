@@ -1,40 +1,16 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Tipo de HAE</title>
+@extends('layouts.app')
 
-    <link rel="stylesheet" href="{{ asset('css/tipos-hae.css') }}">
-</head>
-<body>
+@section('title', 'Novo tipo de HAE')
+@section('eyebrow', 'Configuração institucional')
+@section('page-title', 'Novo tipo de HAE')
+@section('page-subtitle', 'Crie uma categoria e defina sua capacidade para cada semestre.')
+@section('header-actions')<a href="{{ route('direcao.tipos-hae.index') }}" class="button button--secondary">← Voltar</a>@endsection
 
-<div class="th-container">
-
-    <div class="th-header">
-        <h1>Novo Tipo de HAE</h1>
-    </div>
-
-    <div class="th-card">
-
-        <form action="{{ route('direcao.tipos-hae.store') }}" method="POST">
-            @csrf
-
-            @include('direcao.tipoHae._form')
-
-            <div class="th-actions-bottom">
-                <button type="submit" class="th-btn">Salvar</button>
-
-                <a href="{{ route('direcao.tipos-hae.index') }}" class="th-btn th-btn-outline">
-                    Cancelar
-                </a>
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-</body>
-</html>
+@section('content')
+    <form action="{{ route('direcao.tipos-hae.store') }}" method="POST" class="form-card form-card--narrow">
+        @csrf
+        <div class="form-card__intro"><h2>Dados do tipo</h2><p>O nome identifica a categoria em formulários, painéis e relatórios.</p></div>
+        <section class="form-section">@include('direcao.tipoHae._form')</section>
+        <div class="form-actions"><a href="{{ route('direcao.tipos-hae.index') }}" class="button button--secondary">Cancelar</a><button type="submit" class="button">Criar tipo</button></div>
+    </form>
+@endsection

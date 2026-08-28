@@ -1,33 +1,16 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tipos de HAE</title>
+@section('title', 'Editar tipo de HAE')
+@section('eyebrow', 'Configuração institucional')
+@section('page-title', 'Editar tipo de HAE')
+@section('page-subtitle', 'Atualize a categoria ' . $tipoHae->nome . ' e sua capacidade.')
+@section('header-actions')<a href="{{ route('direcao.tipos-hae.index') }}" class="button button--secondary">← Voltar</a>@endsection
 
-    <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
-    <link rel="stylesheet" href="{{ asset('../css/tipos-hae.css') }}">
-</head>
-<body>
-    
-    <div class="th-container">
-        <div class="th-header">
-            <h1>Editar Tipo de HAE</h1>
-        </div>
-        
-        <div class="th-card">
-        <form action="{{ route('direcao.tipos-hae.update', $tipoHae) }}" method="POST">
-                @csrf
-                @method('PUT')
-                
-                @include('direcao.tipoHae._form')
-                
-                <div class="th-actions-bottom">
-                    <button type="submit" class="th-btn">Atualizar</button>
-                <a href="{{ route('direcao.tipos-hae.index') }}" class="th-btn th-btn-outline">Cancelar</a>
-            </div>
-        </form>
-    </div>
-</div>
-</body>
+@section('content')
+    <form action="{{ route('direcao.tipos-hae.update', $tipoHae) }}" method="POST" class="form-card form-card--narrow">
+        @csrf @method('PUT')
+        <div class="form-card__intro"><h2>Dados do tipo</h2><p>Alterações de limite afetam as validações do semestre atual.</p></div>
+        <section class="form-section">@include('direcao.tipoHae._form')</section>
+        <div class="form-actions"><a href="{{ route('direcao.tipos-hae.index') }}" class="button button--secondary">Cancelar</a><button type="submit" class="button">Salvar alterações</button></div>
+    </form>
+@endsection

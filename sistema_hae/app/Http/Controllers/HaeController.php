@@ -56,7 +56,8 @@ class HaeController extends Controller
         $finalizadas = $haes->where('status', 'finalizada');
         $recusadas = $haes->where('status', 'recusada');
 
-        $haesRelator = Haes::whereHas('relatores', fn ($q) => $q->where('user_id', $user->id))
+        $haesRelator = Haes::with('user')
+            ->whereHas('relatores', fn ($q) => $q->where('user_id', $user->id))
             ->where('semestre_id', $semestreAtual->id)
             ->orderBy('created_at', 'desc')
             ->get();

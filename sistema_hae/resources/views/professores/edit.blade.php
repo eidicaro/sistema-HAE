@@ -1,84 +1,22 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
+@section('title', 'Editar professor')
+@section('eyebrow', 'Gestão de usuários')
+@section('page-title', 'Editar professor')
+@section('page-subtitle', 'Atualize os dados de acesso de ' . $professor->name . '.')
 
-    <title>Novo Professor</title>
+@section('header-actions')<a href="{{ route('direcao.professores.index') }}" class="button button--secondary">← Voltar</a>@endsection
 
-    <link rel="stylesheet" href="{{ asset('/css/crud-professores.css') }}">
-    <link rel="stylesheet" href="{{ asset('/css/fonte.css') }}">
-</head>
-
-<body>
-
-    @include('components.header')
-
-    <h1>Editar Professor</h1>
-
-    @if ($errors->any())
-
-    <div class="error">
-
-        <ul>
-
-            @foreach ($errors->all() as $erro)
-            <li>{{ $erro }}</li>
-            @endforeach
-
-        </ul>
-
-    </div>
-
-    @endif
-
-    <form action="{{ route('direcao.professores.update', $professor) }}" method="POST" class="form-professor">
-        @csrf
-        @method('PUT')
-
-        <label> Nome </label>
-
-        <br>
-
-        <input type="text" name="name" value="{{ old('name',$professor->name) }}" required>
-
-        <br><br>
-
-        <label>Email</label>
-
-        <br>
-
-        <input type="email" name="email" value="{{ old('email',$professor->email) }}" required>
-
-        <br><br>
-
-        <label>Senha</label>
-
-        <br>
-
-        <input type="password" name="password">
-
-        <br><br>
-
-        <label>Confirmar Senha</label>
-
-        <br>
-
-        <input type="password" name="password_confirmation">
-
-        <br><br>
-
-        <small>Deixe a senha em branco caso não deseje alterá-la.</small>
-
-        <br><br>
-
-        <button type="submit" class="btn-salvar">Salvar Alterações</button>
+@section('content')
+    <form action="{{ route('direcao.professores.update', $professor) }}" method="POST" class="form-card form-card--narrow">
+        @csrf @method('PUT')
+        <div class="form-card__intro"><h2>Dados do professor</h2><p>Altere somente os campos que precisam ser atualizados.</p></div>
+        <section class="form-section"><div class="form-grid">
+            <div class="field field--full"><label for="name">Nome completo</label><input type="text" id="name" name="name" value="{{ old('name', $professor->name) }}" required autocomplete="name"></div>
+            <div class="field field--full"><label for="email">E-mail</label><input type="email" id="email" name="email" value="{{ old('email', $professor->email) }}" required autocomplete="email"></div>
+            <div class="field"><label for="password">Nova senha</label><input type="password" id="password" name="password" autocomplete="new-password"><span class="field__hint">Deixe em branco para manter a senha atual.</span></div>
+            <div class="field"><label for="password_confirmation">Confirmar nova senha</label><input type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password"></div>
+        </div></section>
+        <div class="form-actions"><a href="{{ route('direcao.professores.index') }}" class="button button--secondary">Cancelar</a><button type="submit" class="button">Salvar alterações</button></div>
     </form>
-
-    <br>
-
-    <a href="/direcao/professores" class="btn-voltar">Voltar</a>
-
-</body>
-
-</html>
+@endsection

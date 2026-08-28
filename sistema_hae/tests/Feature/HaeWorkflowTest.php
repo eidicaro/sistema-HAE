@@ -111,6 +111,32 @@ class HaeWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_main_pages_render_for_each_profile(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $coordenador = User::factory()->create([
+            'role' => User::ROLE_COORDENADOR,
+            'curso' => Haes::CURSOS[0],
+        ]);
+        $direcao = User::factory()->create(['role' => User::ROLE_DIRECAO]);
+        $hae = $this->criarHae($professor);
+        $hae->relatores()->attach($coordenador);
+
+        $this->actingAs($professor)->get(route('professor'))->assertOk();
+        $this->actingAs($professor)->get(route('hae.create'))->assertOk();
+        $this->actingAs($coordenador)->get(route('coordenador'))->assertOk();
+
+        $this->actingAs($direcao)->get(route('direcao'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.relatores'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.resultados'))->assertOk();
+        $this->actingAs($direcao)->get(route('semestres.index'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.tipos-hae.index'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.tipos-hae.create'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.professores.index'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.professores.create'))->assertOk();
+        $this->actingAs($direcao)->get(route('direcao.professores.edit', $professor))->assertOk();
+    }
+
     public function test_direction_limit_calculation_is_scoped_to_hae_semester(): void
     {
         $direcao = User::factory()->create(['role' => User::ROLE_DIRECAO]);

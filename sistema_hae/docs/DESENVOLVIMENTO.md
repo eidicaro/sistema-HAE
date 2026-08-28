@@ -51,7 +51,7 @@ php artisan route:list --except-vendor
 
 ## Assets
 
-As telas existentes carregam CSS de `public/css` diretamente. `resources/js`, Vite e Tailwind estão presentes, mas quase sem participação nas telas. Na parte 2, escolha um único pipeline e documente a migração; não mantenha duas fontes de estilo para o mesmo componente.
+Todas as telas carregam `public/css/app.css` através dos layouts compartilhados. `resources/js`, Vite e Tailwind estão presentes, mas não participam da interface atual. Ao migrar o pipeline no futuro, mantenha uma única fonte de estilos e preserve os tokens descritos em `SISTEMA_VISUAL.md`.
 
 ## Dados de desenvolvimento
 

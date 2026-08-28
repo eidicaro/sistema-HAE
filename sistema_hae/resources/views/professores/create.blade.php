@@ -1,79 +1,22 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
+@extends('layouts.app')
 
-    <title>Novo Professor</title>
+@section('title', 'Novo professor')
+@section('eyebrow', 'Gestão de usuários')
+@section('page-title', 'Cadastrar professor')
+@section('page-subtitle', 'Crie as credenciais de acesso para um novo professor.')
 
-    <link rel="stylesheet" href="{{ asset('/css/crud-professores.css') }}">
-    <link rel="stylesheet" href="{{ asset('/css/fonte.css') }}">
-</head>
-<body>
+@section('header-actions')<a href="{{ route('direcao.professores.index') }}" class="button button--secondary">← Voltar</a>@endsection
 
-@include('components.header')
-
-<h1>Novo Professor</h1>
-
-@if ($errors->any())
-
-<div class="error">
-
-    <ul>
-
-        @foreach ($errors->all() as $erro)
-
-            <li>{{ $erro }}</li>
-
-        @endforeach
-
-    </ul>
-
-</div>
-
-@endif
-
-<form action="/direcao/professores" method="POST" class="form-professor">
-    @csrf
-
-    <label>Nome</label>
-
-    <br>
-
-    <input type="text" name="name" value="{{ old('name') }}" required>
-
-    <br><br>
-
-    <label>Email</label>
-
-    <br>
-
-    <input type="email" name="email" value="{{ old('email') }}" required>
-
-    <br><br>
-
-    <label>Senha</label>
-
-    <br>
-
-    <input type="password" name="password" required>
-
-    <br><br>
-
-    <label>Confirmar Senha</label>
-
-    <br>
-
-    <input type="password" name="password_confirmation" required>
-
-    <br><br>
-
-    <button type="submit" class="btn-salvar">Cadastrar</button>
-
-</form>
-
-<br>
-
-<a href="/direcao/professores" class="btn-voltar">Voltar</a>
-
-</body>
-</html>
+@section('content')
+    <form action="{{ route('direcao.professores.store') }}" method="POST" class="form-card form-card--narrow">
+        @csrf
+        <div class="form-card__intro"><h2>Dados do professor</h2><p>O novo usuário será criado com o perfil de professor.</p></div>
+        <section class="form-section"><div class="form-grid">
+            <div class="field field--full"><label for="name">Nome completo</label><input type="text" id="name" name="name" value="{{ old('name') }}" required autocomplete="name"></div>
+            <div class="field field--full"><label for="email">E-mail</label><input type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="email"></div>
+            <div class="field"><label for="password">Senha inicial</label><input type="password" id="password" name="password" required autocomplete="new-password"><span class="field__hint">Mínimo de 6 caracteres.</span></div>
+            <div class="field"><label for="password_confirmation">Confirmar senha</label><input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"></div>
+        </div></section>
+        <div class="form-actions"><a href="{{ route('direcao.professores.index') }}" class="button button--secondary">Cancelar</a><button type="submit" class="button">Cadastrar professor</button></div>
+    </form>
+@endsection

@@ -1,308 +1,162 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAE</title>
-    <link rel="stylesheet" href="{{ asset('../../css/show.css') }}">
-    <link rel="stylesheet" href="{{ asset('../../css/fonte.css') }}">
-</head>
-<body>
+@extends('layouts.app')
 
 @php
     $user = auth()->user();
+    $statusLabel = match($hae->status) {
+        'pendente' => 'Pendente',
+        'com_diligencia' => 'Em diligência',
+        'em_execucao' => 'Em execução',
+        'finalizada' => 'Finalizada',
+        'recusada' => 'Recusada',
+        default => $hae->status,
+    };
+    $usuarioEhRelator = $hae->relatores->contains($user->id);
+    $usuarioEhCoordenador = $user->role === 'coordenador';
+    $podeDarParecer = $usuarioEhRelator || $usuarioEhCoordenador;
+    $jaDeuParecer = $hae->pareceres->where('user_id', $user->id)->isNotEmpty();
 @endphp
 
-<a href="{{ route($user->role) }}">Voltar</a>
+@section('title', $hae->titulo)
+@section('eyebrow', 'Detalhes da atividade')
+@section('page-title', 'Consulta da HAE')
+@section('page-subtitle', 'Revise a proposta, os pareceres e o histórico de decisões.')
 
-<div class="hae-container">
+@section('header-actions')
+    <a href="{{ route($user->role) }}" class="button button--secondary">← Voltar ao painel</a>
+@endsection
 
-    <h1 class="titulo">{{ $hae->titulo }}</h1>
+@section('content')
+    <div class="detail-layout">
+        <div class="detail-main">
+            <section class="detail-hero">
+                <div class="detail-hero__top">
+                    <div><h2>{{ $hae->titulo }}</h2><p class="detail-hero__type">{{ $hae->tipoHae->nome ?? 'Tipo não definido' }}</p></div>
+                    <span class="status-pill status-pill--{{ $hae->status }}">{{ $statusLabel }}</span>
+                </div>
+                <dl class="detail-meta">
+                    <div><dt>Professor</dt><dd>{{ $hae->user->name }}</dd></div>
+                    <div><dt>Curso</dt><dd>{{ $hae->curso }}</dd></div>
+                    <div><dt>Carga horária</dt><dd>{{ $hae->carga_horaria }}h semanais</dd></div>
+                    <div><dt>Semestre</dt><dd>{{ $hae->semestre->nome ?? 'Não informado' }}</dd></div>
+                    <div><dt>Submetida em</dt><dd>{{ $hae->created_at->format('d/m/Y') }}</dd></div>
+                    <div><dt>Edital</dt><dd>{{ $hae->edital_aceito ? 'Aceito' : 'Não aceito' }}</dd></div>
+                </dl>
+            </section>
 
-    <!-- infos Principais -->
-    <div class="info">
-        <p><strong>Tipo de HAE:</strong> 
-            {{ $hae->tipoHae->nome ?? 'Não definido'}}
-        </p>
+            <section class="content-block"><h3>Resumo</h3><p>{{ $hae->resumo }}</p></section>
+            <section class="content-block"><h3>Justificativa</h3><p>{{ $hae->justificativa }}</p></section>
+            <section class="content-block"><h3>Cronograma</h3><p>{{ $hae->cronograma ?: 'Não informado.' }}</p></section>
+            <section class="content-block"><h3>Especificações</h3><p>{{ $hae->especificacoes ?: 'Não informado.' }}</p></section>
 
-        <p><strong>Professor:</strong> {{ $hae->user->name }}</p>
-        <p><strong>Curso:</strong> {{ $hae->curso }}</p>
-        <p><strong>Carga Horária:</strong> {{ $hae->carga_horaria }}</p>
-        @if( $hae->edital_aceito == 1)
-            <p style="color: #009908"><strong style="color: #000">Edital:</strong>Aceito</p>
-            @else
-            <p style="color: #FF0000"><strong style="color: #000">Edital:</strong>Recusado</p>
-        @endif
+            <section class="content-block">
+                <h3>Pareceres</h3>
+                <div class="timeline">
+                    @forelse($hae->pareceres as $parecer)
+                        <article class="timeline-item"><div class="timeline-item__head"><strong>{{ $parecer->user->name }}</strong><span>{{ $parecer->tipo === 'coordenador' ? 'Coordenação' : 'Relator' }} · {{ $parecer->created_at->format('d/m/Y') }}</span></div><p>{{ $parecer->comentario }}</p></article>
+                    @empty
+                        <div class="empty-state"><p>Nenhum parecer registrado.</p></div>
+                    @endforelse
+                </div>
 
+                @if($podeDarParecer && !$jaDeuParecer)
+                    <form method="POST" action="{{ route('parecer.store', $hae->id) }}" class="decision-form" style="margin-top: 18px">
+                        @csrf
+                        <div class="field"><label for="comentario-parecer">Registrar parecer</label><textarea id="comentario-parecer" name="comentario" placeholder="Apresente sua análise da proposta..." required></textarea></div>
+                        <div class="actions-row"><button type="submit" class="button">Enviar parecer</button></div>
+                    </form>
+                @endif
+            </section>
 
-        <p>
-            <strong>Status:</strong> 
-            <span class="status status-{{ $hae->status }}">
-            {{
-                match($hae->status) {
-                    'pendente' => 'Pendente',
-                    'com_diligencia' => 'Com Diligência',
-                    'em_execucao' => 'Em Execução',
-                    'finalizada' => 'Finalizada',
-                    'recusada' => 'Recusada',
-                    default => $hae->status
-                }
-            }}
-            </span>
-        </p>
+            <section class="content-block">
+                <h3>Histórico de decisões</h3>
+                <div class="timeline">
+                    @forelse($hae->decisoes as $decisao)
+                        <article class="timeline-item"><div class="timeline-item__head"><strong>{{ ucfirst($decisao->decisao) }}</strong><span>{{ $decisao->created_at->format('d/m/Y H:i') }}</span></div><p>{{ $decisao->comentario ?: 'Sem comentário.' }}</p></article>
+                    @empty
+                        <div class="empty-state"><p>Nenhuma decisão registrada.</p></div>
+                    @endforelse
+                </div>
+            </section>
 
-        {{-- 🔥 BOTÃO EDITAR (SÓ PROFESSOR E EM DILIGÊNCIA) --}}
-        @if($user->role == 'professor' && $hae->status == \App\Models\Haes::STATUS_DILIGENCIA)
-            <a href="{{ route('hae.edit', $hae->id) }}" class="btn-editar">
-                Editar e reenviar
-            </a>
-        @endif
-
-        @if($user->role == 'professor' && $hae->user_id == $user->id && $hae->status == 'em_execucao')
-            <a href="{{ route('relatorio.create', $hae->id) }}">
-                Preencher Relatório
-            </a>
-        @endif
-    </div>
-
-
-        <!-- infos principais -->
-    <div class="bloco">
-        <h2>Resumo</h2>
-        <p>{{ $hae->resumo }}</p>
-    </div>
-
-    <div class="bloco">
-        <h2>Justificativa</h2>
-        <p>{{ $hae->justificativa }}</p>
-    </div>
-
-    <div class="bloco">
-        <h2>Cronograma</h2>
-
-        <p style="white-space: pre-line;">
-            {{ $hae->cronograma }}
-        </p>
-    </div>
-
-    <div class="bloco">
-        <h2>Detalhes Específicos</h2>
-        <p style="white-space: pre-line;">{{ $hae->especificacoes ?: 'Não informado' }}</p>
-    </div>
-
-    <!-- PARECERES -->
-    <div class="bloco">
-        <!-- mostra o parecer -->
-        <h2>Pareceres</h2>
-
-        @forelse($hae->pareceres as $parecer)
-            <div class="item">
-                <p>
-                    <strong>{{ $parecer->user->name }}</strong> 
-                    ({{ $parecer->tipo }})
-                </p>
-                <p>{{ $parecer->comentario }}</p>
-            </div>
-        @empty
-            <p class="vazio">Sem pareceres ainda</p>
-        @endforelse
-
-        <!-- se o usuario for relator daquela hae, ele pode dar o parecer -->
-        @php
-            $usuario = auth()->user();
-
-            $usuarioEhRelator = $hae->relatores->contains($usuario->id);
-            $usuarioEhCoordenador = $usuario->role == 'coordenador';
-
-            $podeDarParecer = $usuarioEhRelator || $usuarioEhCoordenador;
-
-            $jaDeuParecer = $hae->pareceres->where('user_id', auth()->id())->count();
-        @endphp
-
-        @if($podeDarParecer && !$jaDeuParecer)
-            <div class="bloco-parecer">
-                <h3>Dar Parecer</h3>
-
-                <form method="POST" action="{{ route('parecer.store', $hae->id) }}">
-                    @csrf
-
-                    <textarea name="comentario" required class="comentario"></textarea>
-
-                    <button type="submit" class="btn-parecer">
-                        Enviar parecer
-                    </button>
-                </form>
-            </div>
-        @endif
-    </div>
-
-    <!-- DECISOES -->
-    <div class="bloco">
-        <!-- Mostra as Decisões -->
-        <h2>Decisões</h2>
-
-        @forelse($hae->decisoes as $decisao)
-            <div class="item">
-                <p><strong>Status:</strong> {{ $decisao->decisao }}</p>
-                <p>{{ $decisao->comentario }}</p>
-            </div>
-        @empty
-            <p class="vazio">Sem decisão ainda</p>
-        @endforelse
-
-        <!-- mensagem bala -->
-        @if(session('error'))
-            <div style="
-                background: #ffdddd;
-                color: #a00;
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 1px solid #a00;
-                border-radius: 5px;
-            ">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        @if(session('sucesso'))
-            <div style="
-                background: #ddffdd;
-                color: #0a0;
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 1px solid #0a0;
-                border-radius: 5px;
-            ">
-                {{ session('sucesso') }}
-            </div>
-        @endif
-
-        <!-- se for a direção, ele pode dar a decisão -->
-        @if($user->role == 'direcao' && !in_array($hae->status, ['finalizada', 'recusada', 'em_execucao']))
-            
-            <div class="bloco-decisao">
-                <h3>Tomar decisão</h3>
-
-                <form method="POST" action="{{ route('direcao.decisao', $hae->id) }}">
-                    @csrf
-
-                    <textarea name="comentario" placeholder="Comentário (opcional)" class="comentario"></textarea>
-
-                    <div class="acoes">
-                        <button name="acao" value="aprovada" class="btn-aprovar">
-                            Aprovar
-                        </button>
-
-                        <button name="acao" value="recusada" class="btn-recusar">
-                            Recusar
-                        </button>
-
-                        <button name="acao" value="diligencia" class="btn-diligencia">
-                            Pedir Diligência
-                        </button>
+            @if($relatorio)
+                <section class="content-block">
+                    <div class="section-heading" style="margin-bottom: 14px"><div><h3>Relatório do professor</h3><p>Situação: {{ ucfirst($relatorio->status) }}</p></div></div>
+                    <p><strong>{{ $relatorio->titulo }}</strong></p>
+                    <div class="timeline" style="margin-top: 16px">
+                        <article class="timeline-item"><div class="timeline-item__head"><strong>Sumário executivo</strong></div><p>{{ $relatorio->sumario }}</p></article>
+                        <article class="timeline-item"><div class="timeline-item__head"><strong>Principais resultados</strong></div><p>{{ $relatorio->resultados_texto }}</p></article>
                     </div>
-                </form>
-            </div>
+                </section>
 
-        @endif
+                @include('relatorio.comparacao', ['relatorio' => $relatorio])
 
-
-    </div>
-
-<!-- Relatorio -->
-    @if(isset($relatorio) && in_array($relatorio->status, ['enviado', 'reprovado', 'aprovado']))
-        @include('relatorio.comparacao', ['relatorio' => $relatorio])
-    @endif
-
-    <!-- vizualizar relatorio -->
-    @if(isset($relatorio))
-    <div class="bloco">
-        <h2>Relatório do Professor</h2>
-
-        <p><strong>Título:</strong> {{ $relatorio->titulo }}</p>
-
-        <div class="sub-bloco">
-            <h3>Sumário Executivo</h3>
-            <p>{{ $relatorio->sumario }}</p>
-        </div>
-
-        <div class="sub-bloco">
-            <h3>Principais Resultados</h3>
-            <p>{{ $relatorio->resultados_texto }}</p>
-        </div>
-    </div>
-    @endif
-
-    @if(isset($relatorio))
-    <div class="bloco">
-        <h2>Arquivos do Relatório</h2>
-
-        @php
-            $principal = $relatorio->arquivos->where('tipo', 'principal')->first();
-            $comprovacoes = $relatorio->arquivos->where('tipo', 'comprovacao');
-        @endphp
-
-        {{-- 📄 Arquivo principal --}}
-        @if($principal)
-            <div class="item">
-                <p><strong>Arquivo Principal:</strong></p>
-
-                <a href="{{ route('arquivo.ver', $principal->id) }}" target="_blank">
-                    Visualizar
-                </a>
-
-                <a href="{{ route('arquivo.download', $principal->id) }}">
-                    Download
-                </a>
-            </div>
-        @endif
-
-        {{-- 📎 Comprovações --}}
-        @if($comprovacoes->count())
-            <div class="item">
-                <p><strong>Comprovações:</strong></p>
-
-                @foreach($comprovacoes as $arquivo)
-                    <div>
-                        <a href="{{ route('arquivo.ver', $arquivo->id) }}" target="_blank">
-                            Visualizar
-                        </a>
-
-                        <a href="{{ route('arquivo.download', $arquivo->id) }}">
-                            Download
-                        </a>
+                <section class="content-block">
+                    <h3>Arquivos do relatório</h3>
+                    @php
+                        $principal = $relatorio->arquivos->where('tipo', 'principal')->first();
+                        $comprovacoes = $relatorio->arquivos->where('tipo', 'comprovacao');
+                    @endphp
+                    <div class="file-list">
+                        @if($principal)
+                            <div class="file-item"><span class="file-item__name"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 2.5L17.5 8H14V4.5ZM6 20V4h6v6h6v10H6Z"/></svg>Arquivo principal</span><span class="file-item__actions"><a href="{{ route('arquivo.ver', $principal->id) }}" target="_blank" class="text-link">Visualizar</a><a href="{{ route('arquivo.download', $principal->id) }}" class="text-link">Baixar</a></span></div>
+                        @endif
+                        @foreach($comprovacoes as $index => $arquivo)
+                            <div class="file-item"><span class="file-item__name"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 6.5v11a4.5 4.5 0 0 1-9 0V5a3 3 0 0 1 6 0v11.5a1.5 1.5 0 0 1-3 0V6H12v10.5h.01L12 5a1.5 1.5 0 0 0-3 0v12.5a3 3 0 0 0 6 0v-11h1.5Z"/></svg>Comprovação {{ $index + 1 }}</span><span class="file-item__actions"><a href="{{ route('arquivo.ver', $arquivo->id) }}" target="_blank" class="text-link">Visualizar</a><a href="{{ route('arquivo.download', $arquivo->id) }}" class="text-link">Baixar</a></span></div>
+                        @endforeach
+                        @if(!$principal && $comprovacoes->isEmpty())<div class="empty-state"><p>Nenhum arquivo enviado.</p></div>@endif
                     </div>
-                @endforeach
-            </div>
-        @endif
-
-        @if(!$principal && !$comprovacoes->count())
-            <p class="vazio">Nenhum arquivo enviado</p>
-        @endif
-    </div>
-    @endif
-
-    @if($user->role == 'direcao' 
-        && $hae->status == 'em_execucao' 
-        && isset($relatorio) 
-        && $relatorio->status == 'enviado')
-        <div style="display: flex;
-                    justify-content: space-around;
-                    margin: 2% 0 0 0;">
-        
-        <form method="POST" action="{{ route('relatorio.aprovar', $relatorio->id) }}">
-            @csrf
-            <button class="btn-rel-aprov">Aprovar Relatório</button>
-        </form>
-
-        <form method="POST" action="{{ route('relatorio.reprovar', $relatorio->id) }}">
-            @csrf
-            <button class="btn-rel-rec">Reprovar Relatório</button>
-        </form>
+                </section>
+            @endif
         </div>
-    @endif
 
-</div>
+        <aside class="detail-aside sticky-panel">
+            <section class="panel panel--accent">
+                <div class="panel__header"><h3>Próximas ações</h3></div>
+                <div class="panel__body">
+                    <div class="decision-actions">
+                        @if($user->role === 'professor' && $hae->status === \App\Models\Haes::STATUS_DILIGENCIA)
+                            <a href="{{ route('hae.edit', $hae->id) }}" class="button">Editar e reenviar</a>
+                        @endif
+                        @if($user->role === 'professor' && $hae->user_id === $user->id && $hae->status === \App\Models\Haes::STATUS_EM_EXECUCAO && (!$relatorio || $relatorio->status === \App\Models\Relatorio::STATUS_RECUSADO))
+                            <a href="{{ route('relatorio.create', $hae->id) }}" class="button">Preencher relatório</a>
+                        @endif
+                        @if($user->role === 'professor' && $relatorio?->status === \App\Models\Relatorio::STATUS_ENVIADO)
+                            <p style="margin: 0; color: var(--ink-600)">Relatório enviado. Aguarde a avaliação da direção.</p>
+                        @endif
+                        @if(!($user->role === 'professor' && in_array($hae->status, [\App\Models\Haes::STATUS_DILIGENCIA, \App\Models\Haes::STATUS_EM_EXECUCAO])))
+                            <p style="margin: 0; color: var(--ink-600)">Consulte abaixo as informações e ações disponíveis para esta etapa.</p>
+                        @endif
+                    </div>
+                </div>
+            </section>
 
-</body>
-</html>
+            @if($user->role === 'direcao' && in_array($hae->status, ['pendente', 'com_diligencia']))
+                <section class="panel">
+                    <div class="panel__header"><h3>Decisão da direção</h3></div>
+                    <div class="panel__body">
+                        <form method="POST" action="{{ route('direcao.decisao', $hae->id) }}" class="decision-form">
+                            @csrf
+                            <div class="field"><label for="comentario-decisao">Comentário</label><textarea id="comentario-decisao" name="comentario" placeholder="Justificativa ou orientação para o professor..."></textarea></div>
+                            <div class="decision-actions"><button name="acao" value="aprovada" class="button button--success">Aprovar proposta</button><button name="acao" value="diligencia" class="button button--warning">Solicitar diligência</button><button name="acao" value="recusada" class="button button--secondary">Recusar proposta</button></div>
+                        </form>
+                    </div>
+                </section>
+            @endif
+
+            @if($user->role === 'direcao' && $hae->status === 'em_execucao' && $relatorio?->status === 'enviado')
+                <section class="panel">
+                    <div class="panel__header"><h3>Avaliar relatório</h3></div>
+                    <div class="panel__body"><div class="decision-actions">
+                        <form method="POST" action="{{ route('relatorio.aprovar', $relatorio->id) }}">@csrf<button class="button button--success" style="width: 100%">Aprovar relatório</button></form>
+                        <form method="POST" action="{{ route('relatorio.reprovar', $relatorio->id) }}">@csrf<button class="button button--secondary" style="width: 100%">Solicitar correção</button></form>
+                    </div></div>
+                </section>
+            @endif
+
+            <section class="panel">
+                <div class="panel__header"><h3>Relatores</h3><span class="count-badge">{{ $hae->relatores->count() }}</span></div>
+                <div class="panel__body"><div class="reviewer-card__tags">@forelse($hae->relatores as $relator)<span class="tag">{{ $relator->name }}</span>@empty<span style="color: var(--ink-500)">Nenhum relator atribuído.</span>@endforelse</div></div>
+            </section>
+        </aside>
+    </div>
+@endsection

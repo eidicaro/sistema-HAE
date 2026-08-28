@@ -9,6 +9,7 @@ Esta documentação descreve o comportamento suportado após a revisão de 28/08
 | [BANCO_DE_DADOS.md](BANCO_DE_DADOS.md) | Tabelas, relacionamentos, exclusões e legado |
 | [ROTAS_E_PERMISSOES.md](ROTAS_E_PERMISSOES.md) | Superfície HTTP e matriz de acesso |
 | [DESENVOLVIMENTO.md](DESENVOLVIMENTO.md) | Setup, convenções, testes e checklist de alteração |
+| [SISTEMA_VISUAL.md](SISTEMA_VISUAL.md) | Identidade, componentes de interface e responsividade |
 | [OPERACAO_E_DEPLOY.md](OPERACAO_E_DEPLOY.md) | Configuração, publicação na HostGator, backup e diagnóstico |
 | [PENDENCIAS.md](PENDENCIAS.md) | Limitações conhecidas e escopo sugerido das partes 2 e 3 |
 

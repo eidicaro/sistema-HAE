@@ -1,44 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ asset('../css/create-rel.css') }}">
-    <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
+@extends('layouts.app')
 
-</head>
-<body>
-    
+@section('title', 'Relatório da HAE')
+@section('eyebrow', 'Conclusão da atividade')
+@section('page-title', 'Enviar relatório')
+@section('page-subtitle', $hae->titulo)
 
-<h1>Relatório da HAE</h1>
+@section('header-actions')
+    <a href="{{ route('hae.show', $hae->id) }}" class="button button--secondary">← Voltar para a HAE</a>
+@endsection
 
-<h2>{{ $hae->titulo }}</h2>
+@section('content')
+    <form method="POST" action="{{ route('relatorio.store', $hae->id) }}" enctype="multipart/form-data" class="form-card">
+        @csrf
+        <div class="form-card__intro"><h2>Relatório de execução</h2><p>Registre o que foi realizado e anexe os documentos que comprovam a atividade.</p></div>
 
-<form method="POST" action="{{ route('relatorio.store', $hae->id) }}" enctype="multipart/form-data">
-    @csrf
+        <section class="form-section">
+            <div class="form-section__title"><span class="form-section__number">1</span><h3>Informações gerais</h3></div>
+            <div class="form-grid">
+                <div class="field field--full"><label for="titulo">Título do relatório</label><input type="text" id="titulo" name="titulo" value="{{ old('titulo', $hae->relatorio->titulo ?? '') }}" required></div>
+                <div class="field field--full"><label for="sumario">Sumário executivo</label><textarea id="sumario" name="sumario" required>{{ old('sumario', $hae->relatorio->sumario ?? '') }}</textarea><span class="field__hint">Apresente de forma resumida o desenvolvimento da atividade.</span></div>
+                <div class="field field--full"><label for="resultados_texto">Principais resultados</label><textarea id="resultados_texto" name="resultados_texto" required>{{ old('resultados_texto', $hae->relatorio->resultados_texto ?? '') }}</textarea><span class="field__hint">Descreva entregas, impactos e resultados alcançados.</span></div>
+            </div>
+        </section>
 
-    <h2>📌 Informações Gerais</h2>
+        <section class="form-section">
+            <div class="form-section__title"><span class="form-section__number">2</span><h3>Documentos</h3></div>
+            <div class="form-grid">
+                <div class="field"><label for="arquivo_principal">Arquivo principal</label><input type="file" id="arquivo_principal" name="arquivo_principal"><span class="field__hint">Até 10 MB.</span></div>
+                <div class="field"><label for="comprovacoes">Comprovações</label><input type="file" id="comprovacoes" name="comprovacoes[]" multiple><span class="field__hint">Até 10 arquivos, com no máximo 10 MB cada.</span></div>
+            </div>
+        </section>
 
-    <label>Título do Relatório</label>
-    <input type="text" name="titulo" value="{{ old('titulo', $hae->relatorio->titulo ?? '') }}" required>
-
-    <label>Sumário Executivo</label>
-    <textarea name="sumario" required>{{ old('sumario', $hae->relatorio->sumario ?? '') }}</textarea>
-
-    <label>Principais Resultados</label>
-    <textarea name="resultados_texto" required>{{ old('resultados_texto', $hae->relatorio->resultados_texto ?? '') }}</textarea>
-
-    <hr>
-
-    <h2>📎 Upload</h2>
-
-    <input type="file" name="arquivo_principal">
-    <input type="file" name="comprovacoes[]" multiple>
-
-    <br><br>
-    <button type="submit">Enviar</button>
-</form>
-
-</body>
-</html>
+        <div class="form-actions"><a href="{{ route('hae.show', $hae->id) }}" class="button button--secondary">Cancelar</a><button type="submit" class="button">Enviar relatório</button></div>
+    </form>
+@endsection

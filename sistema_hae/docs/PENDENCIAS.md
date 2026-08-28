@@ -2,18 +2,18 @@
 
 Este arquivo separa limitações conhecidas de defeitos já corrigidos. A ordem abaixo é uma sugestão de trabalho, não uma autorização para alterar produção sem backup e homologação.
 
-## Parte 2 — design e experiência
+## Parte 2 — design e experiência concluída
 
-- criar layout Blade único; hoje cada view repete documento HTML e includes podem conter marcação estrutural inválida;
-- revisar todos os paths de CSS e consolidar o pipeline de assets;
-- criar componentes para header, navegação, alertas, botões, cards, tabelas e formulários;
-- padronizar nomes, acentuação, status e mensagens de sessão (`success`, `sucesso`, `error`, `erro`);
-- tornar dashboards e formulários responsivos;
-- exibir erros junto aos campos e preservar valores no relatório;
-- melhorar acessibilidade: labels, foco, contraste, textos alternativos e navegação por teclado;
-- remover estilos inline e JavaScript duplicado das views;
-- parametrizar texto/número do edital e catálogo de cursos;
-- corrigir semântica da exportação: o botão diz CSV, mas entrega XLSX, e há colunas legadas sem correspondência na tabela `haes`.
+- layouts público e autenticado compartilhados;
+- navegação lateral por perfil e painel responsivo;
+- dashboard da direção reorganizado por prioridade operacional;
+- componentes unificados para mensagens, botões, cards, tabelas, formulários e quadro de HAEs;
+- identidade branca e vermelha alinhada à Fatec, com marcas existentes da Fatec Tatuí e CPS;
+- foco visível, labels, navegação semântica e suporte a redução de movimento;
+- um único arquivo de estilo, `public/css/app.css`;
+- nomenclatura da exportação corrigida na interface para planilha.
+
+Melhorias futuras de experiência: parametrizar o texto do edital, tornar cursos configuráveis, eliminar os poucos estilos inline de valores dinâmicos e realizar teste de usabilidade com usuários reais.
 
 ## Parte 3 — segurança
 

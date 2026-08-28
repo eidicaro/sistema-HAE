@@ -1,79 +1,42 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Semestres</title>
-    <link rel="stylesheet" href="{{ asset('../css/semestres.css') }}">
-    <link rel="stylesheet" href="{{ asset('../css/fonte.css') }}">
-</head>
+@extends('layouts.app')
 
-<body style="font-family: Arial; padding:20px;">
-<a href="{{ route($user->role) }}">Voltar</a>
-    <!-- caro dev, o haecontroller é o principal, a maioria dos parametros estão sendo passados por ele -->
+@section('title', 'Semestres')
+@section('eyebrow', 'Configuração institucional')
+@section('page-title', 'Gerenciar semestres')
+@section('page-subtitle', 'Cadastre os períodos letivos e defina qual está recebendo novas submissões.')
 
+@section('content')
+    <div class="detail-layout">
+        <section class="form-card form-card--narrow">
+            <div class="form-card__intro"><h2>Novo semestre</h2><p>Informe o nome e o intervalo do período letivo.</p></div>
+            <form method="POST" action="{{ route('semestres.store') }}">
+                @csrf
+                <div class="form-section"><div class="form-grid">
+                    <div class="field field--full"><label for="nome">Identificação</label><input type="text" id="nome" name="nome" value="{{ old('nome') }}" placeholder="Ex.: 2026/1" required></div>
+                    <div class="field"><label for="data_inicio">Data de início</label><input type="date" id="data_inicio" name="data_inicio" value="{{ old('data_inicio') }}" required></div>
+                    <div class="field"><label for="data_fim">Data de término</label><input type="date" id="data_fim" name="data_fim" value="{{ old('data_fim') }}" required></div>
+                </div></div>
+                <div class="form-actions"><button type="submit" class="button">Cadastrar semestre</button></div>
+            </form>
+        </section>
 
-<h1 style="color:#B30A07;">Gerenciar Semestres</h1>
-
-<!-- MENSAGEM -->
-@if(session('success'))
-    <p style="color:green;">{{ session('success') }}</p>
-@endif
-
-<!-- FORM CRIAR -->
- <div class="criar-semestre">
-    <h3>Criar novo semestre</h3>
-
-    <form method="POST" action="/semestres" class="form-semestre">
-        @csrf
-
-        <input type="text" name="nome" placeholder="Ex: 2026/1" required class="nome">
-
-        <label>Início:</label>
-        <input type="date" name="data_inicio" required class="data">
-
-        <label>Fim:</label>
-        <input type="date" name="data_fim" required class="data">
-
-        <button class="btn-criar">Criar</button>
-    </form>
-</div>
-
-<hr>
-
-<!-- LISTAGEM -->
-<h3>Semestres cadastrados</h3>
-
-<table  class="semestres">
-    <tr>
-        <th>Nome</th>
-        <th>Período</th>
-        <th>Status</th>
-        <th>Ação</th>
-    </tr>
-
-    @foreach($semestres as $semestre)
-    <tr>
-        <td>{{ $semestre->nome }}</td>
-        <td>{{ $semestre->data_inicio }} até {{ $semestre->data_fim }}</td>
-        <td>
-            @if($semestre->ativo)
-                <strong style="color:green;">ATIVO</strong>
-            @else
-                Inativo
-            @endif
-        </td>
-        <td>
-            @if(!$semestre->ativo)
-                <form method="POST" action="/semestres/{{ $semestre->id }}/ativar">
-                    @csrf
-                    <button>Ativar</button>
-                </form>
-            @endif
-        </td>
-    </tr>
-    @endforeach
-
-</table>
-
-</body>
-</html>
+        <section class="panel">
+            <div class="panel__header"><div><h2>Períodos cadastrados</h2></div><span class="count-badge">{{ $semestres->count() }}</span></div>
+            <div class="table-wrap"><table class="data-table">
+                <thead><tr><th>Semestre</th><th>Período</th><th>Status</th><th>Ação</th></tr></thead>
+                <tbody>
+                    @forelse($semestres as $semestre)
+                        <tr>
+                            <td><strong>{{ $semestre->nome }}</strong></td>
+                            <td>{{ $semestre->data_inicio->format('d/m/Y') }} a {{ $semestre->data_fim->format('d/m/Y') }}</td>
+                            <td><span class="tag {{ $semestre->ativo ? 'tag--active' : 'tag--inactive' }}">{{ $semestre->ativo ? 'Ativo' : 'Inativo' }}</span></td>
+                            <td>@unless($semestre->ativo)<form method="POST" action="{{ route('semestres.ativar', $semestre->id) }}">@csrf<button class="button button--secondary button--small">Ativar</button></form>@endunless</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="4"><div class="empty-state"><p>Nenhum semestre cadastrado.</p></div></td></tr>
+                    @endforelse
+                </tbody>
+            </table></div>
+        </section>
+    </div>
+@endsection

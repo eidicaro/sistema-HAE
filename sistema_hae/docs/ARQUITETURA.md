@@ -12,7 +12,7 @@ Aplicação monolítica server-side em Laravel 12. As requisições entram por `
 - Laravel session/auth para login;
 - filesystem `local` para anexos privados;
 - `maatwebsite/excel` para exportação XLSX;
-- CSS estático em `public/css`;
+- sistema visual unificado em `public/css/app.css`;
 - Vite/Tailwind instalados, mas ainda não são o pipeline principal das telas.
 
 ## Módulos
@@ -39,7 +39,8 @@ app/
 database/migrations/       histórico do esquema
 database/seeders/          criação opcional do acesso inicial
 resources/views/           telas e componentes Blade
-public/css, public/images/ assets legados servidos diretamente
+public/css/app.css        tokens e componentes visuais compartilhados
+public/images/            marcas institucionais
 routes/web.php             rotas web e fronteiras de permissão
 tests/Feature/             regressões dos fluxos críticos
 docs/                      documentação de continuidade

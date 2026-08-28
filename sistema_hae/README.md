@@ -27,7 +27,7 @@ php artisan serve
 
 No PowerShell, `Copy-Item .env.example .env` pode ser usado no lugar de `copy`.
 
-Os estilos atuais estão principalmente em `public/css`; portanto, o fluxo principal não depende do Vite. Caso altere `resources/js` ou passe a usar o pipeline Vite:
+O sistema visual está em `public/css/app.css`; portanto, o fluxo atual não depende do Vite. Caso altere `resources/js` ou passe a usar o pipeline Vite:
 
 ```bash
 npm install
@@ -52,6 +52,7 @@ php artisan route:list --except-vendor
 - [Banco de dados](docs/BANCO_DE_DADOS.md)
 - [Rotas e permissões](docs/ROTAS_E_PERMISSOES.md)
 - [Desenvolvimento e testes](docs/DESENVOLVIMENTO.md)
+- [Sistema visual](docs/SISTEMA_VISUAL.md)
 - [Operação e deploy](docs/OPERACAO_E_DEPLOY.md)
 - [Pendências e próximos passos](docs/PENDENCIAS.md)
 
