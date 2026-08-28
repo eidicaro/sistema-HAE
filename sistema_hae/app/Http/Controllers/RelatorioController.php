@@ -2,53 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Relatorio;
-use App\Models\RelatorioResultado;
-use App\Models\RelatorioArquivo;
 use App\Models\Haes;
+use App\Models\Relatorio;
+use App\Models\RelatorioArquivo;
+use App\Models\RelatorioResultado;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RelatorioController extends Controller
 {
     public function create($id)
     {
-        $hae = Haes::with(['tipoHae'])->findOrFail($id);
+        $hae = Haes::with(['tipoHae', 'relatorio'])->findOrFail($id);
+        $this->autorizarEnvio($hae);
+
+        if ($hae->relatorio && $hae->relatorio->status !== Relatorio::STATUS_RECUSADO) {
+            return redirect()->route('hae.show', $hae->id)
+                ->with('error', 'Já existe um relatório enviado para esta HAE.');
+        }
 
         return view('relatorio.create', compact('hae'));
     }
 
     public function store(Request $request, $id)
     {
-        // 🔍 busca último relatório da HAE
-        $relatorio = Relatorio::where('hae_id', $id)->latest()->first();
+        $hae = Haes::with('relatorio.arquivos')->findOrFail($id);
+        $this->autorizarEnvio($hae);
 
-        if ($relatorio && $relatorio->status == 'reprovado') {
-            // 🔄 ATUALIZA relatório existente
-            $relatorio->update([
-                'titulo' => $request->titulo,
-                'sumario' => $request->sumario,
-                'resultados_texto' => $request->resultados_texto,
-                'status' => 'enviado',
+        $validated = $request->validate([
+            'titulo' => ['required', 'string', 'max:255'],
+            'sumario' => ['required', 'string'],
+            'resultados_texto' => ['required', 'string'],
+            'resultados' => ['nullable', 'array'],
+            'resultados.*.previsto' => ['nullable', 'integer', 'min:0'],
+            'resultados.*.realizado' => ['nullable', 'integer', 'min:0'],
+            'arquivo_principal' => ['nullable', 'file', 'max:10240'],
+            'comprovacoes' => ['nullable', 'array', 'max:10'],
+            'comprovacoes.*' => ['file', 'max:10240'],
+        ]);
+
+        $relatorioAtual = $hae->relatorio;
+
+        if ($relatorioAtual && $relatorioAtual->status !== Relatorio::STATUS_RECUSADO) {
+            return back()->with('error', 'Já existe um relatório enviado para esta HAE.');
+        }
+
+        $arquivosAntigos = $relatorioAtual?->arquivos->pluck('caminho')->all() ?? [];
+
+        DB::transaction(function () use ($request, $validated, $hae, $relatorioAtual): void {
+            $relatorio = $relatorioAtual ?? new Relatorio(['hae_id' => $hae->id]);
+            $relatorio->fill([
+                'titulo' => $validated['titulo'],
+                'sumario' => $validated['sumario'],
+                'resultados_texto' => $validated['resultados_texto'],
+                'status' => Relatorio::STATUS_ENVIADO,
             ]);
+            $relatorio->save();
 
-            // 🧹 limpa dados antigos
             $relatorio->resultados()->delete();
             $relatorio->arquivos()->delete();
 
-        } else {
-            // 🆕 CRIA novo relatório
-            $relatorio = Relatorio::create([
-                'hae_id' => $id,
-                'titulo' => $request->titulo,
-                'sumario' => $request->sumario,
-                'resultados_texto' => $request->resultados_texto,
-                'status' => 'enviado',
-            ]);
-        }
-
-        // 📊 salvar comparações
-        if ($request->has('resultados')) {
-            foreach ($request->resultados as $campo => $valores) {
+            foreach ($validated['resultados'] ?? [] as $campo => $valores) {
                 RelatorioResultado::create([
                     'relatorio_id' => $relatorio->id,
                     'campo' => $campo,
@@ -56,86 +71,77 @@ class RelatorioController extends Controller
                     'realizado' => $valores['realizado'] ?? 0,
                 ]);
             }
-        }
 
-        // 📄 arquivo principal
-        if ($request->hasFile('arquivo_principal')) {
-            $path = $request->file('arquivo_principal')->store('relatorios');
-
-            RelatorioArquivo::create([
-                'relatorio_id' => $relatorio->id,
-                'caminho' => $path,
-                'tipo' => 'principal'
-            ]);
-        }
-
-        // 📎 comprovacoes
-        if ($request->hasFile('comprovacoes')) {
-            foreach ($request->file('comprovacoes') as $file) {
-                $path = $file->store('relatorios');
-
-                RelatorioArquivo::create([
-                    'relatorio_id' => $relatorio->id,
-                    'caminho' => $path,
-                    'tipo' => 'comprovacao'
-                ]);
+            if ($request->hasFile('arquivo_principal')) {
+                $this->salvarArquivo($relatorio, $request->file('arquivo_principal'), 'principal');
             }
-        }
 
-        return redirect("/hae/$id")->with('success', 'Relatório enviado!');
+            foreach ($request->file('comprovacoes', []) as $arquivo) {
+                $this->salvarArquivo($relatorio, $arquivo, 'comprovacao');
+            }
+        });
+
+        Storage::disk('local')->delete($arquivosAntigos);
+
+        return redirect()->route('hae.show', $hae->id)->with('success', 'Relatório enviado!');
     }
 
     public function aprovar($id)
     {
-        $relatorio = Relatorio::findOrFail($id);
+        $relatorio = Relatorio::with('hae')->findOrFail($id);
+        abort_unless($relatorio->status === Relatorio::STATUS_ENVIADO, 422);
 
-        $relatorio->status = 'aprovado';
-        $relatorio->save();
-
-        // 🔥 finaliza a HAE
-        $relatorio->hae->status = 'finalizada';
-        $relatorio->hae->save();
+        DB::transaction(function () use ($relatorio): void {
+            $relatorio->update(['status' => Relatorio::STATUS_APROVADO]);
+            $relatorio->hae->update(['status' => Haes::STATUS_FINALIZADA]);
+        });
 
         return back()->with('sucesso', 'Relatório aprovado!');
     }
 
     public function reprovar($id)
     {
-        $relatorio = Relatorio::findOrFail($id);
+        $relatorio = Relatorio::with('hae')->findOrFail($id);
+        abort_unless($relatorio->status === Relatorio::STATUS_ENVIADO, 422);
 
-        $relatorio->status = 'reprovado';
-        $relatorio->save();
-
-        // 🔥 volta pra execução
-        $relatorio->hae->status = 'em_execucao';
-        $relatorio->hae->save();
+        DB::transaction(function () use ($relatorio): void {
+            $relatorio->update(['status' => Relatorio::STATUS_RECUSADO]);
+            $relatorio->hae->update(['status' => Haes::STATUS_EM_EXECUCAO]);
+        });
 
         return back()->with('error', 'Relatório reprovado!');
     }
 
     public function download($id)
     {
-        $arquivo = RelatorioArquivo::findOrFail($id);
+        $arquivo = RelatorioArquivo::with('relatorio.hae.relatores')->findOrFail($id);
+        abort_unless($arquivo->relatorio->hae->podeSerVistaPor(auth()->user()), 403);
+        abort_unless(Storage::disk('local')->exists($arquivo->caminho), 404);
 
-        $path = storage_path('app/private/' . $arquivo->caminho);
-
-        if (!file_exists($path)) {
-            abort(404, 'Arquivo não encontrado.');
-        }
-
-        return response()->download($path);
+        return Storage::disk('local')->download($arquivo->caminho);
     }
 
     public function ver($id)
     {
-        $arquivo = RelatorioArquivo::findOrFail($id);
+        $arquivo = RelatorioArquivo::with('relatorio.hae.relatores')->findOrFail($id);
+        abort_unless($arquivo->relatorio->hae->podeSerVistaPor(auth()->user()), 403);
+        abort_unless(Storage::disk('local')->exists($arquivo->caminho), 404);
 
-        $path = storage_path('app/private/' . $arquivo->caminho);
+        return response()->file(Storage::disk('local')->path($arquivo->caminho));
+    }
 
-        if (!file_exists($path)) {
-            abort(404, 'Arquivo não encontrado.');
-        }
+    private function autorizarEnvio(Haes $hae): void
+    {
+        abort_unless($hae->user_id === auth()->id(), 403);
+        abort_unless($hae->status === Haes::STATUS_EM_EXECUCAO, 422);
+    }
 
-        return response()->file($path);
+    private function salvarArquivo(Relatorio $relatorio, $arquivo, string $tipo): void
+    {
+        RelatorioArquivo::create([
+            'relatorio_id' => $relatorio->id,
+            'caminho' => $arquivo->store('relatorios'),
+            'tipo' => $tipo,
+        ]);
     }
 }

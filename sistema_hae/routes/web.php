@@ -1,180 +1,90 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DirecaoController;
 use App\Http\Controllers\HaeController;
 use App\Http\Controllers\ParecerController;
-use App\Http\Controllers\DirecaoController;
-use App\Http\Controllers\SemestresController;
-use App\Http\Controllers\RelatorioController;
-use App\Http\Controllers\TipoHaeController;
 use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\SemestresController;
+use App\Http\Controllers\TipoHaeController;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| ROTA INICIAL
-|--------------------------------------------------------------------------
-*/
+Route::view('/', 'welcome');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/login', fn () => redirect('/'))->name('login');
+Route::get('/login/{tipo}', [AuthController::class, 'showLogin'])
+    ->whereIn('tipo', User::ROLES);
+Route::post('/login/{tipo}', [AuthController::class, 'login'])
+    ->whereIn('tipo', User::ROLES);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
-/*
-|--------------------------------------------------------------------------
-| AUTENTICAÇÃO
-|--------------------------------------------------------------------------
-*/
-
-// tela de login (tipo: professor, coordenador, direcao)
-Route::get('/login/{tipo}', [AuthController::class, 'showLogin']);
-
-Route::get('/login', function () {
-    return redirect('/'); // padrão
-})->name('login');
-
-// processa login
-Route::post('/login/{tipo}', [AuthController::class, 'login']);
-
-// logout
-Route::post('/logout', [AuthController::class, 'logout']);
-
-
-/*
-|--------------------------------------------------------------------------
-| ROTAS PROTEGIDAS (PRECISA ESTAR LOGADO)
-|--------------------------------------------------------------------------
-*/
 Route::middleware('auth')->group(function () {
+    Route::get('/professor', [HaeController::class, 'index'])
+        ->middleware('auth.tipo:professor')
+        ->name('professor');
+    Route::get('/coordenador', [HaeController::class, 'index'])
+        ->middleware('auth.tipo:coordenador')
+        ->name('coordenador');
+    Route::get('/direcao', [HaeController::class, 'index'])
+        ->middleware('auth.tipo:direcao')
+        ->name('direcao');
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROFESSOR / COORD / DIREÇÃO (DASHBOARDS)
-    |--------------------------------------------------------------------------
-    */
+    Route::get('/hae/{id}', [HaeController::class, 'show'])->name('hae.show');
+    Route::get('/arquivo/{id}/download', [RelatorioController::class, 'download'])
+        ->name('arquivo.download');
+    Route::get('/arquivo/{id}/ver', [RelatorioController::class, 'ver'])
+        ->name('arquivo.ver');
 
-    // cada rota usa o mesmo controller (index decide o que mostrar)
-    Route::get('/professor', [HaeController::class, 'index'])->name('professor');
-    Route::get('/coordenador', [HaeController::class, 'index'])->name('coordenador');
-    Route::get('/direcao', [HaeController::class, 'index'])->name('direcao');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FORMULÁRIO HAE
-    |--------------------------------------------------------------------------
-    */
-
-    // abre formulário com tipo dinâmico (?tipo=graduacao)
-    Route::get('/formulario', [HaeController::class, 'create'])->name('hae.create');
-
-    // salvar HAE
-    Route::post('/salvar-hae', [HaeController::class, 'store']);
-
-    //mostrar hae
-    Route::get('/hae/{id}', [HaeController::class, 'show']);
-
-    //editar Hae
-    Route::put('/hae/{id}', [HaeController::class, 'update'])->name('hae.update');
-    Route::get('/hae/{id}/edit', [HaeController::class, 'edit'])->name('hae.edit');
-
-    // salvar parecer
-    Route::post('/parecer/{hae_id}', [ParecerController::class, 'store'])->middleware('auth');
-
-    //decisão
-    Route::post('/direcao/decisao/{id}', [DirecaoController::class, 'decisao']);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PARECER (RELATOR)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post('/parecer', [ParecerController::class, 'store']);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | DECISÃO (COORDENAÇÃO / DIREÇÃO)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/direcao/relatores', [DirecaoController::class, 'relatores']);
-    Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator']);
-
-    // limitação de qtde de hae
-    Route::prefix('direcao')->name('direcao.')->group(function () {
-
-        /*
-        |--------------------------------------------------------------------------
-        | TIPOS DE HAE
-        |--------------------------------------------------------------------------
-        */
-
-        Route::resource('tipos-hae', TipoHaeController::class)
-            ->except(['show'])
-            ->parameters([
-                'tipos-hae' => 'tipoHae'
-            ]);
-
-        Route::post('tipos-hae/{tipoHae}/toggle', [TipoHaeController::class, 'toggle'])
-            ->name('tipos-hae.toggle');
-
-        /*
-        |--------------------------------------------------------------------------
-        | PROFESSORES
-        |--------------------------------------------------------------------------
-        */
-
-        Route::resource('professores', ProfessorController::class)
-            ->parameters([
-                'professores' => 'professor'
-            ])
-            ->except(['show']);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Exportar CSV
-        |--------------------------------------------------------------------------
-        */
-
-        Route::get('/exportar-csv', [HaeController::class, 'exportarcsv'])
-            ->name('direcao.exportarcsv');
+    Route::middleware('auth.tipo:professor')->group(function () {
+        Route::get('/formulario', [HaeController::class, 'create'])->name('hae.create');
+        Route::post('/salvar-hae', [HaeController::class, 'store'])->name('hae.store');
+        Route::get('/hae/{id}/edit', [HaeController::class, 'edit'])->name('hae.edit');
+        Route::put('/hae/{id}', [HaeController::class, 'update'])->name('hae.update');
+        Route::get('/hae/{id}/relatorio', [RelatorioController::class, 'create'])
+            ->name('relatorio.create');
+        Route::post('/hae/{id}/relatorio', [RelatorioController::class, 'store'])
+            ->name('relatorio.store');
     });
 
+    Route::post('/parecer/{hae_id}', [ParecerController::class, 'store'])
+        ->middleware('auth.tipo:professor,coordenador')
+        ->name('parecer.store');
 
-    /*
-    |--------------------------------------------------------------------------
-    | TELAS AUXILIARES (DIREÇÃO)
-    |--------------------------------------------------------------------------
-    */
+    Route::middleware('auth.tipo:direcao')->group(function () {
+        Route::post('/direcao/decisao/{id}', [DirecaoController::class, 'decisao'])
+            ->name('direcao.decisao');
+        Route::get('/direcao/relatores', [DirecaoController::class, 'relatores'])
+            ->name('direcao.relatores');
+        Route::post('/direcao/relatores/{hae}', [DirecaoController::class, 'atribuirRelator'])
+            ->name('direcao.relatores.update');
+        Route::get('/resultados-dir', [DirecaoController::class, 'resultados'])
+            ->name('direcao.resultados');
 
-    Route::get('/resultados-dir', [DirecaoController::class, 'resultados']);
+        Route::get('/semestres', [SemestresController::class, 'index'])->name('semestres.index');
+        Route::post('/semestres', [SemestresController::class, 'store'])->name('semestres.store');
+        Route::post('/semestres/{id}/ativar', [SemestresController::class, 'ativar'])
+            ->name('semestres.ativar');
 
+        Route::post('/relatorio/{id}/aprovar', [RelatorioController::class, 'aprovar'])
+            ->name('relatorio.aprovar');
+        Route::post('/relatorio/{id}/reprovar', [RelatorioController::class, 'reprovar'])
+            ->name('relatorio.reprovar');
 
-    /*
-    |--------------------------------------------------------------------------
-    | CONTROLLE DE SEMESTRE
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/semestres', [SemestresController::class, 'index']);
-    Route::post('/semestres', [SemestresController::class, 'store']);
-    Route::post('/semestres/{id}/ativar', [SemestresController::class, 'ativar']);
+        Route::prefix('direcao')->name('direcao.')->group(function () {
+            Route::resource('tipos-hae', TipoHaeController::class)
+                ->except(['show'])
+                ->parameters(['tipos-hae' => 'tipoHae']);
+            Route::post('tipos-hae/{tipoHae}/toggle', [TipoHaeController::class, 'toggle'])
+                ->name('tipos-hae.toggle');
 
+            Route::resource('professores', ProfessorController::class)
+                ->except(['show'])
+                ->parameters(['professores' => 'professor']);
 
-    /*
-    |--------------------------------------------------------------------------
-    | GERAR RELATORIO
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/hae/{id}/relatorio', [RelatorioController::class, 'create']);
-    Route::post('/hae/{id}/relatorio', [RelatorioController::class, 'store']);
-
-    Route::post('/relatorio/{id}/aprovar', [RelatorioController::class, 'aprovar']);
-    Route::post('/relatorio/{id}/reprovar', [RelatorioController::class, 'reprovar']);
-
-    Route::get('/arquivo/{id}/download', [RelatorioController::class, 'download'])->name('arquivo.download');
-    Route::get('/arquivo/{id}/ver', [RelatorioController::class, 'ver'])->name('arquivo.ver');
+            Route::get('exportar-csv', [HaeController::class, 'exportarcsv'])
+                ->name('exportarcsv');
+        });
+    });
 });

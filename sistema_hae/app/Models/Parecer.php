@@ -12,14 +12,14 @@ class Parecer extends Model
         'hae_id',
         'user_id',
         'tipo',
-        'comentario'
+        'comentario',
     ];
 
-    //relacionamento
-    
+    // relacionamento
+
     public function hae()
     {
-        return $this->belongsTo(Hae::class);
+        return $this->belongsTo(Haes::class);
     }
 
     public function user()
@@ -27,4 +27,3 @@ class Parecer extends Model
         return $this->belongsTo(User::class);
     }
 }
-

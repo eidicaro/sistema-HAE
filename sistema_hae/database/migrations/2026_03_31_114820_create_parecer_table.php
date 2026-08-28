@@ -13,21 +13,22 @@ return new class extends Migration
     {
         Schema::create('parecer', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hae_id')->constrained()->onDelete('cascade'); //hae
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); //usuario
-            $table->enum('tipo', ['relator', 'coordenador']); //coordenador
+            $table->foreignId('hae_id')->constrained()->onDelete('cascade'); // hae
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // usuario
+            $table->enum('tipo', ['relator', 'coordenador']); // coordenador
             $table->text('comentario');
             $table->timestamps();
-    
+
             // evita duplicidade de parecer por usuário
             $table->unique(['hae_id', 'user_id']);
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('parecers');
+        Schema::dropIfExists('parecer');
     }
 };

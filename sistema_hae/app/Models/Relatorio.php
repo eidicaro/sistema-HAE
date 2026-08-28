@@ -2,25 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RelatorioArquivo;
-use App\Models\RelatorioResultado;
 
 class Relatorio extends Model
 {
-    const STATUS_PENDENTE = 'pendente';
-    const STATUS_APROVADO = 'aprovado';
-    const STATUS_ENVIADO = 'enviado';
-    const STATUS_RECUSADO = 'reprovado';
+    public const STATUS_PENDENTE = 'pendente';
 
+    public const STATUS_APROVADO = 'aprovado';
+
+    public const STATUS_ENVIADO = 'enviado';
+
+    public const STATUS_RECUSADO = 'reprovado';
 
     protected $fillable = [
         'hae_id',
         'titulo',
         'sumario',
         'resultados_texto',
-        'status'
+        'status',
     ];
 
     public function hae()

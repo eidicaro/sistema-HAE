@@ -32,7 +32,7 @@
 
     @endif
 
-    <form action="/direcao/professores" method="POST" class="form-professor">
+    <form action="{{ route('direcao.professores.update', $professor) }}" method="POST" class="form-professor">
         @csrf
         @method('PUT')
 
@@ -64,7 +64,7 @@
 
         <br>
 
-        <input type="password" name="password_confirmation" required>
+        <input type="password" name="password_confirmation">
 
         <br><br>
 

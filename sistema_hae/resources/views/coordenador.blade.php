@@ -16,6 +16,7 @@
     <form method="POST" action="/logout" >
     @csrf
     <button type="submit" class="logout">Logout</button>
+    </form>
 
     
     <h2>HAEs Submetidas</h2>

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -16,10 +14,10 @@ class AuthController extends Controller
 
     public function login(Request $request, $tipo)
     {
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password
-        ];
+        $credentials = $request->validate([
+            'email' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
 
         if (Auth::attempt($credentials)) {
 
@@ -27,10 +25,17 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            return redirect('/' . $user->role);
+            if ($user->role !== $tipo) {
+                Auth::logout();
+
+                return back()->withInput($request->only('email'))
+                    ->with('erro', 'Este usuário não pertence ao perfil selecionado.');
+            }
+
+            return redirect('/'.$user->role);
         }
 
-        return back()->with('erro', 'Login inválido'); //redireciona pra tela inicial
+        return back()->withInput($request->only('email'))->with('erro', 'Login inválido');
     }
 
     public function logout(Request $request)
@@ -40,8 +45,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login'); //tira o login e manda para a página inicial
+        return redirect('/login'); // tira o login e manda para a página inicial
     }
-
-   
 }

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('decisoes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade'); //hae
-            $table->foreignId('avaliador_id')->constrained('users')->onDelete('cascade');  //direção ou coord       
+            $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade'); // hae
+            $table->foreignId('avaliador_id')->constrained('users')->onDelete('cascade');  // direção ou coord
             $table->string('decisao'); // aprovado, recusado, diligencia
             $table->text('comentario')->nullable();
-        
+
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('decisaos');
+        Schema::dropIfExists('decisoes');
     }
 };

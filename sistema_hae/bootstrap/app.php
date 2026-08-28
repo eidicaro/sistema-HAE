@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Middleware\CheckTipo;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\CheckTipo;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,9 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function ($middleware) {
+    ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'auth.tipo' => \App\Http\Middleware\CheckTipo::class,
+            'auth.tipo' => CheckTipo::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

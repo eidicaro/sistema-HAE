@@ -13,11 +13,12 @@ class CheckTipo
      *
      * @param  Closure(Request): (Response)  $next
      */
-        public function handle($request, Closure $next, $tipo)
+    public function handle(Request $request, Closure $next, string ...$tipos): Response
     {
-        if (session('tipo') != $tipo) {
-            return redirect('/');
-        }
+        abort_unless(
+            $request->user() && in_array($request->user()->role, $tipos, true),
+            403
+        );
 
         return $next($request);
     }

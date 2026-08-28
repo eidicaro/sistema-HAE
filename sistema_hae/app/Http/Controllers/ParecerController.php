@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Parecer;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Haes;
-use App\Http\Controllers\HaeController;
+use App\Models\Parecer;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class ParecerController extends Controller
 {
@@ -30,41 +29,45 @@ class ParecerController extends Controller
      * Store a newly created resource in storage.
      */
 
-    //salva o novo parecer
+    // salva o novo parecer
     public function store(Request $request, $hae_id)
     {
         $hae = Haes::findOrFail($hae_id);
-    
+        $validated = $request->validate([
+            'comentario' => ['required', 'string'],
+        ]);
+
         $usuario = auth()->user();
-        
+
         $ehRelator = $hae->relatores->contains($usuario->id);
-        $ehCoordenador = $usuario->role == 'coordenador';
-        
+        $ehCoordenador = $usuario->role === User::ROLE_COORDENADOR
+            && $hae->curso === $usuario->curso;
+
         // valida se é relator ou coordenador
-        if (!$ehRelator && !$ehCoordenador) {
+        if (! $ehRelator && ! $ehCoordenador) {
             abort(403);
         }
-    
+
         // impede duplicidade
         $jaExiste = Parecer::where('hae_id', $hae->id)
             ->where('user_id', auth()->id())
             ->exists();
-    
+
         if ($jaExiste) {
             return back()->with('erro', 'Você já enviou um parecer.');
         }
-    
-        $tipo = auth()->user()->role == 'coordenador'
+
+        $tipo = $usuario->role === User::ROLE_COORDENADOR
             ? 'coordenador'
             : 'relator';
-    
+
         Parecer::create([
             'hae_id' => $hae->id,
             'user_id' => auth()->id(),
             'tipo' => $tipo,
-            'comentario' => $request->comentario
+            'comentario' => $validated['comentario'],
         ]);
-    
+
         return back()->with('sucesso', 'Parecer enviado!');
     }
 

@@ -8,8 +8,17 @@ class Semestres extends Model
 {
     protected $fillable = ['nome', 'data_inicio', 'data_fim', 'ativo'];
 
-    //relacionamento
-    
+    protected function casts(): array
+    {
+        return [
+            'data_inicio' => 'date',
+            'data_fim' => 'date',
+            'ativo' => 'boolean',
+        ];
+    }
+
+    // relacionamento
+
     public function haes()
     {
         return $this->hasMany(Haes::class);

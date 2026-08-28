@@ -58,8 +58,8 @@
             </a>
         @endif
 
-        @if($hae->status == 'em_execucao')
-            <a href="/hae/{{ $hae->id }}/relatorio">
+        @if($user->role == 'professor' && $hae->user_id == $user->id && $hae->status == 'em_execucao')
+            <a href="{{ route('relatorio.create', $hae->id) }}">
                 Preencher Relatório
             </a>
         @endif
@@ -87,7 +87,7 @@
 
     <div class="bloco">
         <h2>Detalhes Específicos</h2>
-        @includeIf('components.hae.' . $hae->tipo, ['hae' => $hae])
+        <p style="white-space: pre-line;">{{ $hae->especificacoes ?: 'Não informado' }}</p>
     </div>
 
     <!-- PARECERES -->
@@ -123,7 +123,7 @@
             <div class="bloco-parecer">
                 <h3>Dar Parecer</h3>
 
-                <form method="POST" action="/parecer/{{ $hae->id }}">
+                <form method="POST" action="{{ route('parecer.store', $hae->id) }}">
                     @csrf
 
                     <textarea name="comentario" required class="comentario"></textarea>
@@ -183,7 +183,7 @@
             <div class="bloco-decisao">
                 <h3>Tomar decisão</h3>
 
-                <form method="POST" action="/direcao/decisao/{{ $hae->id }}">
+                <form method="POST" action="{{ route('direcao.decisao', $hae->id) }}">
                     @csrf
 
                     <textarea name="comentario" placeholder="Comentário (opcional)" class="comentario"></textarea>
@@ -290,12 +290,12 @@
                     justify-content: space-around;
                     margin: 2% 0 0 0;">
         
-        <form method="POST" action="/relatorio/{{ $relatorio->id }}/aprovar">
+        <form method="POST" action="{{ route('relatorio.aprovar', $relatorio->id) }}">
             @csrf
             <button class="btn-rel-aprov">Aprovar Relatório</button>
         </form>
 
-        <form method="POST" action="/relatorio/{{ $relatorio->id }}/reprovar">
+        <form method="POST" action="{{ route('relatorio.reprovar', $relatorio->id) }}">
             @csrf
             <button class="btn-rel-rec">Reprovar Relatório</button>
         </form>

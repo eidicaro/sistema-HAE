@@ -15,19 +15,19 @@
 
 <h2>{{ $hae->titulo }}</h2>
 
-<form method="POST" action="/hae/{{ $hae->id }}/relatorio" enctype="multipart/form-data">
+<form method="POST" action="{{ route('relatorio.store', $hae->id) }}" enctype="multipart/form-data">
     @csrf
 
     <h2>📌 Informações Gerais</h2>
 
     <label>Título do Relatório</label>
-    <input type="text" name="titulo">
+    <input type="text" name="titulo" value="{{ old('titulo', $hae->relatorio->titulo ?? '') }}" required>
 
     <label>Sumário Executivo</label>
-    <textarea name="sumario"></textarea>
+    <textarea name="sumario" required>{{ old('sumario', $hae->relatorio->sumario ?? '') }}</textarea>
 
     <label>Principais Resultados</label>
-    <textarea name="resultados_texto"></textarea>
+    <textarea name="resultados_texto" required>{{ old('resultados_texto', $hae->relatorio->resultados_texto ?? '') }}</textarea>
 
     <hr>
 

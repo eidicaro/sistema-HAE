@@ -12,7 +12,7 @@ class Decisao extends Model
         'hae_id',
         'avaliador_id',
         'decisao',
-        'comentario'
+        'comentario',
     ];
 
     // relacionamentos

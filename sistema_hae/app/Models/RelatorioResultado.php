@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Relatorio;
 
 class RelatorioResultado extends Model
 {
@@ -16,7 +15,7 @@ class RelatorioResultado extends Model
         'relatorio_id',
         'campo',
         'previsto',
-        'realizado'
+        'realizado',
     ];
 
     // 🔗 relacionamento com Relatorio

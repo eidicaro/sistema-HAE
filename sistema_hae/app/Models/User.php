@@ -10,6 +10,18 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public const ROLE_PROFESSOR = 'professor';
+
+    public const ROLE_COORDENADOR = 'coordenador';
+
+    public const ROLE_DIRECAO = 'direcao';
+
+    public const ROLES = [
+        self::ROLE_PROFESSOR,
+        self::ROLE_COORDENADOR,
+        self::ROLE_DIRECAO,
+    ];
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -23,6 +35,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'curso',
     ];
 
     /**
@@ -54,15 +67,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Haes::class, 'user_id');
     }
-    
+
     public function pareceres()
     {
-        return $this->hasMany(Parecer::class, 'relator_id');
+        return $this->hasMany(Parecer::class, 'user_id');
     }
-    
+
     public function decisoes()
     {
-        return $this->hasMany(Decisao::class, 'user_id');
+        return $this->hasMany(Decisao::class, 'avaliador_id');
     }
 
     public function haesComoRelator()

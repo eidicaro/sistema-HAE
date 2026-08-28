@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Relatorio;
 
 class RelatorioArquivo extends Model
 {
@@ -15,7 +14,7 @@ class RelatorioArquivo extends Model
     protected $fillable = [
         'relatorio_id',
         'caminho',
-        'tipo'
+        'tipo',
     ];
 
     // 🔗 relacionamento com Relatorio

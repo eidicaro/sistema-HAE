@@ -17,13 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class HaesExport implements
-    FromCollection,
-    WithHeadings,
-    WithMapping,
-    WithStyles,
-    WithEvents,
-    WithColumnWidths
+class HaesExport implements FromCollection, WithColumnWidths, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $semestreId;
 
@@ -77,7 +71,7 @@ class HaesExport implements
             'Mês 4',
             'Mês 5',
             'Criado em',
-            'Atualizado em'
+            'Atualizado em',
         ];
     }
 
@@ -110,7 +104,7 @@ class HaesExport implements
             $this->formatarStatus($hae->status),
             $this->formatarTexto($hae->titulo),
             $hae->carga_horaria !== null
-                ? $hae->carga_horaria . ' h'
+                ? $hae->carga_horaria.' h'
                 : '',
             $this->formatarTexto($hae->resumo),
             $this->formatarTexto($hae->justificativa),
@@ -181,7 +175,7 @@ class HaesExport implements
             'font' => [
                 'bold' => true,
                 'color' => [
-                    'rgb' => 'FFFFFF'
+                    'rgb' => 'FFFFFF',
                 ],
                 'size' => 11,
             ],
@@ -189,7 +183,7 @@ class HaesExport implements
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
                 'startColor' => [
-                    'rgb' => 'B30A07'
+                    'rgb' => 'B30A07',
                 ],
             ],
 
@@ -203,7 +197,7 @@ class HaesExport implements
                 'bottom' => [
                     'borderStyle' => Border::BORDER_MEDIUM,
                     'color' => [
-                        'rgb' => '8F0805'
+                        'rgb' => '8F0805',
                     ],
                 ],
             ],
@@ -238,7 +232,7 @@ class HaesExport implements
 
                 // Filtro automático
                 $sheet->setAutoFilter(
-                    'A1:X' . $highestRow
+                    'A1:X'.$highestRow
                 );
 
                 // Zoom
@@ -253,14 +247,14 @@ class HaesExport implements
                 if ($highestRow >= 2) {
 
                     $sheet->getStyle(
-                        'A2:X' . $highestRow
+                        'A2:X'.$highestRow
                     )->applyFromArray([
 
                         'font' => [
                             'name' => 'Aptos',
                             'size' => 10,
                             'color' => [
-                                'rgb' => '2D3748'
+                                'rgb' => '2D3748',
                             ],
                         ],
 
@@ -273,7 +267,7 @@ class HaesExport implements
                             'bottom' => [
                                 'borderStyle' => Border::BORDER_THIN,
                                 'color' => [
-                                    'rgb' => 'E2E8F0'
+                                    'rgb' => 'E2E8F0',
                                 ],
                             ],
                         ],
@@ -299,7 +293,7 @@ class HaesExport implements
                             'fill' => [
                                 'fillType' => Fill::FILL_SOLID,
                                 'startColor' => [
-                                    'rgb' => 'F8FAFC'
+                                    'rgb' => 'F8FAFC',
                                 ],
                             ],
                         ]);
@@ -343,23 +337,21 @@ class HaesExport implements
                             'font' => [
                                 'bold' => true,
                                 'color' => [
-                                    'rgb' => $statusStyle['text']
+                                    'rgb' => $statusStyle['text'],
                                 ],
                             ],
 
                             'fill' => [
                                 'fillType' => Fill::FILL_SOLID,
                                 'startColor' => [
-                                    'rgb' => $statusStyle['background']
+                                    'rgb' => $statusStyle['background'],
                                 ],
                             ],
 
                             'alignment' => [
-                                'horizontal' =>
-                                    Alignment::HORIZONTAL_CENTER,
+                                'horizontal' => Alignment::HORIZONTAL_CENTER,
 
-                                'vertical' =>
-                                    Alignment::VERTICAL_CENTER,
+                                'vertical' => Alignment::VERTICAL_CENTER,
 
                                 'wrapText' => true,
                             ],
@@ -382,23 +374,21 @@ class HaesExport implements
                                 'font' => [
                                     'bold' => true,
                                     'color' => [
-                                        'rgb' => '166534'
+                                        'rgb' => '166534',
                                     ],
                                 ],
 
                                 'fill' => [
                                     'fillType' => Fill::FILL_SOLID,
                                     'startColor' => [
-                                        'rgb' => 'DCFCE7'
+                                        'rgb' => 'DCFCE7',
                                     ],
                                 ],
 
                                 'alignment' => [
-                                    'horizontal' =>
-                                        Alignment::HORIZONTAL_CENTER,
+                                    'horizontal' => Alignment::HORIZONTAL_CENTER,
 
-                                    'vertical' =>
-                                        Alignment::VERTICAL_CENTER,
+                                    'vertical' => Alignment::VERTICAL_CENTER,
                                 ],
                             ]);
 
@@ -409,23 +399,21 @@ class HaesExport implements
                                 'font' => [
                                     'bold' => true,
                                     'color' => [
-                                        'rgb' => '991B1B'
+                                        'rgb' => '991B1B',
                                     ],
                                 ],
 
                                 'fill' => [
                                     'fillType' => Fill::FILL_SOLID,
                                     'startColor' => [
-                                        'rgb' => 'FEE2E2'
+                                        'rgb' => 'FEE2E2',
                                     ],
                                 ],
 
                                 'alignment' => [
-                                    'horizontal' =>
-                                        Alignment::HORIZONTAL_CENTER,
+                                    'horizontal' => Alignment::HORIZONTAL_CENTER,
 
-                                    'vertical' =>
-                                        Alignment::VERTICAL_CENTER,
+                                    'vertical' => Alignment::VERTICAL_CENTER,
                                 ],
                             ]);
                     }
@@ -470,12 +458,12 @@ class HaesExport implements
                  */
 
                 $sheet->getStyle(
-                    'J2:J' . max(2, $highestRow)
+                    'J2:J'.max(2, $highestRow)
                 )->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => [
-                            'rgb' => '1E293B'
+                            'rgb' => '1E293B',
                         ],
                     ],
                 ]);
@@ -505,7 +493,7 @@ class HaesExport implements
 
                 // Nome da aba
                 $sheet->setTitle('HAEs');
-            }
+            },
         ];
     }
 
@@ -535,7 +523,7 @@ class HaesExport implements
         $linhas = explode("\n", $texto);
 
         $linhas = array_map(
-            fn($linha) => trim(
+            fn ($linha) => trim(
                 preg_replace('/[ \t]+/', ' ', $linha)
             ),
             $linhas

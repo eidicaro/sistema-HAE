@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipoHae;
 use App\Models\Haes;
+use App\Models\TipoHae;
 use Illuminate\Http\Request;
 
 class TipoHaeController extends Controller
@@ -23,9 +23,9 @@ class TipoHaeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nome'      => 'required|string|max:255|unique:tipo_haes,nome',
+            'nome' => 'required|string|max:255|unique:tipo_haes,nome',
             'descricao' => 'nullable|string',
-            'limite'    => 'required|integer|min:0',
+            'limite' => 'required|integer|min:0',
         ]);
 
         $validated['ativo'] = $request->boolean('ativo');
@@ -45,9 +45,9 @@ class TipoHaeController extends Controller
     public function update(Request $request, TipoHae $tipoHae)
     {
         $validated = $request->validate([
-            'nome'      => 'required|string|max:255|unique:tipo_haes,nome,' . $tipoHae->id,
+            'nome' => 'required|string|max:255|unique:tipo_haes,nome,'.$tipoHae->id,
             'descricao' => 'nullable|string',
-            'limite'    => 'required|integer|min:0',
+            'limite' => 'required|integer|min:0',
         ]);
 
         $validated['ativo'] = $request->boolean('ativo');
@@ -61,7 +61,7 @@ class TipoHaeController extends Controller
 
     public function toggle(TipoHae $tipoHae)
     {
-        $tipoHae->update(['ativo' => !$tipoHae->ativo]);
+        $tipoHae->update(['ativo' => ! $tipoHae->ativo]);
 
         return back()->with('success', 'Status atualizado!');
     }

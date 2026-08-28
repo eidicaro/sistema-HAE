@@ -14,11 +14,7 @@
 <h1>Nova HAE</h1>
 <a href="/professor">voltar</a>
 
-@php
-    $tipo = request('tipo');
-@endphp
-
-<form method="POST" action="{{ isset($hae) ? route('hae.update', $hae->id) : '/salvar-hae' }}">
+<form method="POST" action="{{ isset($hae) ? route('hae.update', $hae->id) : route('hae.store') }}">
     @csrf
 
     @if(isset($hae))
@@ -30,7 +26,7 @@
 <h2>Sobre o EDITAL DE HAE Nº 02/2025 – 1º SEMESTRE DE 2026</h2>
 
 <label>Sobre o EDITAL DE HAE Nº 02/2025 – 1º SEMESTRE DE 2026</label>
-<select name="edital">
+<select name="edital" required>
     <option value="1" {{ old('edital', $hae->edital_aceito ?? '') == 1 ? 'selected' : '' }}>Li e estou de acordo</option>
     <option value="0" {{ old('edital', $hae->edital_aceito ?? '') == 0 ? 'selected' : '' }}>Não desejo submeter</option>
 </select>
@@ -55,14 +51,12 @@
 </div>
 
 <label>Curso com maior aderência ao projeto</label>
-<select name="curso">
-    <option {{ old('curso', $hae->curso ?? '') == 'Automação Industrial' ? 'selected' : '' }}>Automação Industrial</option>
-    <option {{ old('curso', $hae->curso ?? '') == 'Manutenção Industrial' ? 'selected' : '' }}>Manutenção Industrial</option>
-    <option {{ old('curso', $hae->curso ?? '') == 'Gestão Empresarial' ? 'selected' : '' }}>Gestão Empresarial</option>
-    <option {{ old('curso', $hae->curso ?? '') == 'Gestão da Tecnologia da Informação' ? 'selected' : '' }}>Gestão da Tecnologia da Informação</option>
-    <option {{ old('curso', $hae->curso ?? '') == 'Produção Fonográfica' ? 'selected' : '' }}>Produção Fonográfica</option>
-    <option {{ old('curso', $hae->curso ?? '') == 'AMS - Análise e Desenvolvimento de Sistemas' ? 'selected' : '' }}>AMS - Análise e Desenvolvimento de Sistemas</option>
-    <option {{ old('curso', $hae->curso ?? '') == 'AMS - Processos Gerenciais' ? 'selected' : '' }}>AMS - Processos Gerenciais</option>
+<select name="curso" required>
+    @foreach($cursos as $curso)
+        <option value="{{ $curso }}" {{ old('curso', $hae->curso ?? '') == $curso ? 'selected' : '' }}>
+            {{ $curso }}
+        </option>
+    @endforeach
 </select>
 
 
@@ -108,8 +102,6 @@
     placeholder="Ex: Segundas e Quartas das 19h às 21h">
 {{ old('cronograma', $hae->cronograma ?? '') }}
 </textarea>
-
-<input type="hidden" name="tipo" value="{{ $tipo }}">
 
 <br><br>
 <button type="submit">Enviar</button>

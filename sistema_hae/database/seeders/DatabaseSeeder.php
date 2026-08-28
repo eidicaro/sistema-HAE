@@ -2,34 +2,31 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Semestres;
-use App\Models\TipoHae;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-                // ====== DIRECAO ======
-                User::create([
-                    'name' => 'dir',
-                    'email' => 'dir',
-                    'password' => '123', 
-                    'role' => 'direcao',
-                ]);
+        $email = env('SEED_DIRECAO_EMAIL');
+        $password = env('SEED_DIRECAO_PASSWORD');
 
-                User::create([
-                    'name' => 'prof',
-                    'email' => 'prof',
-                    'password' => '123', 
-                    'role' => 'professor',
-                ]);
+        if (! $email || ! $password) {
+            $this->command?->warn(
+                'Usuário de direção não criado. Defina SEED_DIRECAO_EMAIL e SEED_DIRECAO_PASSWORD.'
+            );
 
-                TipoHae::create([
-                    'nome' => 'teste',
-                    'descricao' => null,
-                    
-                ]);
+            return;
+        }
+
+        User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name' => env('SEED_DIRECAO_NAME', 'Direção'),
+                'password' => $password,
+                'role' => User::ROLE_DIRECAO,
+            ]
+        );
     }
 }

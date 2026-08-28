@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('relatorios', function (Blueprint $table) {
             $table->id();
             $table->foreignId('hae_id')->constrained('haes')->onDelete('cascade');
-    
+
             $table->string('titulo')->nullable();
             $table->text('sumario');
             $table->text('resultados_texto');
             $table->string('status')->default('pendente');
-    
+
             $table->timestamps();
         });
     }

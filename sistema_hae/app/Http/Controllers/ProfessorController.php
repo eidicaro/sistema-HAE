@@ -11,8 +11,6 @@ class ProfessorController extends Controller
     /**
      * Lista todos os professores.
      */
-
-
     public function index(Request $request)
     {
         $busca = $request->busca;
@@ -65,8 +63,10 @@ class ProfessorController extends Controller
      */
     public function edit(User $professor)
     {
+        $this->garantirProfessor($professor);
+
         return view('professores.edit', [
-            'professor' => $professor
+            'professor' => $professor,
         ]);
     }
 
@@ -75,6 +75,8 @@ class ProfessorController extends Controller
      */
     public function update(Request $request, User $professor)
     {
+        $this->garantirProfessor($professor);
+
         $request->validate([
             'name' => 'required|max:255',
             'email' => [
@@ -103,6 +105,8 @@ class ProfessorController extends Controller
      */
     public function destroy(User $professor)
     {
+        $this->garantirProfessor($professor);
+
         if ($professor->haes()->exists()) {
             return back()->with(
                 'error',
@@ -116,5 +120,10 @@ class ProfessorController extends Controller
             'sucesso',
             'Professor excluído com sucesso.'
         );
+    }
+
+    private function garantirProfessor(User $user): void
+    {
+        abort_unless($user->role === User::ROLE_PROFESSOR, 404);
     }
 }

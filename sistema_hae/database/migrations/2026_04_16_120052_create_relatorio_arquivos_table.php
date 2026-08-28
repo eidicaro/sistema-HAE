@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('relatorio_arquivos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('relatorio_id')->constrained()->onDelete('cascade');
-    
+
             $table->string('caminho');
             $table->string('tipo'); // principal ou comprovacao
-    
+
             $table->timestamps();
         });
     }

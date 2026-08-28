@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('relatorio_resultados', function (Blueprint $table) {
             $table->id();
             $table->foreignId('relatorio_id')->constrained()->onDelete('cascade');
-    
+
             $table->string('campo'); // ex: escolas, eventos
             $table->integer('previsto')->nullable();
             $table->integer('realizado')->nullable();
-    
+
             $table->timestamps();
         });
     }

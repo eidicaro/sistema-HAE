@@ -3,21 +3,48 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Haes extends Model
 {
+    public const STATUS_PENDENTE = 'pendente';
+
+    public const STATUS_DILIGENCIA = 'com_diligencia';
+
+    public const STATUS_EM_EXECUCAO = 'em_execucao';
+
+    public const STATUS_FINALIZADA = 'finalizada';
+
+    public const STATUS_RECUSADA = 'recusada';
+
+    public const STATUS_VALIDOS = [
+        self::STATUS_PENDENTE,
+        self::STATUS_DILIGENCIA,
+        self::STATUS_EM_EXECUCAO,
+        self::STATUS_FINALIZADA,
+        self::STATUS_RECUSADA,
+    ];
+
+    public const STATUS_QUE_RESERVAM_CARGA = [
+        self::STATUS_PENDENTE,
+        self::STATUS_DILIGENCIA,
+        self::STATUS_EM_EXECUCAO,
+        self::STATUS_FINALIZADA,
+    ];
+
+    public const CURSOS = [
+        'Automação Industrial',
+        'Manutenção Industrial',
+        'Gestão Empresarial',
+        'Gestão da Tecnologia da Informação',
+        'Produção Fonográfica',
+        'AMS - Análise e Desenvolvimento de Sistemas',
+        'AMS - Processos Gerenciais',
+    ];
+
     protected $table = 'haes';
-    const STATUS_PENDENTE = 'pendente';
-    const STATUS_DILIGENCIA = 'com_diligencia';
-    const STATUS_APROVADA = 'aprovada';
-    const STATUS_EM_EXECUCAO = 'em_execucao';
-    const STATUS_FINALIZADA = 'finalizada';
-    const STATUS_RECUSADA = 'recusada';
 
     protected $fillable = [
         'user_id',
-        'tipo',
         'edital_aceito',
         'curso',
         'titulo',
@@ -31,15 +58,33 @@ class Haes extends Model
         'tipo_hae_id',
     ];
 
-    //  RELACIONAMENTOS
+    protected function casts(): array
+    {
+        return [
+            'edital_aceito' => 'boolean',
+            'carga_horaria' => 'integer',
+        ];
+    }
 
+    public function podeSerVistaPor(User $user): bool
+    {
+        return match ($user->role) {
+            User::ROLE_PROFESSOR => $this->user_id === $user->id
+                || $this->relatores()->whereKey($user->id)->exists(),
+            User::ROLE_COORDENADOR => $this->curso === $user->curso
+                || $this->relatores()->whereKey($user->id)->exists(),
+            User::ROLE_DIRECAO => true,
+            default => false,
+        };
+    }
+
+    //  RELACIONAMENTOS
 
     // HAE pertence a um usuário (professor)
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
 
     // PARECERES (relatores)
     public function pareceres()
@@ -67,10 +112,10 @@ class Haes extends Model
     // RELATORIOS
     public function relatorio()
     {
-        return $this->hasOne(Relatorio::class, 'hae_id');
+        return $this->hasOne(Relatorio::class, 'hae_id')->latestOfMany();
     }
 
-    //TIPOS HAE
+    // TIPOS HAE
     public function tipoHae()
     {
         return $this->belongsTo(TipoHae::class);
