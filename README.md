@@ -1,6 +1,13 @@
-# sistema-HAE
-Este projeto tem como objetivo desenvolver um sistema para organizar, controlar e validar as Horas de Atividades Específicas (HAE) dos professores, desde o planejamento até a sua conclusão.
+# Sistema HAE — Fatec
 
-A plataforma permitirá o cadastro e acompanhamento das atividades realizadas, facilitando o registro, a análise e a validação por parte da instituição. Além disso, busca centralizar as informações em um único ambiente, tornando o processo mais transparente, padronizado e eficiente.
+Sistema interno para submissão, avaliação, acompanhamento e encerramento de Horas de Atividades Específicas (HAEs).
 
-O sistema também visa reduzir processos manuais, melhorar o controle institucional e garantir maior confiabilidade nos dados relacionados às atividades acadêmicas.
+O código da aplicação Laravel está em [`sistema_hae/`](sistema_hae/README.md). A documentação técnica começa em [`sistema_hae/docs/INDEX.md`](sistema_hae/docs/INDEX.md).
+
+## Situação do projeto
+
+- Parte 1 concluída: documentação, formalização de regras, limpeza e correções de manutenção.
+- Parte 2 pendente: revisão completa de design, responsividade, componentes e acessibilidade.
+- Parte 3 pendente: revisão aprofundada de segurança.
+
+Antes de publicar alterações no ambiente da HostGator, consulte o procedimento em [`sistema_hae/docs/OPERACAO_E_DEPLOY.md`](sistema_hae/docs/OPERACAO_E_DEPLOY.md).
