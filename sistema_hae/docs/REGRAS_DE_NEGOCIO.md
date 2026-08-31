@@ -37,7 +37,8 @@
 ## Submissão
 
 - O tipo pai deve existir e estar ativo.
-- O subtipo deve existir, estar ativo e pertencer ao tipo pai informado.
+- Tipos sem subtipos ativos podem receber propostas sem subtipo.
+- Quando o tipo possui subtipos ativos, um deles deve ser selecionado, estar ativo e pertencer ao tipo pai informado.
 - O professor precisa aceitar o edital.
 - Curso precisa pertencer à lista `Haes::CURSOS`.
 - Título, carga horária, resumo e justificativa são obrigatórios.

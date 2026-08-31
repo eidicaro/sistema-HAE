@@ -12,15 +12,19 @@ use App\Http\Controllers\TipoHaeController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::view('/', 'welcome')->name('home');
 
-Route::get('/login', fn () => redirect('/'))->name('login');
+Route::get('/login', fn () => redirect()->route('home'))->name('login');
 Route::get('/login/{tipo}', [AuthController::class, 'showLogin'])
-    ->whereIn('tipo', User::ROLES);
+    ->whereIn('tipo', User::ROLES)
+    ->name('login.show');
 Route::post('/login/{tipo}', [AuthController::class, 'login'])
     ->whereIn('tipo', User::ROLES)
-    ->middleware('throttle:login');
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
+    ->middleware('throttle:login')
+    ->name('login.authenticate');
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/professor', [HaeController::class, 'index'])

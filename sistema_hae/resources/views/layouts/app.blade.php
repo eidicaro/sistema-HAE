@@ -67,7 +67,7 @@
                     <small>{{ match($usuarioAtual->role) { 'direcao' => 'Direção', 'coordenador' => 'Coordenação', default => 'Professor' } }}</small>
                 </span>
             </div>
-            <form method="POST" action="/logout">
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="logout-button" title="Sair do sistema">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17v-2h4V9h-4V7l-5 5 5 5Zm9-14h-8a2 2 0 0 0-2 2v1h2V5h8v14h-8v-1H9v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></svg>

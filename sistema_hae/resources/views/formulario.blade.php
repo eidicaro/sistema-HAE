@@ -20,7 +20,7 @@
         </div>
 
         @if($nomes->isEmpty())
-            <div class="alert alert--error" role="alert"><span class="alert__dot"></span><div><strong>Submissão indisponível</strong><p>A direção ainda precisa cadastrar ao menos um subtipo ativo em um tipo de HAE ativo.</p></div></div>
+            <div class="alert alert--error" role="alert"><span class="alert__dot"></span><div><strong>Submissão indisponível</strong><p>A direção ainda precisa cadastrar ao menos um tipo de HAE ativo.</p></div></div>
         @endif
 
         <section class="form-section">
@@ -51,7 +51,7 @@
                 </div>
                 <div class="field">
                     <label for="subtipo_hae_id">Subtipo de HAE</label>
-                    <select id="subtipo_hae_id" name="subtipo_hae_id" required>
+                    <select id="subtipo_hae_id" name="subtipo_hae_id">
                         <option value="">Selecione primeiro o tipo</option>
                         @foreach($nomes as $tipo)
                             <optgroup label="{{ $tipo->nome }}">
@@ -61,7 +61,7 @@
                             </optgroup>
                         @endforeach
                     </select>
-                    <span class="field__hint">O subtipo utiliza o limite de horas do tipo selecionado.</span>
+                    <span class="field__hint">Obrigatório somente quando o tipo selecionado possuir subtipos ativos.</span>
                     @error('subtipo_hae_id')<span class="field__error">{{ $message }}</span>@enderror
                 </div>
                 <div class="field">

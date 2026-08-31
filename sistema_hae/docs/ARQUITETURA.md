@@ -79,7 +79,7 @@ Pareceres são informações de apoio e não alteram o status. A decisão regist
 - Papéis continuam em `users.role`, pois o sistema possui apenas três perfis fixos.
 - Cursos continuam como texto, tanto no usuário coordenador quanto na HAE. Isso exige igualdade exata.
 - Tipos de HAE são categorias pai configuráveis e carregam o limite de horas.
-- Subtipos pertencem a um tipo pai, não possuem limite próprio e identificam a modalidade escolhida na proposta.
+- Subtipos são opcionais, pertencem a um tipo pai, não possuem limite próprio e identificam a modalidade escolhida quando o tipo possui subdivisões.
 - O limite é isolado por tipo pai e semestre; as horas de todos os seus subtipos são somadas.
 - Alterações concorrentes de limite, status e relatório usam transações e locks de linha.
 - Arquivos ficam privados e só saem pelos endpoints autorizados.

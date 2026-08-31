@@ -109,7 +109,7 @@ class ProfessorController extends Controller
 
         $professor->save();
 
-        return redirect('/direcao/professores')
+        return redirect()->route('direcao.professores.index')
             ->with('sucesso', 'Professor atualizado com sucesso!');
     }
 

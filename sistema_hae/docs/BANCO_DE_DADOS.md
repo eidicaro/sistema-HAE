@@ -39,7 +39,7 @@ Entidade central. Liga professor, semestre, tipo pai e subtipo, armazena curso, 
 - exclusão do usuário ou semestre: cascade;
 - exclusão do tipo: restrict;
 - exclusão do subtipo: restrict;
-- `subtipo_hae_id` é nullable somente para manter compatibilidade com HAEs criadas antes da implantação dos subtipos; novas submissões exigem o campo;
+- `subtipo_hae_id` é nullable porque nem todo tipo possui subdivisões; quando o tipo escolhido possui subtipos ativos, novas submissões exigem a seleção de um deles;
 - `resultados_esperados`, `indicadores`, `mes_1` a `mes_5` e `horarios_hae` são textos opcionais para preservar registros legados;
 - status é string e validado pela aplicação.
 

@@ -14,6 +14,8 @@ use Database\Seeders\UsuariosTesteSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ViewErrorBag;
 use Tests\TestCase;
 
 class HaeWorkflowTest extends TestCase
@@ -23,6 +25,33 @@ class HaeWorkflowTest extends TestCase
     public function test_public_home_is_available(): void
     {
         $this->get('/')->assertOk();
+    }
+
+    public function test_generated_urls_preserve_a_configured_subdirectory(): void
+    {
+        URL::forceRootUrl('https://example.test/subdiretorio');
+        URL::forceScheme('https');
+        view()->share('errors', new ViewErrorBag);
+
+        $home = view('welcome')->render();
+        $login = view('login', ['tipo' => User::ROLE_DIRECAO])->render();
+
+        $this->assertSame('https://example.test/subdiretorio', route('home'));
+        $this->assertSame('https://example.test/subdiretorio/professor', route('professor'));
+        $this->assertSame('https://example.test/subdiretorio/logout', route('logout'));
+        $this->assertStringContainsString(
+            'href="https://example.test/subdiretorio/login/professor"',
+            $home
+        );
+        $this->assertStringContainsString(
+            'href="https://example.test/subdiretorio/css/app.css"',
+            $home
+        );
+        $this->assertStringContainsString('href="https://example.test/subdiretorio"', $login);
+        $this->assertStringContainsString(
+            'action="https://example.test/subdiretorio/login/direcao"',
+            $login
+        );
     }
 
     public function test_manual_test_users_seeder_creates_expected_profiles(): void
@@ -171,6 +200,74 @@ class HaeWorkflowTest extends TestCase
             'mes_5' => 'Avaliação',
             'horarios_hae' => 'Segundas, das 19h às 21h',
         ]);
+    }
+
+    public function test_professor_can_submit_hae_for_type_without_subtypes(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        $semestre = Semestres::create([
+            'nome' => '2026/1',
+            'data_inicio' => '2026-01-01',
+            'data_fim' => '2026-06-30',
+            'ativo' => true,
+        ]);
+        $tipo = TipoHae::create(['nome' => 'Gestão acadêmica', 'limite' => 20, 'ativo' => true]);
+
+        $this->actingAs($professor)
+            ->get(route('hae.create'))
+            ->assertOk()
+            ->assertSee('Gestão acadêmica');
+
+        $this->actingAs($professor)
+            ->post(route('hae.store'), [
+                'tipo_hae_id' => $tipo->id,
+                'edital' => '1',
+                'curso' => Haes::CURSOS[0],
+                'titulo' => 'Atividade sem subdivisão',
+                'carga_horaria' => 4,
+                'resumo' => 'Resumo',
+                'justificativa' => 'Justificativa',
+            ])
+            ->assertRedirect(route('professor'));
+
+        $this->assertDatabaseHas('haes', [
+            'user_id' => $professor->id,
+            'semestre_id' => $semestre->id,
+            'tipo_hae_id' => $tipo->id,
+            'subtipo_hae_id' => null,
+            'status' => Haes::STATUS_PENDENTE,
+        ]);
+    }
+
+    public function test_subtype_is_required_when_selected_type_has_active_subtypes(): void
+    {
+        $professor = User::factory()->create(['role' => User::ROLE_PROFESSOR]);
+        Semestres::create([
+            'nome' => '2026/1',
+            'data_inicio' => '2026-01-01',
+            'data_fim' => '2026-06-30',
+            'ativo' => true,
+        ]);
+        $tipo = TipoHae::create(['nome' => 'Extensão', 'limite' => 20, 'ativo' => true]);
+        SubtipoHae::create([
+            'tipo_hae_id' => $tipo->id,
+            'nome' => 'Projeto comunitário',
+            'ativo' => true,
+        ]);
+
+        $this->actingAs($professor)
+            ->post(route('hae.store'), [
+                'tipo_hae_id' => $tipo->id,
+                'edital' => '1',
+                'curso' => Haes::CURSOS[0],
+                'titulo' => 'Proposta sem subtipo',
+                'carga_horaria' => 4,
+                'resumo' => 'Resumo',
+                'justificativa' => 'Justificativa',
+            ])
+            ->assertSessionHasErrors('subtipo_hae_id');
+
+        $this->assertDatabaseMissing('haes', ['titulo' => 'Proposta sem subtipo']);
     }
 
     public function test_hae_form_keeps_all_institutional_questions(): void

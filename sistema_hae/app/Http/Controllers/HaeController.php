@@ -131,7 +131,7 @@ class HaeController extends Controller
                 ->where('ativo', true)
                 ->lockForUpdate()
                 ->firstOrFail();
-            $subtipo = $this->obterSubtipoAtivo($tipo, $validated['subtipo_hae_id']);
+            $subtipo = $this->obterSubtipoAtivo($tipo, $validated['subtipo_hae_id'] ?? null);
 
             $horasUsadas = Haes::where('tipo_hae_id', $tipo->id)
                 ->where('semestre_id', $semestre->id)
@@ -143,7 +143,7 @@ class HaeController extends Controller
             Haes::create([
                 'user_id' => auth()->id(),
                 'tipo_hae_id' => $validated['tipo_hae_id'],
-                'subtipo_hae_id' => $subtipo->id,
+                'subtipo_hae_id' => $subtipo?->id,
                 'edital_aceito' => $request->boolean('edital'),
                 'curso' => $validated['curso'],
                 'titulo' => $validated['titulo'],
@@ -163,7 +163,7 @@ class HaeController extends Controller
             ]);
         }, 3);
 
-        return redirect('/professor')->with('success', 'HAE enviada com sucesso!');
+        return redirect()->route('professor')->with('success', 'HAE enviada com sucesso!');
     }
 
     public function show($id)
@@ -230,7 +230,7 @@ class HaeController extends Controller
                 ->where('ativo', true)
                 ->lockForUpdate()
                 ->firstOrFail();
-            $this->obterSubtipoAtivo($tipo, $validated['subtipo_hae_id']);
+            $subtipo = $this->obterSubtipoAtivo($tipo, $validated['subtipo_hae_id'] ?? null);
 
             $horasUsadas = Haes::where('tipo_hae_id', $tipo->id)
                 ->where('semestre_id', $hae->semestre_id)
@@ -242,12 +242,13 @@ class HaeController extends Controller
 
             $hae->update([
                 ...$validated,
+                'subtipo_hae_id' => $subtipo?->id,
                 'edital_aceito' => $request->boolean('edital'),
                 'status' => Haes::STATUS_PENDENTE,
             ]);
         }, 3);
 
-        return redirect('/professor')->with('success', 'HAE atualizada com sucesso!');
+        return redirect()->route('professor')->with('success', 'HAE atualizada com sucesso!');
     }
 
     public function exportarcsv()
@@ -290,7 +291,7 @@ class HaeController extends Controller
                 Rule::exists('tipo_haes', 'id')->where('ativo', true),
             ],
             'subtipo_hae_id' => [
-                'required',
+                'nullable',
                 'integer',
                 Rule::exists('subtipo_haes', 'id')->where('ativo', true),
             ],
@@ -322,8 +323,18 @@ class HaeController extends Controller
         ]);
     }
 
-    private function obterSubtipoAtivo(TipoHae $tipo, int $subtipoId): SubtipoHae
+    private function obterSubtipoAtivo(TipoHae $tipo, ?int $subtipoId): ?SubtipoHae
     {
+        if ($subtipoId === null) {
+            if ($tipo->subtipos()->where('ativo', true)->exists()) {
+                throw ValidationException::withMessages([
+                    'subtipo_hae_id' => 'Selecione um subtipo ativo para o tipo de HAE informado.',
+                ]);
+            }
+
+            return null;
+        }
+
         $subtipo = SubtipoHae::whereKey($subtipoId)
             ->where('tipo_hae_id', $tipo->id)
             ->where('ativo', true)
@@ -342,7 +353,6 @@ class HaeController extends Controller
     private function tiposDisponiveis()
     {
         return TipoHae::where('ativo', true)
-            ->whereHas('subtipos', fn ($query) => $query->where('ativo', true))
             ->with(['subtipos' => fn ($query) => $query->where('ativo', true)->orderBy('nome')])
             ->orderBy('nome')
             ->get();

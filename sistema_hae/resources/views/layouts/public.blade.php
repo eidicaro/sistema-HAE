@@ -8,7 +8,7 @@
 </head>
 <body class="public-shell">
     <header class="public-header">
-        <a href="/" class="public-brand" aria-label="Página inicial do Sistema HAE">
+        <a href="{{ route('home') }}" class="public-brand" aria-label="Página inicial do Sistema HAE">
             <img src="{{ asset('images/20_anos.png') }}" alt="Fatec Tatuí">
             <span></span>
             <strong>Sistema HAE</strong>

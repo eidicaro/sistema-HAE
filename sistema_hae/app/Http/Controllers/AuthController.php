@@ -48,7 +48,7 @@ class AuthController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return redirect('/'.$user->role);
+            return redirect()->route($user->role);
         }
 
         Log::warning('Falha de autenticação', [
@@ -74,6 +74,6 @@ class AuthController extends Controller
             'ip' => $request->ip(),
         ]);
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 }

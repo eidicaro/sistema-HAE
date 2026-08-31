@@ -53,11 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const tipoSelecionado = tipoHae.value;
         const subtipoSelecionado = subtipoHae.value;
         let selecaoContinuaValida = false;
+        let possuiSubtipos = false;
 
         subtipoHae.querySelectorAll('option[data-tipo-hae]').forEach((option) => {
             const pertenceAoTipo = option.dataset.tipoHae === tipoSelecionado;
             option.disabled = !pertenceAoTipo;
             option.hidden = !pertenceAoTipo;
+            possuiSubtipos ||= pertenceAoTipo;
 
             if (pertenceAoTipo && option.value === subtipoSelecionado) {
                 selecaoContinuaValida = true;
@@ -68,7 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
             subtipoHae.value = selecaoContinuaValida ? subtipoSelecionado : '';
         }
 
-        subtipoHae.disabled = tipoSelecionado === '';
+        const opcaoInicial = subtipoHae.querySelector('option:not([data-tipo-hae])');
+        if (opcaoInicial) {
+            opcaoInicial.textContent = tipoSelecionado === ''
+                ? 'Selecione primeiro o tipo'
+                : possuiSubtipos
+                    ? 'Selecione um subtipo'
+                    : 'Este tipo não possui subtipo';
+        }
+
+        subtipoHae.required = possuiSubtipos;
+        subtipoHae.disabled = tipoSelecionado === '' || !possuiSubtipos;
     };
 
     filtrarSubtipos(true);

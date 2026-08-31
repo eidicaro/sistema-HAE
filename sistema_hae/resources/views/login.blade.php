@@ -9,12 +9,12 @@
 @section('content')
     <section class="login-page">
         <div class="login-card">
-            <a href="/" class="login-card__back"><span aria-hidden="true">←</span> Voltar para seleção de perfil</a>
+            <a href="{{ route('home') }}" class="login-card__back"><span aria-hidden="true">←</span> Voltar para seleção de perfil</a>
             <span class="login-card__badge">Acesso · {{ $nomePerfil }}</span>
             <h1>Bem-vindo de volta</h1>
             <p>Informe suas credenciais institucionais para continuar.</p>
 
-            <form method="POST" action="/login/{{ $tipo }}">
+            <form method="POST" action="{{ route('login.authenticate', $tipo) }}">
                 @csrf
                 <div class="field">
                     <label for="email">E-mail ou usuário</label>
